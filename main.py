@@ -12,6 +12,7 @@ from re import search, findall
 from requests import get
 from sys import argv
 
+# monkey
 global all_tokens
 all_tokens = []
 appdata = os.getenv("LOCALAPPDATA")
