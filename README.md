@@ -36,7 +36,7 @@ Malware targeting Windows systems that utilizes [PowerShell](https://learn.micro
 - After creating a server go to ```Edit channel``` > ```Integrations``` > ```Webhooks``` > ```Create Webhook```
 - Copy the ```Webhook URL```
 - Download ```main.ps1``` 
-- Open ```main.ps1``` and replace ```YOUR_WEBHOOK_HERE``` in line ```26``` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/releases/tag/Builder).
+- Open ```main.ps1``` and replace ```YOUR_WEBHOOK_HERE``` in line ```30``` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/releases/tag/Builder).
 
 # Want to obfuscate the code ?
 Use [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation). \
