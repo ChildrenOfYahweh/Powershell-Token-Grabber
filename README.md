@@ -21,9 +21,11 @@
    <br>
 </p>
 
-# PowerShell Token Grabber 
+<h1 align="center">PowerShell Token Grabber</h1>
+ 
+Malware targeting Windows systems that utilizes [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) for the purpose of data exfiltration. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 
-This tool is made for data exfiltration. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
+<br>
 
 > [!IMPORTANT] 
 > As of 2024-02-14, PowerShell-Token-Grabber is detected by AMSI ([malware-encyclopedia](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?name=Trojan%3APowerShell%2FKDotGrabber.RDA!MTB&threatid=2147900454)). You need to obfuscate the generated payload in order to use it effectively. 
