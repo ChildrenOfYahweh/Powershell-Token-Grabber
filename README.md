@@ -44,7 +44,8 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
 
 # Screenshots
   ## 🔨 Builder
-> ![GUI](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/29f443d1-ed54-4926-babc-33b87b570592)
+> ![GUI](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/f157716e-5ff9-446c-9e8c-629b163d52a0)
+
 
    ### Builder Features
  - [x] 🔸 Obfuscation of ```BAT``` and ```PS1``` files
