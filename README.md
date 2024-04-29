@@ -46,7 +46,6 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
   ## 🔨 Builder
 > ![GUI](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/f157716e-5ff9-446c-9e8c-629b163d52a0)
 
-
    ### Builder Features
  - [x] 🔸 Obfuscation of ```BAT``` and ```PS1``` files
  - [x] 🔩 Compilation of Exe Files 
@@ -97,8 +96,6 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
   - 📜 History
 - [x] Extracts [Discord](https://discord.com) Token
 - [x] Get System Information (Version, CPU, DISK, GPU, RAM, IP, Installed Apps etc.)
-- [x] Get System Uptime 
-- [X] Get Screen Resolution
 - [x] List of Installed Applications
 - [x] List of Installed Antiviruses
 - [x] List of all Network Adapters
