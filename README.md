@@ -59,14 +59,14 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
 
 #  Features
 - [x] GUI Builder
-- [x] Anti-Kill (Terminating the grabber will result in a system crash, indicated by a ```BSoD``` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6).
+- [x] Anti-Kill (Terminating the grabber will result in a system crash, indicated by a ```BSoD``` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).
 - [x] [Mutex](https://learn.microsoft.com/en-us/dotnet/api/system.threading.mutex?view=net-7.0) (single instance)
 - [x] Force [UAC](https://learn.microsoft.com/en-us/windows/security/identity-protection/user-account-control/how-user-account-control-works)
 - [x] Antivirus Evasion: Disables [AMSI](https://learn.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal) , excluded from ```Windows Defender``` and blocks access to antivirus websites in [hosts file](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae). 
 - [x] Anti-Analysis ```VMWare, VirtualBox, Sandboxes, Emulators, Debuggers, Virustotal, Any.run```
 - [x] Persistence via [Task Scheduler](https://learn.microsoft.com/en-us/windows/win32/taskschd/about-the-task-scheduler) 
 - [x] Extracts WiFi Passwords
-- [x] Files ```2fa, backupcodes, seedphrases, passwords, etc.``` 
+- [x] Files Stealer ```2fa, backupcodes, seedphrases, passwords, privatekeys, etc.``` 
 - [x] 📷 Webcam & Desktop Screenshots
 - [x] Session Stealers 
   > ### Messaging
@@ -75,7 +75,8 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
     - [Signal](https://signal.org) 
     - [Telegram](https://telegram.org) 
     - [Viber](https://viber.com) 
-    - [WhatsApp](https://whatsapp.com) 
+    - [WhatsApp](https://whatsapp.com)
+    - [Skype](https://skype.com/en/get-skype/)
   > ### Gaming 
     - [Electronic Arts](https://ea.com)
     - [Epicgames](https://store.epicgames.com)
@@ -83,6 +84,7 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
     - [Minecraft](https://minecraft.net)
     - [Ubisoft](https://ubisoftconnect.com)
     - [Steam](https://store.steampowered.com)
+    - [Battle.net](https://battle.net)
 - [x] VPN Clients
     - [Nord](https://nordvpn.com) 
     - [Proton](https://protonvpn.com)
@@ -102,7 +104,7 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
 - [x] List of all Network Adapters
 - [x] List of Apps that Run On Startup
 - [x] List of Running Services & Applications
-- [x] List TCP Connections and Underlying Process
+- [x] All Network Information
 - [x] Extracts Product Key
 - [x] Self-Destructs After Execution (optional)
 
