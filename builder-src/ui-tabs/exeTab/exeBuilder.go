@@ -17,7 +17,7 @@ func GetExeBuilder(a fyne.App) *fyne.Container {
 	//white := color.NRGBA{R: 255, G: 255, B: 255, A: 255}
 	//red := color.NRGBA{R: 180, G: 0, B: 0, A: 255}
 
-	mainTitle := canvas.NewText("Powershell Token Grabber Builder", blue)
+	mainTitle := canvas.NewText("Kematian Stealer Builder", blue)
 	mainTitle.Alignment = fyne.TextAlignCenter
 	mainTitle.TextSize = 18
 
