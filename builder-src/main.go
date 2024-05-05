@@ -20,7 +20,7 @@ import (
 
 func main() {
 	a := app.New()
-	win := a.NewWindow(cursed.Generate("Powershell Token Grabber Builder", "normal", true, true, true))
+	win := a.NewWindow(cursed.Generate("Kematian-Stealer Builder", "normal", true, true, true))
 	win.Resize(fyne.NewSize(500, 400))
 	win.CenterOnScreen()
 
@@ -34,7 +34,7 @@ func main() {
 		container.NewTabItem("Batch", batchTab.GetBatchBuilder(a)),
 		container.NewTabItem("EXE", exeTab.GetExeBuilder(a)),
 		container.NewTabItem("Remove", removeTab.GetRemoveTab(a)),
-		container.NewTabItem("Credits", widget.NewLabel("Made by KDot227, Chainski and EvilByteCode AODIWJAWODIJAWODIJAWDOIJAWDOIJ")),
+		container.NewTabItem("Credits", widget.NewLabel("Made by KDot227, Chainski and EvilByteCode")),
 	)
 
 	win.SetContent(tabs)
