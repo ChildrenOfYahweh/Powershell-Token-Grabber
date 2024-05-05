@@ -8,7 +8,6 @@ else {
     $ProgressPreference = 'SilentlyContinue'
 }
 
-
 function KDMUTEX {
     $AppId = "a0e59cd1-5d22-4ae1-967b-1bf3e1d36d6b" 
     $CreatedNew = $false
