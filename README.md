@@ -110,7 +110,7 @@ Moreover, the tool has robust ```persistence mechanisms``` to remain active on t
 - [x] Self-Destructs After Execution (optional)
 
 ### Telegram Session Stealer Usage :
-After the exfiltrated data is uploaded to your discord webhook, download the compressed file ```KDOT.zip```, extract it on your PC, inside that folder there will also be another subfolder ```Messaging Sessions``` , inside this subfolder you will find the ```Telegram``` folder.
+After the exfiltrated data is uploaded to your discord webhook, download the compressed file ```Kematian.zip```, extract it on your PC, inside that folder there will also be another subfolder ```Messaging Sessions``` , inside this subfolder you will find the ```Telegram``` folder.
 Now, copy the tdata folder from ```Telegram``` folder and paste it in the directory below:
 
 ```
@@ -164,10 +164,10 @@ Cleanup
 - [Join our discord server](https://discord.com/invite/WJCNUpxnrE)
 
 # Bug Reports & Suggestions
-Found a bug? Have an idea? Let me know [here](https://github.com/KDot227/Powershell-Token-Grabber/issues), Please provide a detailed explanation of the expected behavior, actual behavior, and steps to reproduce, or what you want to see and how it could be done. You can be a small part of this project!
+Found a bug? Have an idea? Let me know [here](https://github.com/KDot227/Kematian-Stealer/issues), Please provide a detailed explanation of the expected behavior, actual behavior, and steps to reproduce, or what you want to see and how it could be done. You can be a small part of this project!
 
 # License
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/kdot227/Powershell-Token-Grabber/blob/main/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/kdot227/Kematian-Stealer/blob/main/LICENSE) file for details
 
 # Disclaimer
 I, the creator, am not responsible for any actions, and or damages, caused by this software.
