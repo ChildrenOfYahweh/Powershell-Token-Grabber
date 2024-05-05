@@ -20,7 +20,7 @@ import (
 
 func main() {
 	a := app.New()
-	win := a.NewWindow(cursed.Generate("Kematian-Stealer Builder", "normal", true, true, true))
+	win := a.NewWindow(cursed.Generate("Kematian Stealer Builder", "normal", true, true, true))
 	win.Resize(fyne.NewSize(500, 400))
 	win.CenterOnScreen()
 
@@ -50,7 +50,7 @@ func main() {
 		defer ticker.Stop()
 
 		for range ticker.C {
-			output := cursed.Generate("Powershell Token Grabber Builder", "normal", true, true, true)
+			output := cursed.Generate("Kematian Stealer Builder", "normal", true, true, true)
 			outputChannel <- output
 		}
 	}()
