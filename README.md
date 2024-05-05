@@ -45,7 +45,8 @@ Moreover, the tool has robust ```persistence mechanisms``` to remain active on t
 
 # Screenshots
   ## 🔨 Builder
-> ![GUI](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/f157716e-5ff9-446c-9e8c-629b163d52a0)
+> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/576aa2c3-1480-4d23-9027-d52d8973c780)
+
 
    ### Builder Features
  - [x] 🔸 Obfuscation of ```BAT``` and ```PS1``` files
