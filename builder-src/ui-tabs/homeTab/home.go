@@ -18,7 +18,7 @@ func GetHomeTab(a fyne.App) *fyne.Container {
 	mainTitle.Alignment = fyne.TextAlignCenter
 	mainTitle.TextSize = 18
 
-	textBox := canvas.NewText("If the Grabber ever doesn't work, go into the powershell tab and press on debug build & exec\n\nFind the error then post it on the Github.", blue)
+	textBox := canvas.NewText("If Kematian Stealer ever doesn't work, go into the powershell tab and press on debug build & exec\n\nFind the error then post it on the Github.", blue)
 	textBox.Alignment = fyne.TextAlignCenter
 	textBox.TextSize = 12
 
