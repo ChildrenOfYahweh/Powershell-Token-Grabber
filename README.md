@@ -24,24 +24,24 @@
 <h1 align="center">Kematian Stealer</h1>
 
 # About The Project
-Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). It functions seamlessly across any ``x64bit`` system, from ```Windows 8 x64 to Windows 11 x64```, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve ```seed phrases, session files, passwords, application data, Discord information``` and more.
+Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). It functions seamlessly across any `x64bit` system, from `Windows 8 x64 to Windows 11 x64`, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve `seed phrases, session files, passwords, application data, Discord information` and more.
 
-This tool is particularly advantageous for accessing application and file data without restrictions, while evading conventional security measures such as ```firewalls``` and ```antivirus``` software, thanks to its ```fileless capabilities```, which set it apart from other stealers. Upon execution, Kematian Stealer creates a ```mutex``` on the system and designates the process as ```critical``` before initiating data exfiltration, ensuring smooth and uninterrupted transmission of data.
+This tool is particularly advantageous for accessing application and file data without restrictions, while evading conventional security measures such as `firewalls` and `antivirus` software, thanks to its `fileless capabilities`, which set it apart from other stealers. Upon execution, Kematian Stealer creates a `mutex` on the system and designates the process as `critical` before initiating data exfiltration, ensuring smooth and uninterrupted transmission of data.
 
-Moreover, the tool has robust ```persistence mechanisms``` to remain active on the machine after reboot. Additionally, its user-friendly ```GUI builder``` simplifies the process of creating payloads, enhancing its accessibility and usability.
+Moreover, the tool has robust `persistence mechanisms` to remain active on the machine after reboot. Additionally, its user-friendly `GUI builder` simplifies the process of creating payloads, enhancing its accessibility and usability.
 <br>
 
 
 # Usage
 - Create a Webhook on your [Discord Server](https://discord.com). I recommend creating a new server.
-- After creating a server go to ```Edit channel``` > ```Integrations``` > ```Webhooks``` > ```Create Webhook```
-- Copy the ```Webhook URL```
-- Download ```main.ps1``` 
-- Open ```main.ps1``` and replace ```YOUR_WEBHOOK_HERE``` in line ```30``` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
+- After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
+- Copy the `Webhook URL`
+- Download `main.ps1` 
+- Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `30` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
 
 # Obfuscation 
-- [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation) for ```.ps1``` files
-- [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``` files 
+- [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation) for `.ps1` files
+- [Somalifuscator](https://github.com/kdot227/somalifuscator) for `.bat` files 
 
 # Screenshots
   ## 🔨 Builder
@@ -49,7 +49,7 @@ Moreover, the tool has robust ```persistence mechanisms``` to remain active on t
 
 
    ### Builder Features
- - [x] 🔸 Obfuscation of ```BAT``` and ```PS1``` files
+ - [x] 🔸 Obfuscation of `BAT` and `PS1` files
  - [x] 🔩 Compilation of Exe Files 
  - [x] 💉 Pump/Inject the output exe file with zero-filled bytes 
 
@@ -62,14 +62,14 @@ Moreover, the tool has robust ```persistence mechanisms``` to remain active on t
 
 #  Features
 - [x] GUI Builder
-- [x] Anti-Kill (Terminating the grabber will result in a system crash, indicated by a ```BSoD``` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).
+- [x] Anti-Kill (Terminating the grabber will result in a system crash, indicated by a `BSoD` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).
 - [x] [Mutex](https://learn.microsoft.com/en-us/dotnet/api/system.threading.mutex?view=net-7.0) (single instance)
 - [x] Force [UAC](https://learn.microsoft.com/en-us/windows/security/identity-protection/user-account-control/how-user-account-control-works)
-- [x] Antivirus Evasion: Disables [AMSI](https://learn.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal) , excluded from ```Windows Defender``` and blocks access to antivirus websites in [hosts file](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae). 
-- [x] Anti-Analysis ```VMWare, VirtualBox, Sandboxes, Emulators, Debuggers, Virustotal, Any.run```
+- [x] Antivirus Evasion: Disables [AMSI](https://learn.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal) , excluded from `Windows Defender` and blocks access to antivirus websites in [hosts file](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae). 
+- [x] Anti-Analysis `VMWare, VirtualBox, Sandboxes, Emulators, Debuggers, Virustotal, Any.run`
 - [x] Persistence via [Task Scheduler](https://learn.microsoft.com/en-us/windows/win32/taskschd/about-the-task-scheduler) 
 - [x] Extracts WiFi Passwords
-- [x] Files Stealer ```2fa, backupcodes, seedphrases, passwords, privatekeys, etc.``` 
+- [x] Files Stealer `2fa, backupcodes, seedphrases, passwords, privatekeys, etc.` 
 - [x] 📷 Webcam & Desktop Screenshots
 - [x] Session Stealers 
   > ### Messaging
@@ -110,12 +110,12 @@ Moreover, the tool has robust ```persistence mechanisms``` to remain active on t
 - [x] Self-Destructs After Execution (optional)
 
 ### Telegram Session Stealer Usage :
-After the exfiltrated data is uploaded to your discord webhook, download the compressed file ```Kematian.zip```, extract it on your PC, inside that folder there will also be another subfolder ```Messaging Sessions``` , inside this subfolder you will find the ```Telegram``` folder.
-Now, copy the tdata folder from ```Telegram``` folder and paste it in the directory below:
+After the exfiltrated data is uploaded to your discord webhook, download the compressed file `Kematian.zip`, extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
+Now, copy the `tdata` folder from `Telegram` folder and paste it in the directory below:
 
-```
+`
 %userprofile%\AppData\Roaming\Telegram Desktop
-```
+`
 Before pasting the tdata folder, ensure that you have deleted the existing tdata folder on your PC.
 # ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/8951b0d5-9ff1-491a-8589-614db5aefd6f)
 
