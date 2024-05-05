@@ -9,7 +9,7 @@ import (
 )
 
 func AutoUpdate() bool {
-	url := "https://raw.githubusercontent.com/ChildrenOfYahweh/Powershell-Token-Grabber/main/builder-src/FyneApp.toml"
+	url := "https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer/main/builder-src/FyneApp.toml"
 
 	resp, err := http.Get(url)
 	if err != nil {
