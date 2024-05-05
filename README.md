@@ -9,8 +9,8 @@
    <img src="https://img.shields.io/github/stars/ChildrenOfYahweh/Kematian-Stealer?style=flat&color=fca107">
    <img src="https://img.shields.io/github/forks/ChildrenOfYahweh/Kematian-Stealer?style=flat&color=fca107">
    <img src="https://img.shields.io/github/issues/ChildrenOfYahweh/Kematian-Stealer?style=flat&color=fca107">
-  <img src="https://img.shields.io/github/commit-activity/m/ChildrenOfYahweh/Kematian-Stealer?color=fca107"
-  <img src="https://img.shields.io/badge/PowerShell-%E2%89%A5%20v3.0-red">
+  <img src="https://img.shields.io/github/commit-activity/m/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
+  <img src="https://img.shields.io/badge/Powershell-v3.0-fca107">
   <br>
    <img src="https://img.shields.io/github/last-commit/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
    <img src="https://img.shields.io/github/license/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
