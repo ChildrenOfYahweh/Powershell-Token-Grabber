@@ -21,7 +21,7 @@
    <br>
 </p>
 
-<h1 align="center">PowerShell Token Grabber</h1>
+<h1 align="center">Kematian Stealer</h1>
  
 Malware targeting Windows systems that utilizes [PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) for the purpose of data exfiltration. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks).
 
