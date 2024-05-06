@@ -2,7 +2,6 @@ package cookies
 
 import (
 	"database/sql"
-
 	"kdot/kematian/browsers/chromium/structs"
 	"kdot/kematian/decryption"
 )

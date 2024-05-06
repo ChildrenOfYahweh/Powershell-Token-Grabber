@@ -3,7 +3,6 @@ package pass
 import (
 	"database/sql"
 	"encoding/json"
-
 	"kdot/kematian/browsers/chromium/structs"
 	"kdot/kematian/decryption"
 )
