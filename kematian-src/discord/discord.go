@@ -11,8 +11,8 @@ import (
 
 	"net/http"
 
-	"kdot/grabber/decryption"
-	"kdot/grabber/exfil"
+	"kdot/kematian/decryption"
+	"kdot/kematian/exfil"
 )
 
 //var ids []int64

