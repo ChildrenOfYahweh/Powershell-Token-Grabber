@@ -34,7 +34,7 @@ REM
 
 pause
 
-del kematian.exe || echo "kematian.exe not found"
+del kematian.exe || echo "kematian.exe was not found"
 
 pause
 exit
