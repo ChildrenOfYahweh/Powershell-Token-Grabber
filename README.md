@@ -110,7 +110,6 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - [x] List of all Network Adapters
 - [x] List of Apps that Run On Startup
 - [x] List of Running Services & Applications
-- [x] All Network Information
 - [x] Extracts Product Key
 - [x] Self-Destructs After Execution (optional)
 
