@@ -1,4 +1,4 @@
-module kdot/grabber
+module kdot/kematian
 
 go 1.22.1
 
