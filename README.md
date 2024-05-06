@@ -31,13 +31,18 @@ This tool is particularly advantageous for accessing application and file data w
 Moreover, the tool has robust `persistence mechanisms` to remain active on the machine after reboot. Additionally, its user-friendly `GUI builder` simplifies the process of creating payloads, enhancing its accessibility and usability.
 <br>
 
-
 # Usage
 - Create a Webhook on your [Discord Server](https://discord.com). I recommend creating a new server.
 - After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
 - Copy the `Webhook URL`
-- Download `main.ps1` 
+- Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
 - Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `30` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
+
+# Requirements
+- To build Kematian, you need:
+- Windows 8 or higher `x64`.
+- Powershell `v3.0` or higher.
+- An active internet connection.
 
 # Obfuscation 
 - [Invoke-Obfuscation](https://github.com/danielbohannon/Invoke-Obfuscation) for `.ps1` files
@@ -62,7 +67,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 
 #  Features
 - [x] GUI Builder
-- [x] Anti-Kill (Terminating the grabber will result in a system crash, indicated by a `BSoD` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).
+- [x] Anti-Kill (Terminating the Kematian will result in a system crash, indicated by a `BSoD` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).
 - [x] [Mutex](https://learn.microsoft.com/en-us/dotnet/api/system.threading.mutex?view=net-7.0) (single instance)
 - [x] Force [UAC](https://learn.microsoft.com/en-us/windows/security/identity-protection/user-account-control/how-user-account-control-works)
 - [x] Antivirus Evasion: Disables [AMSI](https://learn.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal) , excluded from `Windows Defender` and blocks access to antivirus websites in [hosts file](https://support.microsoft.com/en-us/topic/how-to-reset-the-hosts-file-back-to-the-default-c2a43f9d-e176-c6f3-e4ef-3500277a6dae). 
@@ -163,7 +168,7 @@ Cleanup
 # Need Help?
 - [Join our discord server](https://discord.com/invite/WJCNUpxnrE)
 
-# Bug Reports & Suggestions
+# Bug Reports and Suggestions
 Found a bug? Have an idea? Let me know [here](https://github.com/KDot227/Kematian-Stealer/issues), Please provide a detailed explanation of the expected behavior, actual behavior, and steps to reproduce, or what you want to see and how it could be done. You can be a small part of this project!
 
 # License
