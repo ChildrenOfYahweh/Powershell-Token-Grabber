@@ -67,8 +67,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: kematian-src\kematian-src.exe
-        asset_name: kematian-src.exe
+        asset_path: kematian-src\kematian.exe
+        asset_name: kematian.exe
         asset_content_type: application/zip
 
     - name: Download Donut
@@ -78,7 +78,7 @@ jobs:
       run: Expand-Archive donut.zip
 
     - name: Convert kematian-src to Shellcode 
-      run: .\donut\donut.exe -i kematian-src\kematian-src.exe -x2 -a2 -o kematian.bin -z 4
+      run: .\donut\donut.exe -i kematian-src\kematian.exe -x2 -a2 -o kematian.bin -z 4
 
     # Upload Release Asset
     - name: Upload Release Asset
