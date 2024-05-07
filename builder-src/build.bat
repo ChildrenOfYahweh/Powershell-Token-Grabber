@@ -15,4 +15,5 @@ dist\Builder.exe
 echo %errorlevel%
 
 pause
+
 exit
