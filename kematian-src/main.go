@@ -5,7 +5,6 @@ import (
 	"kdot/kematian/discord"
 	"os"
 	"sync"
-	"github.com/mattn/go-sqlite3"
 )
 
 func main() {
