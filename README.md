@@ -95,7 +95,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
     - [Nord](https://nordvpn.com) 
     - [Proton](https://protonvpn.com)
     - [Surfshark](https://surfshark.com)
-- [x] [Filezilla Hosts]
+- [x] Filezilla Hosts
 - [x] Crypto Wallets 
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zcash
 - [x] Browsers (Brave, Chrome, Firefox, Microsoft Edge, Thunderbird etc.)
