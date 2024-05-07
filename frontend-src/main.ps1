@@ -253,7 +253,7 @@ function Backup-Data {
     $folder_email = "$folderformat\Email Clients"
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
-	$filezilla_bkp = "$folderformat\Filezilla"
+	$filezilla_bkp = "$folderformat\FileZilla"
 
     $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $filezilla_bkp)
     $folders | ForEach-Object {
