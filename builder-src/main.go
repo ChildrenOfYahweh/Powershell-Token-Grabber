@@ -2,7 +2,6 @@ package main
 
 import (
 	"time"
-
 	"builder/modules/autoUpdate"
 	"builder/modules/cursed"
 	"builder/modules/options/utils"
