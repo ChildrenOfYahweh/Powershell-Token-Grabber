@@ -50,8 +50,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 
 # Screenshots
   ## 🔨 Builder
-> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/576aa2c3-1480-4d23-9027-d52d8973c780)
-
+> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/00bd1db9-1186-408a-a399-c5911bcd447f)
 
    ### Builder Features
  - [x] 🔸 Obfuscation of `BAT` and `PS1` files
@@ -62,8 +61,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 > ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a241421a-eeb1-4bc7-aa75-0595745f6ffd)
 
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/751f99e8-e03f-4dfa-b346-2b88d7a874eb)
-
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/12b32ee5-330d-46f4-9b92-59c048c0fa90)
 
 #  Features
 - [x] GUI Builder
@@ -97,6 +95,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
     - [Nord](https://nordvpn.com) 
     - [Proton](https://protonvpn.com)
     - [Surfshark](https://surfshark.com)
+- [x] [Filezilla Hosts]
 - [x] Crypto Wallets 
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zcash
 - [x] Browsers (Brave, Chrome, Firefox, Microsoft Edge, Thunderbird etc.)
@@ -121,7 +120,8 @@ Now, copy the `tdata` folder from `Telegram` folder and paste it in the director
 %userprofile%\AppData\Roaming\Telegram Desktop
 `
 Before pasting the tdata folder, ensure that you have deleted the existing tdata folder on your PC.
-# ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/8951b0d5-9ff1-491a-8589-614db5aefd6f)
+# ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/e5274437-db64-4123-af6c-c2617a67a12f)
+
 
 
  > [!NOTE]   
