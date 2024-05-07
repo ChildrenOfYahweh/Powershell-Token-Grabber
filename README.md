@@ -60,7 +60,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
  ## 🔷 Webhook Data
 > ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/e09d0673-c224-492a-be00-2b147e2f6c35)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/12b32ee5-330d-46f4-9b92-59c048c0fa90)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/dd4a79c0-4c97-47d1-af35-ada6f249b0d1)
 
 #  Features
 - [x] GUI Builder
