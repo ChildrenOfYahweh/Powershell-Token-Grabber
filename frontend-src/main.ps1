@@ -1057,7 +1057,7 @@ Pass: $decodedPass
     $important_files_info = if (Test-Path $important_files) {
         $file_count = (Get-ChildItem -Path $important_files -File).Count
         if ($file_count -gt 0) {
-            'True +' + $file_count
+        ($file_count)
         } else {
             'False'
         }
