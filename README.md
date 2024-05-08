@@ -58,9 +58,9 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
  - [x] 💉 Pump/Inject the output exe file with zero-filled bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/e09d0673-c224-492a-be00-2b147e2f6c35)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/bee6722c-66da-4300-83cd-d80d30970c07)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/dd4a79c0-4c97-47d1-af35-ada6f249b0d1)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/479ee5a8-caa6-4fad-bded-3bd9e2255ca4)
 
 #  Features
 - [x] GUI Builder
@@ -82,6 +82,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
     - [Viber](https://viber.com) 
     - [WhatsApp](https://whatsapp.com)
     - [Skype](https://skype.com/en/get-skype/)
+    - [Pidgin](https://pidgin.im)
   > ### Gaming 
     - [Electronic Arts](https://ea.com)
     - [Epicgames](https://store.epicgames.com)
@@ -94,6 +95,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
     - [Nord](https://nordvpn.com) 
     - [Proton](https://protonvpn.com)
     - [Surfshark](https://surfshark.com)
+    - [OpenVPN](https://openvpn.net/client)
 - [x] FileZilla Hosts
 - [x] Crypto Wallets 
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zcash
