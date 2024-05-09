@@ -1144,7 +1144,7 @@ FileZilla: $filezilla_info
                         "value" = "``````$alldiskinfo``````"
                     },
                     @{
-                        "name"  = ":signal_strength: WiFi"
+                        "name"  = ":wireless: WiFi"
                         "value" = "``````$wifi``````"
                     }
                     @{
