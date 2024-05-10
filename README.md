@@ -58,9 +58,9 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
  - [x] 💉 Pump/Inject the output exe file with zero-filled bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/25da5fbe-2e1e-460e-82a9-c353451dc0cb)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/0605bc99-b5af-4581-b619-568bbd9b01dd)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/479ee5a8-caa6-4fad-bded-3bd9e2255ca4)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a6afde13-668b-484c-9db1-cc4b97f4f8b4)
 
 #  Features
 - [x] GUI Builder
