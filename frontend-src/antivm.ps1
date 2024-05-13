@@ -108,7 +108,7 @@ function VMBYPASSER {
         "vboxcontrol",
         "vmacthlp",
         "vmwareuser",
-		"vt-windows-event-stream",
+	"vt-windows-event-stream",
         "windbg",
         "wireshark",
         "x32dbg",
@@ -125,10 +125,3 @@ function VMBYPASSER {
 	Write-Host "[!] NOT A VM" -ForegroundColor Green
 }
 VMBYPASSER
- 
-
-
-
-
-
-
