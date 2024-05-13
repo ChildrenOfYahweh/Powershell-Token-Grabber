@@ -1,5 +1,5 @@
 $debug = $false
-$autoupdate = $false
+$autoupdate = $true
 $blockhostsfile = $true
 $criticalprocess = $true
 $melt = $true
