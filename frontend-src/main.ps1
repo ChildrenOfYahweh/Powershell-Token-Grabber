@@ -1170,7 +1170,7 @@ if (CHECK_AND_PATCH -eq $true) {
         AUTOUPDATE
     }    
     if ($debug) {
-        Write-Host "[!] Terminate This Process and observe the next one"
+        exit
     } else {
         [ProcessUtility]::MakeProcessKillable()
     }
