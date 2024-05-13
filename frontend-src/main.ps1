@@ -1144,10 +1144,10 @@ function Invoke-TASKS {
 
 if (CHECK_AND_PATCH -eq $true) {
     if ($debug -eq $true) {
-        AUTOUPDATE
+        KDMUTEX
     }
     else {
-        KDMUTEX
+        AUTOUPDATE
     }    
     if ($debug) {
         pause
