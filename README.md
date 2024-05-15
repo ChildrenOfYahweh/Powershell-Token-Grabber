@@ -41,9 +41,6 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
  
  > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
- 
-> [!IMPORTANT]   
- > **AVOID USING THE WEBHOOK LINE IN LINE `1` IF YOU NEED UPDATES DIRECTLY FROM THE REPOSITORY. INSTEAD MODIFY `AUTOUPDATE WEBHOOK` ON LINE `44` WITH YOUR DISCORD WEBHOOK.**
 
 ### Configurations
 ```ps1
