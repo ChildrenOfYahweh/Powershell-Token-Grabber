@@ -1,6 +1,6 @@
 function ShowError {
 
-    Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.MessageBox]::Show('VM/VPS/SANDOXES ARE NOT ALLOWED !','','OK','Error')
+    Add-Type -AssemblyName System.Windows.Forms;[System.Windows.Forms.MessageBox]::Show('VM/VPS/SANDBOXES ARE NOT ALLOWED !','','OK','Error')
 
 }
 
