@@ -76,7 +76,7 @@ $settings = $false
  ## 🔷 Webhook Data
 > ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/15a60c24-bd99-47ce-8ae8-d87b8b531ff4)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/7f9a71dd-b0fe-4ca8-8743-52006ffebff5)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/44893585-efb3-491c-bc8b-f12de14c32c1)
 
 #  Features
 - [x] GUI Builder
