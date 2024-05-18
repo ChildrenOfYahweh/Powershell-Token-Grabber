@@ -39,7 +39,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `1` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
 - Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
  
- > [!NOTE]   
+ > [!WARNING]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
 
 ### Configurations
@@ -71,7 +71,7 @@ $settings = $false
    ### Builder Features
  - [x] 🔸 Obfuscation of `BAT` and `PS1` files
  - [x] 🔩 Compilation of Exe Files 
- - [x] 💉 Pump/Inject the output exe file with zero-filled bytes 
+ - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
  ## 🔷 Webhook Data
 > ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/15a60c24-bd99-47ce-8ae8-d87b8b531ff4)
