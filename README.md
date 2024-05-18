@@ -39,7 +39,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `1` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
 - Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
  
- > [!WARNING]   
+ > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
 
 ### Configurations
