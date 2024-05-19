@@ -76,7 +76,7 @@ $settings = $false
  ## 🔷 Webhook Data
 > ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/15a60c24-bd99-47ce-8ae8-d87b8b531ff4)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/44893585-efb3-491c-bc8b-f12de14c32c1)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/834a525a-0ed4-433c-a16e-8e4cbe9084c3)
 
 #  Features
 - [x] GUI Builder
@@ -116,7 +116,7 @@ $settings = $false
 - [x] FileZilla Hosts
 - [x] Crypto Wallets 
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zcash
-- [x] Browsers (Brave, Chrome, Firefox, Microsoft Edge, Yandex etc.)
+- [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
   - 🍪 Cookies
   - 📜 History
