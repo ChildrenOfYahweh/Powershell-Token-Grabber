@@ -51,7 +51,6 @@ $criticalprocess = $true
 $melt = $false
 $fakeerror = $false
 $persistence = $true
-$settings = $false
 ```
 
 # Requirements
