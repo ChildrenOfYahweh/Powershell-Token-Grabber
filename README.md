@@ -15,8 +15,8 @@
    <img src="https://img.shields.io/github/last-commit/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
    <img src="https://img.shields.io/github/license/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
    <img src="https://img.shields.io/github/contributors/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
-    <img src="https://hits.sh/github.com/ChildrenOfYahweh/Kematian-Stealer.svg?label=views&color=fca107">
-    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Kematian-Stealer?color=fca107"
+    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FChildrenOfYahweh%2FKematian-Stealer&count_bg=%23FCA107&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false">
+    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Kematian-Stealer?color=fca107">
     <img src="https://img.shields.io/github/downloads/ChildrenOfYahweh/Kematian-Stealer/total?color=fca107">
    <br>
 </p>
