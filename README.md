@@ -136,7 +136,7 @@ Now, copy the `tdata` folder from `Telegram` folder and paste it in the director
 `
 %userprofile%\AppData\Roaming\Telegram Desktop
 `
-Before pasting the tdata folder, ensure that you have deleted the existing tdata folder on your PC.
+Before pasting the tdata folder, ensure that you have deleted or backup the existing tdata folder on your PC.
 # ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/1990c822-ff08-4a9f-b0a7-2997fc4dc345)
 
  > [!NOTE]   
