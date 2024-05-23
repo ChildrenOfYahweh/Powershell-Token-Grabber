@@ -39,7 +39,7 @@ function ProcessCountCheck {
 
 function RecentFileActivity {
     $file_Dir = "$ENV:APPDATA/microsoft/windows/recent"
-    $file = Get-ChildItem -Path $file_Dir
+    $file = Get-ChildItem -Path $file_Dir -Recurse
     #if number of files is less than 20
     if ($file.Count -lt 20) {
         Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
