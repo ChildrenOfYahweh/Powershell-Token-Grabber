@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/1325c720-ebc4-4d15-b7bf-e0dd998eaf60", width="400", height="400">
+<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/345004a3-756a-43a6-9a27-8f09884bdc3e", width="400", height="400">
 </p>
 
 <h1 align="center">
