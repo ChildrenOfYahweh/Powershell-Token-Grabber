@@ -98,6 +98,7 @@ $persistence = $true
     - [WhatsApp](https://whatsapp.com)
     - [Skype](https://skype.com/en/get-skype/)
     - [Pidgin](https://pidgin.im)
+    - [Tox](https://tox.chat/index.html)
   > ### Gaming 
     - [Electronic Arts](https://ea.com)
     - [Epicgames](https://store.epicgames.com)
