@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/b122c6d8-713c-4ccb-9567-d24d6c0672b5", width="400", height="400">
+<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/1325c720-ebc4-4d15-b7bf-e0dd998eaf60", width="400", height="400">
 </p>
 
 <h1 align="center">
@@ -65,7 +65,7 @@ $persistence = $true
 
 # Screenshots
   ## 🔨 Builder
-> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/00bd1db9-1186-408a-a399-c5911bcd447f)
+> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a282e7db-6357-483b-b33e-e122007c82f5)
 
    ### Builder Features
  - [x] 🔸 Obfuscation of `BAT` and `PS1` files
@@ -73,9 +73,9 @@ $persistence = $true
  - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a5a58ec8-0138-45c8-b4f2-c1f9e7dde39b)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/7333a978-9d63-45d2-afc2-6a6fcb671c2a)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/ab50d0af-bcb8-4e1d-9fee-eaf2263cc40e)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/ae49a380-3bc5-4fe4-87f1-36e36c513f41)
 
 #  Features
 - [x] GUI Builder
@@ -138,7 +138,7 @@ Now, copy the `tdata` folder from `Telegram` folder and paste it in the director
 %userprofile%\AppData\Roaming\Telegram Desktop
 `
 Before pasting the tdata folder, ensure that you have deleted or backup the existing tdata folder on your PC.
-# ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/1990c822-ff08-4a9f-b0a7-2997fc4dc345)
+![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/488242f5-bcc2-4388-8f40-f4e88d98a4ba)
 
  > [!NOTE]   
  > ***The other session stealers can be utilized by applying the technique above***
