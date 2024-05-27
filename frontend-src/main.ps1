@@ -175,10 +175,8 @@ function Backup-Data {
     $lang = (Get-WinUserLanguageList).LocalizedName
     $date = Get-Date -Format "r"
     $osversion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
-    $osVersionInfo = Get-Item "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion"
-    $osCurrentBuild = $osVersionInfo.GetValue("CurrentBuild")
-    $osUbr = $osVersionInfo.GetValue("UBR")
-    $osbuild = $osCurrentBuild + "." + $osUbr
+    $windowsVersion = Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+    $buildNumber = $windowsVersion.CurrentBuild;$ubR = $windowsVersion.UBR;$osbuild = "$buildNumber.$ubR" 
     $displayversion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").DisplayVersion
     $mfg = (Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer
     $model = (Get-CimInstance -ClassName Win32_ComputerSystem).Model
