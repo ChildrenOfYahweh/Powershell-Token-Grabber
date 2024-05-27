@@ -86,7 +86,7 @@ $persistence = $true
 - [x] Anti-Analysis `VMWare, VirtualBox, Sandboxes, Emulators, Debuggers, Virustotal, Any.run`
 - [x] Persistence via [Task Scheduler](https://learn.microsoft.com/en-us/windows/win32/taskschd/about-the-task-scheduler) 
 - [x] Extracts WiFi Passwords
-- [x] Files Stealer `2fa, backupcodes, seedphrases, passwords, privatekeys, etc.` 
+- [x] Files Stealer `2fa codes, seedphrases, passwords, privatekeys, etc.` 
 - [x] 📷 Webcam & Desktop Screenshots
 - [x] Session Stealers 
   > ### Messaging
