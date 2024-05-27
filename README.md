@@ -73,9 +73,9 @@ $persistence = $true
  - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/7333a978-9d63-45d2-afc2-6a6fcb671c2a)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/2a106061-21dd-4a04-a39b-aeb1ad9e4578)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/ae49a380-3bc5-4fe4-87f1-36e36c513f41)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/442e57e6-07cc-4602-b784-9f4e51e48951)
 
 #  Features
 - [x] GUI Builder
