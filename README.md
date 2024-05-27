@@ -133,10 +133,9 @@ $persistence = $true
 ### Telegram Session Stealer Usage :
 After the exfiltrated data is uploaded to your discord webhook, download the zip file and extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
 Now, copy the `tdata` folder from `Telegram` folder and paste it in the directory below:
-
-`
+```bat
 %userprofile%\AppData\Roaming\Telegram Desktop
-`
+```
 Before pasting the tdata folder, ensure that you have deleted or backup the existing tdata folder on your PC.
 ![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/488242f5-bcc2-4388-8f40-f4e88d98a4ba)
 
