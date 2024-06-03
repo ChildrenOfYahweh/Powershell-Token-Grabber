@@ -27,13 +27,11 @@
    <img src="https://img.shields.io/github/license/ChildrenOfYahweh/Kematian-Stealer?color=fa7202"></a>
   <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer/graphs/contributors">
    <img src="https://img.shields.io/github/contributors/ChildrenOfYahweh/Kematian-Stealer?color=fa7202"></a>
-  <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer">
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FChildrenOfYahweh%2FKematian-Stealer&count_bg=%23FA7202&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false"/></a>
-    <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer">
-    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Kematian-Stealer?color=fa7202"></a>
-    <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer">
-    <img src="https://img.shields.io/github/downloads/ChildrenOfYahweh/Kematian-Stealer/total?color=fa7202"></a>
-   <br>
+ <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer"><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FChildrenOfYahweh%2FKematian-Stealer&count_bg=%23FA7202&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=views&edge_flat=false"/></a>
+   <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer">
+    <img src="https://img.shields.io/github/repo-size/ChildrenOfYahweh/Kematian-Stealer?color=fa7202" alt="Repository Size">
+    <img src="https://img.shields.io/github/downloads/ChildrenOfYahweh/Kematian-Stealer/total?color=fa7202" alt="Total Downloads">
+   </a>
 </p>
 
 <h1 align="center">Kematian Stealer</h1>
