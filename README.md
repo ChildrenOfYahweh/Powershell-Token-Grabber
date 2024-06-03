@@ -5,8 +5,8 @@
 <h1 align="center">
 </h1>
 <p align= "center">
-  <img src="https://img.shields.io/github/actions/workflow/status/ChildrenOfYahweh/Kematian-Stealer/build_builder.yml?style=flat&label=builder-src&color=fa7202">
-  <img src="https://img.shields.io/github/actions/workflow/status/ChildrenOfYahweh/Kematian-Stealer/build_backend.yml?style=flat&label=kematian-src&color=fa7202">
+  <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer/actions/workflows/build_builder.yml"><img src="https://img.shields.io/github/actions/workflow/status/ChildrenOfYahweh/Kematian-Stealer/build_builder.yml?style=flat&label=builder-src&color=fa7202"></a>
+  <a href="https://github.com/ChildrenOfYahweh/Kematian-Stealer/actions/workflows/build_backend.yml"><img src="https://img.shields.io/github/actions/workflow/status/ChildrenOfYahweh/Kematian-Stealer/build_backend.yml?style=flat&label=kematian-src&color=fa7202"></a>
   <br>
   <img src="https://img.shields.io/github/languages/top/ChildrenOfYahweh/Kematian-Stealer?color=fa7202">
    <img src="https://img.shields.io/github/stars/ChildrenOfYahweh/Kematian-Stealer?style=flat&color=fa7202">
