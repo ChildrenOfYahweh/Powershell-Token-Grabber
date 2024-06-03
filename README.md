@@ -116,7 +116,7 @@ $persistence = $true
     - [Tox](https://tox.chat/index.html)
     #### Gaming 
     - [Electronic Arts](https://ea.com)
-    - [Epicgames](https://store.epicgames.com)
+    - [Epic Games](https://store.epicgames.com)
     - [Growtopia](https://growtopiagame.com)
     - [Minecraft](https://minecraft.net)
     - [Ubisoft](https://ubisoftconnect.com)
