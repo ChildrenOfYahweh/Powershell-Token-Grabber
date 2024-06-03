@@ -104,7 +104,7 @@ $persistence = $true
 - [x] Files Stealer `2fa codes, seedphrases, passwords, privatekeys, etc.` 
 - [x] 📷 Webcam & Desktop Screenshots
 - [x] Session Stealers 
-    ### Messaging
+    #### Messaging
     - [Element](https://element.io) 
     - [ICQ](https://icq.com)
     - [Signal](https://signal.org) 
@@ -114,7 +114,7 @@ $persistence = $true
     - [Skype](https://skype.com/en/get-skype/)
     - [Pidgin](https://pidgin.im)
     - [Tox](https://tox.chat/index.html)
-    ### Gaming 
+    #### Gaming 
     - [Electronic Arts](https://ea.com)
     - [Epicgames](https://store.epicgames.com)
     - [Growtopia](https://growtopiagame.com)
@@ -122,13 +122,13 @@ $persistence = $true
     - [Ubisoft](https://ubisoftconnect.com)
     - [Steam](https://store.steampowered.com)
     - [Battle.net](https://battle.net)
-    ### VPN Clients
+    #### VPN Clients
     - [Proton](https://protonvpn.com)
     - [Surfshark](https://surfshark.com)
     - [OpenVPN](https://openvpn.net/client)
-    ### Email Clients
+    #### Email Clients
     - [Thunderbird](https://www.thunderbird.net)
-    ### FTP Clients
+    #### FTP Clients
     - [FileZilla](https://filezilla-project.org)
     - [WinSCP](https://winscp.net/eng/index.php)
 - [x] Crypto Wallets 
