@@ -128,7 +128,9 @@ $persistence = $true
     - [OpenVPN](https://openvpn.net/client)
 - [x] Email Clients
     - [Thunderbird](https://www.thunderbird.net)
-- [x] FileZilla Hosts
+- [x] FTP Clients
+    - [FileZilla](https://filezilla-project.org)
+    - [WinSCP](https://winscp.net/eng/index.php)
 - [x] Crypto Wallets 
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zcash
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
