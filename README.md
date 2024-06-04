@@ -118,7 +118,7 @@ $persistence = $true
     - [Electronic Arts](https://ea.com)
     - [Epic Games](https://store.epicgames.com)
     - [Growtopia](https://growtopiagame.com)
-    - [Minecraft](https://minecraft.net)
+    - [Minecraft](https://minecraft.net) (14 launchers) 
     - [Ubisoft](https://ubisoftconnect.com)
     - [Steam](https://store.steampowered.com)
     - [Battle.net](https://battle.net)
