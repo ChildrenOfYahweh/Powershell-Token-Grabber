@@ -131,7 +131,7 @@ $persistence = $true
     #### FTP Clients
     - [FileZilla](https://filezilla-project.org)
     - [WinSCP](https://winscp.net/eng/index.php)
-- [x] Crypto Wallets 
+   #### Crypto Wallets
    > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zephyr
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
