@@ -104,35 +104,35 @@ $persistence = $true
 - [x] Files Stealer `2fa codes, seedphrases, passwords, privatekeys, etc.` 
 - [x] 📷 Webcam & Desktop Screenshots
 - [x] Session Stealers 
-    #### Messaging
-    - [Element](https://element.io) 
-    - [ICQ](https://icq.com)
-    - [Signal](https://signal.org) 
-    - [Telegram](https://telegram.org) 
-    - [Viber](https://viber.com) 
-    - [WhatsApp](https://whatsapp.com)
-    - [Skype](https://skype.com/en/get-skype/)
-    - [Pidgin](https://pidgin.im)
-    - [Tox](https://tox.chat/index.html)
-    #### Gaming 
-    - [Electronic Arts](https://ea.com)
-    - [Epic Games](https://store.epicgames.com)
-    - [Growtopia](https://growtopiagame.com)
-    - [Minecraft](https://minecraft.net) (14 launchers) 
-    - [Ubisoft](https://ubisoftconnect.com)
-    - [Steam](https://store.steampowered.com)
-    - [Battle.net](https://battle.net)
-    #### VPN Clients
-    - [Proton](https://protonvpn.com)
-    - [Surfshark](https://surfshark.com)
-    - [OpenVPN](https://openvpn.net/client)
-    #### Email Clients
-    - [Thunderbird](https://www.thunderbird.net)
-    #### FTP Clients
-    - [FileZilla](https://filezilla-project.org)
-    - [WinSCP](https://winscp.net/eng/index.php)
-   #### Crypto Wallets
-   > Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zephyr
+  - [x] Messaging
+  - [Element](https://element.io)
+  - [ICQ](https://icq.com)
+  - [Signal](https://signal.org)
+  - [Telegram](https://telegram.org) 
+  - [Viber](https://viber.com)
+  - [WhatsApp](https://whatsapp.com)
+  - [Skype](https://skype.com/en/get-skype/)
+  - [Pidgin](https://pidgin.im)
+  - [Tox](https://tox.chat/index.html)
+  - [x] Gaming 
+  - [Electronic Arts](https://ea.com)
+  - [Epic Games](https://store.epicgames.com)
+  - [Growtopia](https://growtopiagame.com)
+  - [Minecraft](https://minecraft.net) (14 launchers) 
+  - [Ubisoft](https://ubisoftconnect.com)
+  - [Steam](https://store.steampowered.com)
+  - [Battle.net](https://battle.net)
+  - [x] VPN Clients
+  - [Proton](https://protonvpn.com)
+  - [Surfshark](https://surfshark.com)
+  - [OpenVPN](https://openvpn.net/client)
+  - [x] Email Clients
+  - [Thunderbird](https://www.thunderbird.net)
+  - [x] FTP Clients
+  - [FileZilla](https://filezilla-project.org)
+  - [WinSCP](https://winscp.net/eng/index.php)
+  - [x] Crypto Wallets
+  - Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zephyr
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
   - 🍪 Cookies
