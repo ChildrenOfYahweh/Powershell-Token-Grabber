@@ -807,7 +807,7 @@ function Backup-Data {
     	"odbfpeeihdkbihmopkbjmoonfanlbfcl" = "Coinbase"
     	"aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
     	"hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
-		"dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
+        "dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
         "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
         "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
         "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
