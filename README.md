@@ -132,7 +132,7 @@ $persistence = $true
   - [FileZilla](https://filezilla-project.org)
   - [WinSCP](https://winscp.net/eng/index.php)
   - [x] Crypto Wallets
-  - Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zephyr
+  - Collects from 14 Local Wallets and 10 browser wallet extensions.
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
   - 🍪 Cookies
@@ -215,6 +215,6 @@ By using this software, you automatically agree to the above.
 - https://github.com/KDot227
 - https://github.com/Chainski
 - https://github.com/EvilBytecode
-- [Credit](https://t.me/ebthit)
+- [ebthit](https://t.me/ebthit)
 
 <p align="center"><a href=#top>Back to Top</a></p>
