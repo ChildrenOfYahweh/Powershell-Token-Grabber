@@ -132,7 +132,9 @@ $persistence = $true
   - [FileZilla](https://filezilla-project.org)
   - [WinSCP](https://winscp.net/eng/index.php)
   - [x] Crypto Wallets
-  - Collects from 14 local wallets and 10 browser wallets.
+  - Collects from 14 local wallets and 10 browser extensions.
+  - [x] Password Managers
+  - Collects from 9 major password extensions 
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
   - 🍪 Cookies
