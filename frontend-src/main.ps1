@@ -1,11 +1,11 @@
-$webhook = "YOUR_URL_HERE_SERVER" 
-$debug = $false
-$blockhostsfile = $false
-$criticalprocess = $false
-$melt = $false
-$fakeerror = $false
-$persistence = $false
-$write_disk_only = $false
+#$webhook = "YOUR_URL_HERE_SERVER" 
+#$debug = $false
+#$blockhostsfile = $false
+#$criticalprocess = $false
+#$melt = $false
+#$fakeerror = $false
+#$persistence = $false
+#$write_disk_only = $false
 
 if ($debug) {
     $ProgressPreference = 'Continue'
