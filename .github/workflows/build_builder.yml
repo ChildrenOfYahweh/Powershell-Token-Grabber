@@ -40,7 +40,7 @@ jobs:
 
     - name: DEBUG
       run: |
-        dir
+        dir /s /b
     
     - name: Build Kematian Stealer
       run: |
