@@ -10,3 +10,4 @@ go.sum
 cookies_netscape_*.txt
 AutoUpdate.exe
 __pycache__
+kdot.*
