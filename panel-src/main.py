@@ -22,19 +22,10 @@ from ui.pages.clients_page import clients_page_stuff
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
-# slow api bindings (name funny asf ngl)
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 
 from nicegui import ui, app
 
-limiter = Limiter(key_func=get_remote_address)
-
 app = FastAPI()
-
-app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 good_dir = os.getenv("APPDATA")
