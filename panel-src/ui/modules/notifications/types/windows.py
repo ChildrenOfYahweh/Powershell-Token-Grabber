@@ -1,4 +1,4 @@
-import windows_toasts
+import ctypes
 
 
 class Windows:
@@ -6,22 +6,12 @@ class Windows:
 
     def __init__(self) -> None:
         """Initializes the Windows class."""
-        self.toaster = windows_toasts.WindowsToaster("Kematian-Stealer")
+        pass
 
-    def send_message(
-        self,
-        title: str,
-        message: str,
-        sound: str = windows_toasts.AudioSource.SMS,
-        loop: bool = False,
-        mute: bool = False,
-    ) -> None:
-        new_toast = windows_toasts.Toast()
-        new_toast.text_fields = [title, message]
-        new_toast.audio = windows_toasts.ToastAudio(
-            sound=sound, looping=loop, silent=mute
-        )
-        self.toaster.show_toast(new_toast)
+    def send_message(self, title, message) -> None:
+        """Sends a message to the user."""
+        # make a windows toast using ctypes
+        pass
 
 
 if __name__ == "__main__":

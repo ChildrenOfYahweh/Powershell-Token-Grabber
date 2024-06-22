@@ -4,6 +4,5 @@ aiosqlite
 fastapi
 nicegui
 requests
-windows_toasts
 discord_webhook
 pyinstaller

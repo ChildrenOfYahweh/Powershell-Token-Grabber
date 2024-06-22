@@ -9,6 +9,7 @@ import datetime
 
 from ui.modules.first_time.first_time import MakeFiles
 from ui.modules.notifications.notifications import Notifications
+from ui.modules.settings.settings import Settings
 
 from ui.handlers.logs_handler import LogHandler
 
@@ -229,8 +230,11 @@ def settings() -> None:
 ui.run_with(app, title="Kematian-Stealer")
 
 if __name__ in {"__main__", "__mp_main__"}:
+    current_settings = Settings()
     try:
-        uvicorn.run(app, host="127.0.0.1", port=8000)
+        uvicorn.run(
+            app, host="127.0.0.1", port=int(current_settings.get_setting("port"))
+        )
         # ui.run(title="Kematian-Stealer", host="127.0.0.1", port=8000, reload=True)
     except KeyboardInterrupt:
         print("Exiting...")
