@@ -650,7 +650,7 @@ function Backup-Data {
     }
     thunderbirdbackup
 	
-	#MailBird
+    # MailBird
     function mailbird_backup {
         $mailbird_folder = "$env:localappdata\MailBird"
         if (!(Test-Path $mailbird_folder)) { return }
