@@ -128,11 +128,12 @@ $persistence = $true
   - [OpenVPN](https://openvpn.net/client)
   - [x] Email Clients
   - [Thunderbird](https://www.thunderbird.net)
+  - [Mailbird](https://www.getmailbird.com) 
   - [x] FTP Clients
   - [FileZilla](https://filezilla-project.org)
   - [WinSCP](https://winscp.net/eng/index.php)
   - [x] Crypto Wallets
-  - Collects from 10+ desktop wallets and 10+ Browser extensions.
+  - Collects from 10+ desktop wallets and 20+ browser extensions.
   - [x] Password Managers
   - Collects from 9 major password extensions 
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
