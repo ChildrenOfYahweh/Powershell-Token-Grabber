@@ -7,3 +7,4 @@ requests
 discord_webhook
 pyinstaller
 slowapi
+cryptography

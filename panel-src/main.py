@@ -1,6 +1,5 @@
 import os
 import uvicorn
-import asyncio
 import aiohttp
 import aiosqlite
 import subprocess
@@ -37,6 +36,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 good_dir = os.getenv("APPDATA")
+
 file_handler = MakeFiles()
 if not os.path.exists(os.path.join(good_dir, "Kematian-Stealer")):
     file_handler.make_all()
@@ -245,9 +245,21 @@ ui.run_with(app, title="Kematian-Stealer")
 
 if __name__ in {"__main__", "__mp_main__"}:
     current_settings = Settings()
+
+    if not os.path.exists(
+        os.path.join(good_dir, "Kematian-Stealer", "keyfile.pem")
+    ) or not os.path.exists(os.path.join(good_dir, "Kematian-Stealer", "certfile.pem")):
+        file_handler.fix_key_and_certs()
+
     try:
         uvicorn.run(
-            app, host="127.0.0.1", port=int(current_settings.get_setting("port"))
+            app,
+            host="127.0.0.1",
+            port=int(
+                current_settings.get_setting("port"),
+            ),
+            ssl_keyfile=os.path.join(good_dir, "Kematian-Stealer", "keyfile.pem"),
+            ssl_certfile=os.path.join(good_dir, "Kematian-Stealer", "certfile.pem"),
         )
         # ui.run(title="Kematian-Stealer", host="127.0.0.1", port=8000, reload=True)
     except KeyboardInterrupt:
