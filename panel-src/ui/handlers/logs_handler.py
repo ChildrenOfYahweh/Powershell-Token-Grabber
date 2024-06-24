@@ -1,6 +1,5 @@
 import os
 import zipfile
-import aiofiles
 
 from fastapi import File, UploadFile, HTTPException
 
