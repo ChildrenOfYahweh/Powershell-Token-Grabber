@@ -6,3 +6,4 @@ nicegui
 requests
 discord_webhook
 pyinstaller
+slowapi
