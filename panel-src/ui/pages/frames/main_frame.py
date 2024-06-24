@@ -23,19 +23,19 @@ def frame(full_size: bool = False):
             ui.image(Images.get_image("Kematian")).classes("mb-4")
             # add buttons for the tabs
             ui.button("Home", on_click=lambda: ui.navigate.to("/")).classes(
-                "w-full py-4 text-lg"
+                "w-full py-4 text-lg pb-5"
             )
             ui.button("Builder", on_click=lambda: ui.navigate.to("/builder")).classes(
-                "w-full py-4 text-lg"
+                "w-full py-4 text-lg pb-5"
             )
             ui.button("Clients", on_click=lambda: ui.navigate.to("/clients")).classes(
-                "w-full py-4 text-lg"
+                "w-full py-4 text-lg pb-5"
             )
             ui.button("Chat", on_click=lambda: ui.navigate.to("/chat")).classes(
-                "w-full py-4 text-lg"
+                "w-full py-4 text-lg pb-5"
             )
             ui.button("Settings", on_click=lambda: ui.navigate.to("/settings")).classes(
-                "w-full py-4 text-lg"
+                "w-full py-4 text-lg pb-5"
             )
 
     with ui.header().classes(replace="row items-center"):

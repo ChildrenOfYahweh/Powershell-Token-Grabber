@@ -1,5 +1,3 @@
-import ctypes
-
 
 class Windows:
     """Windows class to send notifications."""

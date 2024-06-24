@@ -1,6 +1,5 @@
 import os
 import uvicorn
-import asyncio
 import aiohttp
 import aiosqlite
 import subprocess
@@ -24,7 +23,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 
 
-from nicegui import ui, app
+from nicegui import ui
 
 app = FastAPI()
 
@@ -158,7 +157,7 @@ async def clients_page() -> None:
 
 
 @ui.refreshable
-async def chat_messages(own_id: str) -> None:
+async def chat_messages(own_id: str, chat_area) -> None:
     """Chat messages for the chat page.
 
     Args:
@@ -175,7 +174,7 @@ async def chat_messages(own_id: str) -> None:
             avatar=message["avatar"],
             sent=own_id == message["user_id"],
         )
-    ui.run_javascript("window.scrollTo(0, document.body.scrollHeight)")
+    chat_area.scroll_to(percent=1)
 
 
 @ui.page("/chat")
@@ -183,7 +182,7 @@ async def main():
     """Chat page for the stealer."""
     with frame(True):
 
-        def send() -> None:
+        async def send() -> None:
             stamp = datetime.datetime.now(datetime.UTC).strftime("%X")
             message = {
                 "user_id": user_id,
@@ -192,8 +191,11 @@ async def main():
                 "stamp": stamp,
             }
             text.value = ""
-            asyncio.create_task(post_message(message))
-            chat_messages.refresh()
+            await post_message(message)
+            try:
+                await chat_messages.refresh()
+            except TypeError:
+                return
 
         async def post_message(message):
             async with aiohttp.ClientSession() as session:
@@ -202,22 +204,23 @@ async def main():
         user_id = hwid
         avatar = f"https://robohash.org/{user_id}?set=any"
 
-        with ui.footer().classes("justify-center"), ui.column():
-            with ui.row():
-                with ui.avatar().on("click", lambda: ui.navigate.to(main)):
-                    ui.image(avatar)
-                text = (
-                    ui.input(placeholder="message")
-                    .on("keydown.enter", send)
-                    .props("rounded outlined input-class=mx-3")
-                    .classes("flex-grow")
-                )
-
         await ui.context.client.connected()
-        with ui.column().classes(
-            "w-full max-w-2xl mx-auto items-stretch"
-        ):  # Align messages to the end (right)
-            await chat_messages(user_id)
+        with ui.scroll_area().classes('w-full h-full max-w-2xl mx-auto items-stretch') as chat_area:
+            with ui.column().classes(
+                "w-full max-w-2xl mx-auto items-stretch"
+            ):  # Align messages to the end (right)
+                await chat_messages(user_id, chat_area)
+            chat_area.scroll_to(percent=1)
+
+        with ui.row().style('height: 50px;'):
+            with ui.avatar().on("click", lambda: ui.navigate.to(main)):
+                ui.image(avatar)
+            text = (
+                ui.input(placeholder="message")
+                .on("keydown.enter", send)
+                .props("rounded outlined input-class=mx-3")
+                .classes("flex-grow")
+            )
 
 
 @ui.page("/settings")
