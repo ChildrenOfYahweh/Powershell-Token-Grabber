@@ -53,11 +53,13 @@ columns = [
 async def clients_page_stuff(db_path: str) -> None:
     """Clients page to view the clients that have connected to the server."""
     data = []
+    seen_entries = set()
 
     async with aiosqlite.connect(db_path) as db:
         cursor = await db.execute("SELECT * FROM entries")
         rows = await cursor.fetchall()
         await cursor.close()
+
         for row in rows:
             new_data = {
                 "id": row[0],
@@ -67,10 +69,11 @@ async def clients_page_stuff(db_path: str) -> None:
                 "date": row[4],
                 "timezone": row[5],
             }
-            if new_data in data:
-                # TODO add a way to remove duplicates in the future
-                pass
-            else:
+
+            new_data_tuple = tuple(new_data.items())
+
+            if new_data_tuple not in seen_entries:
+                seen_entries.add(new_data_tuple)
                 data.append(new_data)
 
     with ui.card().classes(

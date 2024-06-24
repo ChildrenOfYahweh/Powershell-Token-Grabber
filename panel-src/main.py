@@ -47,7 +47,6 @@ hwid = lines[2].strip()
 
 NOTIFICATIONS = Notifications(discord=False, windows=True)
 
-
 async def initialize_database():
     """Initialize the database if it doesn't exist."""
     async with aiosqlite.connect(db_path) as db:
