@@ -97,6 +97,7 @@ class BuildPayload:
 
             os.remove("somalifuscator.exe")
             os.remove("kdot.bat")
+            os.remove("settings.json")
 
             os.rename("kdot_obf.bat", "kdot.bat")
 
