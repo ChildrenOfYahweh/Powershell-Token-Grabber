@@ -1,9 +1,9 @@
-from ui.modules.notifications.types.windows import Windows
-from ui.modules.notifications.types.discord import Discord
+from panel.ui.modules.notifications.types.windows import Windows
+from panel.ui.modules.notifications.types.discord import Discord
 
-from ui.modules.settings.settings import Settings
+from panel.ui.modules.settings.settings import Settings
 
-from ui.modules.errors.errors import Errors
+from panel.ui.modules.errors.errors import Errors
 
 
 class Notifications:

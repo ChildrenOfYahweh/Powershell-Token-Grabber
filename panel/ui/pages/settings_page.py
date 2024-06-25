@@ -1,6 +1,6 @@
 from nicegui import ui
 
-from ui.modules.settings.settings import Settings
+from panel.ui.modules.settings.settings import Settings
 
 
 def settings_stuff() -> None:
@@ -17,8 +17,9 @@ def settings_stuff() -> None:
         ).classes("w-full h-full")
 
 
-def change_local_settings(settings: dict) -> None:
+def change_local_settings(settings) -> None:
     """Change the local settings of the application."""
     currentSettings = Settings()
-    for setting, value in settings.items():
+    new_settings = settings.content["json"]
+    for setting, value in new_settings.items():
         currentSettings.change_setting(setting, value)

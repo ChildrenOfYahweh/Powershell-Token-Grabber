@@ -7,7 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from datetime import datetime, timedelta
 
-from ui.modules.settings.settings import Settings
+from panel.ui.modules.settings.settings import Settings
 
 
 class MakeFiles:

@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 
-from ui.media.images import Images
+from panel.ui.media.images import Images
 
 from nicegui import ui
 
