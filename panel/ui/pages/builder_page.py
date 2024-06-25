@@ -49,7 +49,7 @@ def builder() -> None:
                     checkbox_values[key] = ui.checkbox(label)
 
         url = (
-            ui.input("TCP TUNNEL URL:PORT", placeholder="https://example.com:12345")
+            ui.input("TCP TUNNEL URL:PORT", placeholder="example.com:12345")
             .on(
                 "keydown.enter",
                 lambda: build(
@@ -93,9 +93,10 @@ def build(language: str, url: str, options: dict[str, bool]) -> bool:
     Returns:
         bool: Returns True if the payload was built successfully, False otherwise
     """
-    if not url.startswith("https://") and not url.startswith("http://"):
-        ui.notify("Invalid URL", type="negative")
+    if url.startswith("https://") or url.startswith("http://"):
+        ui.notify("PLEASE DO NOT SPECIFCY HTTP/HTTPS://", type="negative")
         return False
+    url = "https://" + url
     if language == None:
         ui.notify("Invalid language", type="negative")
         return False

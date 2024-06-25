@@ -17,6 +17,8 @@ if errorlevel 1 (
     exit /b 1
 )
 
+cls
+
 python main.py
 if errorlevel 1 (
     echo Failed to run main

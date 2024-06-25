@@ -104,5 +104,4 @@ async def clients_page_stuff(db_path: str) -> None:
 
 def open_in_explorer(path: str) -> None:
     """Open the folder in the explorer."""
-    print(path)
     os.system(f"explorer {path}")
