@@ -17,7 +17,7 @@ if errorlevel 1 (
     exit /b 1
 )
 
-python panel-src\main.py
+python main.py
 if errorlevel 1 (
     echo Failed to run main
     pause
