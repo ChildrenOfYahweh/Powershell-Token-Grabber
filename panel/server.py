@@ -1,5 +1,4 @@
 import os
-import uvicorn
 import aiohttp
 import aiosqlite
 import subprocess
@@ -16,6 +15,7 @@ from panel.ui.pages.frames.main_frame import frame
 
 from panel.ui.pages.index_page import fr_page
 from panel.ui.pages.builder_page import builder
+from panel.ui.pages.credits import credits_page
 from panel.ui.pages.settings_page import settings_stuff
 from panel.ui.pages.clients_page import clients_page_stuff
 
@@ -26,8 +26,8 @@ from slowapi.errors import RateLimitExceeded
 from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-
 from nicegui import ui, app
+
 
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
@@ -239,6 +239,13 @@ def settings() -> None:
     """Settings page for the stealer. (NEEDS TO BE REWORKED OR ATLEAST A NEW UI LMFAO)"""
     with frame(True):
         settings_stuff()
+
+
+@ui.page("/credits")
+def credits() -> None:
+    """Credits page for the stealer."""
+    with frame(True):
+        credits_page()
 
 
 ui.run_with(app, title="Kematian-Stealer")

