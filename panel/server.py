@@ -2,7 +2,6 @@ import os
 import aiohttp
 import aiosqlite
 import subprocess
-
 import datetime
 
 from panel.ui.modules.first_time.first_time import MakeFiles
