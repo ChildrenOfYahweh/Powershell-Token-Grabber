@@ -3,8 +3,12 @@ name: Build Kematian Stealer
 on:
   push:
     branches: [ main ]
+    paths: 
+      - 'panel/**'
   pull_request:
     branches: [ main ]
+    paths: 
+      - 'panel/**'
 
 jobs:
   build:

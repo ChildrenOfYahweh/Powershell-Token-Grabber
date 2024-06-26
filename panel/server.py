@@ -2,13 +2,10 @@ import os
 import aiohttp
 import aiosqlite
 import subprocess
-
 import datetime
-
 from panel.ui.modules.first_time.first_time import MakeFiles
 from panel.ui.modules.notifications.notifications import Notifications
 from panel.ui.modules.settings.settings import Settings
-
 from panel.ui.handlers.logs_handler import LogHandler
 
 from panel.ui.pages.frames.main_frame import frame
