@@ -42,7 +42,7 @@ jobs:
     - name: Delete-tag-and-release
       uses: dev-drprasad/delete-tag-and-release@v1.1
       with:
-        tag_name: AutoBuild #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
+        tag_name: KematianBuild #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
         delete_release: true #(optional) default: true - also delete all releases and their assets that are associated to the tag name
         github_token: ${{ secrets.GITHUB_TOKEN }} # (required) - a GitHub token with write access to the repo where tags and releases will be searched and deleted
 
