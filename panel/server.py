@@ -79,7 +79,7 @@ async def on_startup():
 
 
 @app.post("/data")
-# @limiter.limit("1/hour", error_message="Only 1 request per hour allowed")
+@limiter.limit("1/hour", error_message="Only 1 request per hour allowed")
 async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONResponse:
     """Receive data from the client and store it in the database.
 
@@ -105,7 +105,7 @@ async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONRe
     async with aiosqlite.connect(db_path) as db:
         await db.execute(
             """
-            INSERT OR IGNORE INTO entries (hwid, country_code, hostname, date, timezone, filepath) 
+            INSERT OR REPLACE INTO entries (hwid, country_code, hostname, date, timezone, filepath) 
             VALUES (?, ?, ?, ?, ?, ?)
             """,
             (
@@ -125,20 +125,6 @@ async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONRe
         return JSONResponse(content={"status": "ok"})
     else:
         return JSONResponse(content={"status": "error"})
-
-
-# @app.get("/data")
-# async def get_data() -> JSONResponse:
-#    """Get the data from the database.
-#
-#    Returns:
-#        JSONResponse: Return a JSON response with the data from the database.
-#    """
-#    async with aiosqlite.connect(db_path) as db:
-#        cursor = await db.execute("SELECT * FROM entries")
-#        rows = await cursor.fetchall()
-#        await cursor.close()
-#    return JSONResponse(content={"data": rows})
 
 
 @ui.page("/")
