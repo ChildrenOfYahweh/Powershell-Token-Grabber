@@ -53,9 +53,9 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
-        tag_name: AutoBuild
-        release_name: AutoBuild
-        body: "AutoBuild"
+        tag_name: KematianBuild
+        release_name: KematianBuild
+        body: "KematianBuild"
         draft: false
         prerelease: true
 
