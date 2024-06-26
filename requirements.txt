@@ -8,3 +8,4 @@ discord_webhook
 pyinstaller
 slowapi
 cryptography
+notify-py

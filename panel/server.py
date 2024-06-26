@@ -50,7 +50,7 @@ result = subprocess.check_output(
 lines = result.strip().split("\n")
 hwid = lines[2].strip()
 
-NOTIFICATIONS = Notifications(discord=False, windows=True)
+NOTIFICATIONS = Notifications()
 
 
 async def initialize_database():

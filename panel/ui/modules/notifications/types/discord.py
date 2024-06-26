@@ -1,3 +1,5 @@
+import requests
+
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
@@ -12,6 +14,15 @@ class Discord:
         """
         self.webhook_url = webhook
 
+    def check_webhook(self) -> bool:
+        """Check if the webhook is valid.
+
+        Returns:
+            bool: True if the webhook is valid, False otherwise
+        """
+        r = requests.get(self.webhook_url)
+        return r.status_code == 200
+
     def send_message(self, title: str, message: str) -> int:
         """Send a message to a Discord webhook.
 
@@ -22,6 +33,9 @@ class Discord:
         Returns:
             int: Response code of the request
         """
+        if not self.check_webhook():
+            raise ValueError("Invalid webhook URL")
+
         webhook = DiscordWebhook(url=self.webhook_url, username="NOTIFICATION")
         embed = DiscordEmbed()
 

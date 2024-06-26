@@ -1,15 +1,21 @@
+from notifypy import Notify
+
 
 class Windows:
     """Windows class to send notifications."""
 
     def __init__(self) -> None:
         """Initializes the Windows class."""
-        pass
+        self.notification = Notify(
+            default_notification_application_name="Kematian-Stealer",
+        )
 
     def send_message(self, title, message) -> None:
         """Sends a message to the user."""
-        # make a windows toast using ctypes
-        pass
+
+        self.notification.title = title
+        self.notification.message = message
+        self.notification.send()
 
 
 if __name__ == "__main__":

@@ -1,4 +1,6 @@
 import os
+import sys
+import time
 import json
 
 
@@ -10,12 +12,15 @@ class Settings:
         )
 
         self.settings_bones = {
-            "urls": "https://sped.lol",
             "port": "8080",
-            "notifications": "true",
-            "webhook": "",
-            "theme": "dark",
-            "delete_time_frame": "14",
+            "notifications": True,
+            "discord": {
+                "enabled": False,
+                "webhook": "NONE",
+            },
+            "windows": {
+                "enabled": True,
+            },
         }
 
     def change_setting(self, setting: str, value: str) -> None:
@@ -45,7 +50,10 @@ class Settings:
                 data = json.load(file)
                 return data[setting]
         except KeyError:
-            return "Not found"
+            self.set_to_defaults()
+            print(f"Setting {setting} not found, setting to default value.")
+            time.sleep(3)
+            sys.exit(0)
 
     def get_all_settings(self) -> dict:
         """Get all settings from the settings file.

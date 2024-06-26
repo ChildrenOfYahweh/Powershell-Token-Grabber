@@ -9,15 +9,16 @@ from panel.ui.modules.errors.errors import Errors
 class Notifications:
     """Notifications class to send notifications to Discord and Windows."""
 
-    def __init__(self, discord: bool = False, windows: bool = True) -> None:
+    def __init__(self) -> None:
         """Initializes the Notifications class.
 
         Args:
             discord (bool, optional): Switch for Discord Webhook Notifications. Defaults to False.
             windows (bool, optional): Switch for Windows Notifications. Defaults to True.
         """
-        self.discord = discord
-        self.windows = windows
+        self.settings = Settings()
+        self.discord = self.settings.get_setting("discord")["enabled"]
+        self.windows = self.settings.get_setting("windows")["enabled"]
 
     def send_notification(self, message: str) -> None:
         """Send a notification.
@@ -27,7 +28,7 @@ class Notifications:
         """
         if self.discord:
             try:
-                webhook = Settings.get_setting("discord_webhook")
+                webhook = self.settings.get_setting("discord")["webhook"]
                 if webhook:
                     discord = Discord(webhook=webhook)
                     message_response = discord.send_message("Notification", message)
