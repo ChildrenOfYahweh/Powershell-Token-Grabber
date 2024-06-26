@@ -66,6 +66,7 @@ func GetMasterKey(path string) []byte {
 	EncryptedSecretKey, _ := base64.StdEncoding.DecodeString(LocalStateJson.OsCrypt.EncryptedKey)
 
 	//check if we can even get the first 5 bytes and if we can't then just return nothing
+	//not sure what is causing this to error out but it's better to just return nothing than to crash
 	if len(EncryptedSecretKey) < 5 {
 		return nil
 	}

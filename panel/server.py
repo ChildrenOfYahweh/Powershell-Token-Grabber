@@ -50,6 +50,7 @@ result = subprocess.check_output(
 lines = result.strip().split("\n")
 hwid = lines[2].strip()
 
+# Notification Handler
 NOTIFICATIONS = Notifications()
 
 
