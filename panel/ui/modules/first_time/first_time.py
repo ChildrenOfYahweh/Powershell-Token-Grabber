@@ -22,7 +22,8 @@ class MakeFiles:
     def make_appdir_directory(self) -> None:
         """Makes the directory where all the files and directories will be stored."""
 
-        os.mkdir(os.path.join(self.appdir, self.directoryName))
+        if not os.path.exists(os.path.join(self.appdir, self.directoryName)):
+            os.mkdir(os.path.join(self.appdir, self.directoryName))
 
     def get_appdir_directory(self) -> str:
         """Gets the directory where all the files and directories are stored.
@@ -36,8 +37,9 @@ class MakeFiles:
         """Makes the SQLite database file where all the data will be stored."""
         self.dbName = "kdot.db"
         self.dbPath = os.path.join(self.appdir, self.directoryName, self.dbName)
-        with open(self.dbPath, "w") as f:
-            f.write("")
+        if not os.path.exists(self.dbPath):
+            with open(self.dbPath, "w") as f:
+                f.write("")
 
     def get_SQLiteDB_path(self) -> str:
         """Method to get the path of the SQLite database file.
@@ -51,9 +53,11 @@ class MakeFiles:
         settings = Settings()
         self.configName = "config.json"
         self.configPath = os.path.join(self.appdir, self.directoryName, self.configName)
-        with open(self.configPath, "w") as f:
-            f.write("{}")
-        settings.set_to_defaults()
+
+        if not os.path.exists(self.configPath):
+            with open(self.configPath, "w") as f:
+                f.write("{}")
+            settings.set_to_defaults()
 
     def get_config_file_path(self) -> str:
         """Gets the path of the config file.
@@ -65,15 +69,10 @@ class MakeFiles:
 
     def make_logs_directory(self) -> None:
         """Makes the logs directory where all the logs will be stored."""
-        os.mkdir(os.path.join(self.appdir, self.directoryName, self.logs_directory))
-
-    def make_build_ids_file(self) -> None:
-        """Makes the build_ids file where all the build ids will be stored."""
-        self.build_ids_file = "build_ids.json"
-        with open(
-            os.path.join(self.appdir, self.directoryName, self.build_ids_file), "w"
-        ) as f:
-            f.write("{}")
+        if not os.path.exists(
+            os.path.join(self.appdir, self.directoryName, self.logs_directory)
+        ):
+            os.mkdir(os.path.join(self.appdir, self.directoryName, self.logs_directory))
 
     def get_logs_directory(self) -> str:
         """Gets the logs directory where all the logs are stored.
@@ -83,10 +82,32 @@ class MakeFiles:
         """
         return os.path.join(self.appdir, self.directoryName, self.logs_directory)
 
+    def make_build_ids_file(self) -> None:
+        """Makes the build_ids file where all the build ids will be stored."""
+        self.build_ids_file = "build_ids.json"
+        if not os.path.exists(
+            os.path.join(self.appdir, self.directoryName, self.build_ids_file)
+        ):
+            with open(
+                os.path.join(self.appdir, self.directoryName, self.build_ids_file), "w"
+            ) as f:
+                f.write("{}")
+
+    def get_build_ids_file_path(self) -> str:
+        """Gets the path of the build_ids file.
+
+        Returns:
+            str: Returns the path of the build_ids file.
+        """
+        return os.path.join(self.appdir, self.directoryName, "build_ids.json")
+
     def fix_key_and_certs(self) -> None:
         """Fixes the key and certificate files if they are missing or corrupted."""
         keyfile_path = os.path.join(self.appdir, self.directoryName, "keyfile.pem")
         certfile_path = os.path.join(self.appdir, self.directoryName, "certfile.pem")
+
+        if not os.path.exists(keyfile_path) and not os.path.exists(certfile_path):
+            self.generate_key_and_cert()
 
         private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -134,6 +155,22 @@ class MakeFiles:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
         print("Private key and certificate have been generated and saved.")
+
+    def get_key_path(self) -> str:
+        """Gets the path of the key file.
+
+        Returns:
+            str: Returns the path of the key file.
+        """
+        return os.path.join(self.appdir, self.directoryName, "keyfile.pem")
+
+    def get_cert_path(self) -> str:
+        """Gets the path of the certificate file.
+
+        Returns:
+            str: Returns the path of the certificate file.
+        """
+        return os.path.join(self.appdir, self.directoryName, "certfile.pem")
 
     def make_all(self) -> None:
         """Makes all the files and directories needed for the application to run properly."""

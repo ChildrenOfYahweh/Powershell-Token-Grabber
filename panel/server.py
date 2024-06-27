@@ -3,6 +3,7 @@ import aiohttp
 import aiosqlite
 import subprocess
 import datetime
+
 from panel.ui.modules.first_time.first_time import MakeFiles
 from panel.ui.modules.notifications.notifications import Notifications
 from panel.ui.modules.settings.settings import Settings
