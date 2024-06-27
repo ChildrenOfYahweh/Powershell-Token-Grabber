@@ -9,3 +9,4 @@ pyinstaller
 slowapi
 cryptography
 notify-py
+rich
