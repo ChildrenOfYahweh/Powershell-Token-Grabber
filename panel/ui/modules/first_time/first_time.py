@@ -106,9 +106,6 @@ class MakeFiles:
         keyfile_path = os.path.join(self.appdir, self.directoryName, "keyfile.pem")
         certfile_path = os.path.join(self.appdir, self.directoryName, "certfile.pem")
 
-        if not os.path.exists(keyfile_path) and not os.path.exists(certfile_path):
-            self.generate_key_and_cert()
-
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048,
