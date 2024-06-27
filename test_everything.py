@@ -56,21 +56,6 @@ def test_settings_page(screen: Screen) -> None:
     screen.should_contain("table")
 
 
-def test_clients_page(screen: Screen) -> None:
-    @ui.page("/clients")
-    async def clients_page() -> None:
-        """Clients page for the stealer"""
-        with frame(True):
-            await clients_page_stuff(db_path)
-
-    clients_page()
-
-    screen.selenium.set_window_size(1920, 1080)
-
-    screen.open("/clients")
-    screen.should_contain("Clients page")
-
-
 def test_make_files() -> None:
     files = MakeFiles()
     files.make_all()

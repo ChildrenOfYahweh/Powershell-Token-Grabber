@@ -227,7 +227,7 @@ def settings() -> None:
 
 
 @ui.page("/credits")
-def credits() -> None:
+def credits_stuff() -> None:
     """Credits page for the stealer."""
     with frame(True):
         credits_page()
