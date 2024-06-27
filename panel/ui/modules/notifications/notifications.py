@@ -32,7 +32,7 @@ class Notifications:
                 if webhook:
                     discord = Discord(webhook=webhook)
                     message_response = discord.send_message("Notification", message)
-                    if message_response != 204:
+                    if message_response != 200:
                         Errors.make_error(
                             f"Error sending Discord notification: {message_response}"
                         )

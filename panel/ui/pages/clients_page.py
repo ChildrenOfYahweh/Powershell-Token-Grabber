@@ -101,7 +101,7 @@ async def clients_page_stuff(db_path: str) -> None:
                             "flat fab-mini"
                         )
                         ui.button("Remove").on_click(
-                            lambda: remove_entry(table.selected[0]["id"], db_path)
+                            lambda: remove_entry(table.selected[0]["hwid"], db_path)
                         ).bind_visibility_from(
                             table, "selected", backward=lambda val: bool(val)
                         ).props(
@@ -114,15 +114,9 @@ def open_in_explorer(path: str) -> None:
     os.system(f"explorer {path}")
 
 
-def remove_entry(id: int, db_path: str) -> None:
-    """Remove an entry from the database."""
-
-    async def remove_entry_async(id: int, db_path: str) -> None:
-        async with aiosqlite.connect(db_path) as db:
-            await db.execute("DELETE FROM entries WHERE id=?", (id,))
-            await db.commit()
-
-    ui.confirm(
-        "Are you sure you want to remove this entry?",
-        on_confirm=lambda: remove_entry_async(id, db_path),
-    )
+async def remove_entry(hwid: str, db_path: str) -> None:
+    """REMOVE THE ROW FROM THE DATABASE WITH THE FOLLOWING HWID"""
+    async with aiosqlite.connect(db_path) as db:
+        await db.execute("DELETE FROM entries WHERE hwid = ?", (hwid,))
+        await db.commit()
+    print("Removed entry from database.")
