@@ -26,7 +26,6 @@ from fastapi.responses import JSONResponse
 
 from nicegui import ui, app
 
-
 limiter = Limiter(key_func=get_remote_address)
 app = FastAPI()
 app.state.limiter = limiter
