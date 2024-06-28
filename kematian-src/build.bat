@@ -41,6 +41,5 @@ if %debug%==0 (
 pause
 
 del kematian.exe || echo "kematian.exe was not found"
-
 pause
 exit
