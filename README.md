@@ -54,6 +54,7 @@ Moreover, the tool has robust `persistence mechanisms` to remain active on the m
 - Next, activate the checkboxes for the features you want to include in the stub.
 - Finally hit build and the output stub will be placed in the same folder with the builder
 - Your logs will be saved here : `$env:appdata\Kematian-Stealer\logs`
+- A more detailed guide can be found here : https://devs.sped.lol/kematian-stealer
  
  > [!NOTE]   
  > **THE DEBUG OPTION IS FOR TESTING PURPOSES ONLY**
