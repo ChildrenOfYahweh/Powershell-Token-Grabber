@@ -1,13 +1,21 @@
 from nicegui import ui
 
+from panel.ui.handlers.stats_handler import StatisticsHandler
 
-def fr_page() -> None:
+
+async def fr_page() -> None:
     """Main page for the stealer. Very simple."""
+
+    stat_handler = StatisticsHandler()
+
+    data = await stat_handler.get_people()
+    dates = [item[0] for item in data]
+    values = [item[1] for item in data]
+
     ui.echart(
         {
-            "xAxis": {"type": "category"},
+            "xAxis": {"type": "category", "data": dates},
             "yAxis": {"type": "value"},
-            "series": [{"type": "line", "data": [20, 10, 30, 50, 40, 30]}],
-        },
-        on_point_click=ui.notify,
+            "series": [{"type": "line", "data": values, "smooth": True}],
+        }
     ).classes("m-4 w-full h-full")

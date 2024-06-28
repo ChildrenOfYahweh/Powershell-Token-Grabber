@@ -2,6 +2,7 @@ import os
 import sys
 import time
 import json
+import logging
 
 
 class Settings:
@@ -51,7 +52,7 @@ class Settings:
                 return data[setting]
         except KeyError:
             self.set_to_defaults()
-            print(f"Setting {setting} not found, setting to default value.")
+            logging.critical(f"Setting {setting} not found, setting to default value.")
             time.sleep(3)
             sys.exit(0)
 

@@ -1,4 +1,5 @@
 import os
+import logging
 
 import aiosqlite
 
@@ -119,4 +120,4 @@ async def remove_entry(hwid: str, db_path: str) -> None:
     async with aiosqlite.connect(db_path) as db:
         await db.execute("DELETE FROM entries WHERE hwid = ?", (hwid,))
         await db.commit()
-    print("Removed entry from database.")
+    logging.info(f"Removed entry with HWID: {hwid}")

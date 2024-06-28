@@ -1,4 +1,5 @@
 import os
+import logging
 
 from cryptography import x509
 from cryptography.x509.oid import NameOID
@@ -46,7 +47,7 @@ class MakeFiles:
 
         Returns:
             str: Returns the path of the SQLite database file."""
-        return os.path.join(self.appdir, self.directoryName, self.dbName)
+        return os.path.join(self.appdir, self.directoryName, "kdot.db")
 
     def make_config(self) -> None:
         """Makes the config file where all the settings will be stored."""
@@ -151,7 +152,7 @@ class MakeFiles:
         with open(certfile_path, "wb") as f:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-        print("Private key and certificate have been generated and saved.")
+        logging.info("Private key and certificate have been generated and saved.")
 
     def get_key_path(self) -> str:
         """Gets the path of the key file.

