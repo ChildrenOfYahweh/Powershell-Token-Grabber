@@ -58,7 +58,7 @@ def test_settings_page(screen: Screen) -> None:
 
 def test_make_files() -> None:
     files = MakeFiles()
-    files.make_all()
+    files.ensure_all_dirs()
 
     all_found = False
     methods = [
