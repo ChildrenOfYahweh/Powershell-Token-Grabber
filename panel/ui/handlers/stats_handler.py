@@ -6,12 +6,20 @@ from panel.ui.modules.first_time.first_time import MakeFiles
 
 
 class StatisticsHandler:
+    """Class to handle all the statistics related stuff."""
+
     def __init__(self) -> None:
+        """Simply sets the current day and the maker object."""
         self.current_day = datetime.now().strftime("%Y-%m-%d")
         self.maker = MakeFiles()
         self.db_path = self.maker.get_SQLiteDB_path()
 
-    async def get_people(self) -> dict:
+    async def get_people(self) -> list:
+        """Method to get the people who have visited the site.
+
+        Returns:
+            dict: Returns a dictionary with the date as the key and the number of people as the value.
+        """
         people_dict = {}
 
         async with aiosqlite.connect(self.db_path) as db:

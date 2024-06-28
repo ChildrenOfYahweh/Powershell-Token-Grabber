@@ -1,3 +1,5 @@
+import ctypes
+
 from nicegui import ui
 
 from panel.ui.modules.settings.settings import Settings
@@ -22,4 +24,8 @@ def change_local_settings(settings) -> None:
     currentSettings = Settings()
     new_settings = settings.content["json"]
     for setting, value in new_settings.items():
-        currentSettings.change_setting(setting, value)
+        if setting == "port":
+            currentSettings.change_setting(setting, int(value))
+            exit(0)
+        else:
+            currentSettings.change_setting(setting, value)
