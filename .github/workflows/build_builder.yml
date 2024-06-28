@@ -1,17 +1,21 @@
-name: Build Builder
+name: Build Kematian Stealer
 
 on:
   push:
     branches: [ main ]
     paths: 
-      - 'builder-src/**'
+      - 'panel/**'
+  pull_request:
+    branches: [ main ]
+    paths: 
+      - 'panel/**'
 
 jobs:
   build:
 
     strategy:
       matrix:
-        configuration: [Release]
+        python-version: ["3.12"]
 
     runs-on: windows-latest
     permissions:
@@ -21,29 +25,35 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
       with:
-        go-version: '1.22.1'
-        check-latest: true
+        python-version: ${{ matrix.python-version }}
+  # You can test your matrix by printing the current Python version
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
 
-    - name: Install Fyne
-      run: go install fyne.io/fyne/v2/cmd/fyne@latest
-
-    - name: Build Builder
-      working-directory: ./builder-src
+    - name: Install dependencies
       run: |
-        go mod tidy
-        fyne package --os windows --exe Builder.exe --appID com.builder.app --release
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: DEBUG
+      run: |
+        dir
+    
+    - name: Build Kematian Stealer
+      run: |
+        nicegui-pack --onefile --name "main" main.py
 
     # Delete-tag-and-release new
     - name: Delete-tag-and-release
       uses: dev-drprasad/delete-tag-and-release@v1.1
       with:
-        tag_name: Builder #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
+        tag_name: AutoBuild #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
         delete_release: true #(optional) default: true - also delete all releases and their assets that are associated to the tag name
         github_token: ${{ secrets.GITHUB_TOKEN }} # (required) - a GitHub token with write access to the repo where tags and releases will be searched and deleted
-
+  
     # Create Release
     - name: Create Release
       id: create_release
@@ -51,20 +61,20 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
-        tag_name: Builder
-        release_name: Builder
-        body: "AutoBuild"
+        tag_name: AutoBuild
+        release_name: AutoBuild
+        body: ${{ steps.changelog.outputs.changelog }}
         draft: false
         prerelease: false
 
     # Upload Release Asset
     - name: Upload Release Asset
-      id: upload-release-asset
+      id: upload-release-asset 
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: builder-src\Builder.exe
-        asset_name: Builder.exe
+        asset_path: dist\main.exe
+        asset_name: main.exe
         asset_content_type: application/zip

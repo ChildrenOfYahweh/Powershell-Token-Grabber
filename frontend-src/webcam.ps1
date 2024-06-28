@@ -125,7 +125,7 @@ function Get-WebCamImage {
                 } 
     
                 return (Device[])devices.ToArray(typeof(Device)); 
-            }
+            } 
     
             public static Device GetDevice(int deviceIndex) 
             { 

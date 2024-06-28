@@ -6,7 +6,6 @@ import (
 	"kdot/kematian/discord"
 	"os"
 	"sync"
-
 	_ "github.com/mattn/go-sqlite3"
 )
 

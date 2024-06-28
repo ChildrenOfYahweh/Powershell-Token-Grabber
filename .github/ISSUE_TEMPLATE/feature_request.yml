@@ -24,6 +24,6 @@ body:
     attributes:
       label: "Check the following before submitting (If Applicable)"
       options:
-        - label: I have checked the existing [issues](https://github.com/Somali-Devs/Kematian-Stealer/issues)
+        - label: I have checked the existing [issues](https://github.com/ChildrenOfYahweh/Kematian-Stealer/issues)
           required: true
         - label: I want to work on this feature

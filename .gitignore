@@ -9,3 +9,7 @@ output.*
 go.sum
 cookies_netscape_*.txt
 AutoUpdate.exe
+__pycache__
+kdot.*
+screenshots
+.pytest_cache

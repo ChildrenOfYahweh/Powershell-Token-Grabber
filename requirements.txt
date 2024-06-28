@@ -1,0 +1,12 @@
+uvicorn
+aiohttp
+aiosqlite
+fastapi
+nicegui
+requests
+discord_webhook
+pyinstaller
+slowapi
+cryptography
+notify-py
+rich

