@@ -12,7 +12,7 @@ class StatisticsHandler:
         """Simply sets the current day and the maker object."""
         self.current_day = datetime.now().strftime("%Y-%m-%d")
         self.maker = MakeFiles()
-        self.db_path = self.maker.get_SQLiteDB_path()
+        self.db_path = self.maker.get_SQLiteDBGraphs_path()
 
     async def get_people(self) -> list:
         """Method to get the people who have visited the site.
@@ -23,10 +23,10 @@ class StatisticsHandler:
         people_dict = {}
 
         async with aiosqlite.connect(self.db_path) as db:
-            async with db.execute("SELECT * FROM entries") as cursor:
+            async with db.execute("SELECT * FROM graphs") as cursor:
                 rows = await cursor.fetchall()
                 for row in rows:
-                    people_dict[row[4]] = people_dict.get(row[4], 0) + 1
+                    people_dict[row[1]] = people_dict.get(row[1], 0) + 1
 
         sorted_dates = self.sort_date_array(people_dict)
         return sorted_dates

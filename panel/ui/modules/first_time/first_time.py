@@ -49,6 +49,21 @@ class MakeFiles:
             str: Returns the path of the SQLite database file."""
         return os.path.join(self.appdir, self.directoryName, "kdot.db")
 
+    def makeSQLiteDBGraphs(self) -> None:
+        """Makes the SQLite database file where all the data will be stored."""
+        self.dbName = "graphs.db"
+        self.dbPath = os.path.join(self.appdir, self.directoryName, self.dbName)
+        if not os.path.exists(self.dbPath):
+            with open(self.dbPath, "w") as f:
+                f.write("")
+
+    def get_SQLiteDBGraphs_path(self) -> str:
+        """Method to get the path of the SQLite database file.
+
+        Returns:
+            str: Returns the path of the SQLite database file."""
+        return os.path.join(self.appdir, self.directoryName, "graphs.db")
+
     def make_config(self) -> None:
         """Makes the config file where all the settings will be stored."""
         settings = Settings()
@@ -66,7 +81,7 @@ class MakeFiles:
         Returns:
             str: Returns the path of the config file.
         """
-        return os.path.join(self.appdir, self.directoryName, self.configName)
+        return os.path.join(self.appdir, self.directoryName, "config.json")
 
     def make_logs_directory(self) -> None:
         """Makes the logs directory where all the logs will be stored."""
@@ -152,7 +167,7 @@ class MakeFiles:
         with open(certfile_path, "wb") as f:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-        logging.info("Private key and certificate have been generated and saved.")
+        print("Private key and certificate have been generated and saved.")
 
     def get_key_path(self) -> str:
         """Gets the path of the key file.
@@ -170,10 +185,22 @@ class MakeFiles:
         """
         return os.path.join(self.appdir, self.directoryName, "certfile.pem")
 
-    def make_all(self) -> None:
-        """Makes all the files and directories needed for the application to run properly."""
-        self.make_appdir_directory()
-        self.makeSQLiteDB()
-        self.make_config()
-        self.make_logs_directory()
-        self.make_build_ids_file()
+    def ensure_all_dirs(self) -> None:
+        """Ensures that all the directories are present."""
+        check_pairs = {
+            self.get_appdir_directory(): self.make_appdir_directory,
+            self.get_SQLiteDB_path(): self.makeSQLiteDB,
+            self.get_config_file_path(): self.make_config,
+            self.get_logs_directory(): self.make_logs_directory,
+            self.get_build_ids_file_path(): self.make_build_ids_file,
+            self.get_config_file_path(): self.make_config,
+        }
+
+        print("Ensuring all directories are present.")
+
+        for path, make_func in check_pairs.items():
+            if not os.path.exists(path):
+                make_func()
+                print(f"Created {path}")
+            else:
+                print(f"{path} already exists.")

