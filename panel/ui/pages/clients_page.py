@@ -81,10 +81,18 @@ async def clients_page_stuff(db_path: str) -> None:
     with ui.card().classes(
         "w-full h-full justify-center no-shadow border-[1px] border-gray-200 rounded-lg"
     ):
-        ui.label("Clients page").classes("text-6xl w-full text-center font-bold")
-        with ui.table(columns, rows=data, pagination=10, selection="single").classes(
-            "h-full w-full bordered"
-        ) as table:
+        with ui.table(
+            columns,
+            rows=data,
+            pagination=10,
+            selection="single",
+            title="Clients Page",
+        ).classes("h-full w-full bordered") as table:
+            with table.add_slot("top-right"):
+                with ui.input(placeholder="Search").props("type=search").bind_value(
+                    table, "filter"
+                ).add_slot("append"):
+                    ui.icon("search")
             with table.add_slot("bottom-row"):
                 with table.row():
                     with table.cell():
