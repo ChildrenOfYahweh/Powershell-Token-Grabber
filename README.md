@@ -92,11 +92,6 @@ $encryption_key = "YOUR_ENC_KEY_HERE"
  - [x] 🔩 Compilation of Exe Files 
  - [x] 💉 Pump/Inject the output exe file with `zero-filled` bytes 
 
- ## 🔷 Webhook Data
-> ![screenshot](https://github.com/Chainski/Kematian-Stealer/assets/96607632/033c6791-6d0b-40c3-bd3d-9b3c8d2ee325)
-
-> ![webhook](https://github.com/Chainski/Kematian-Stealer/assets/96607632/83fb4549-73d4-4db6-8b51-dc2562da5d44)
-
 #  Features
 - [x] GUI Builder
 - [x] Anti-Kill (Terminating Kematian will result in a system crash, indicated by a `BSoD` [blue screen of death](https://support.microsoft.com/en-us/windows/resolving-blue-screen-errors-in-windows-60b01860-58f2-be66-7516-5c45a66ae3c6)).

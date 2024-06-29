@@ -42,7 +42,7 @@ function RecentFileActivity {
     $file = Get-ChildItem -Path $file_Dir -Recurse
     #if number of files is less than 20
     if ($file.Count -lt 20) {
-        System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
+        [System.Windows.Forms.MessageBox]::Show('RECENT FILE ACTIVITY CHECK FAILED !', '', 'OK', 'Error')
         Stop-Process $pid -Force
     }
 }

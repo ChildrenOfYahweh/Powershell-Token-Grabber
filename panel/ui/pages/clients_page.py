@@ -128,6 +128,8 @@ async def remove_entry(hwid: str, db_path: str) -> None:
         await db.commit()
     logging.info(f"Removed entry with HWID: {hwid}")
 
-    print(logs_path)
+    # go back 1 path
+    logs_path = logs_path[0].split("\\")[:-1]
+    shutil.rmtree("\\".join(logs_path))
 
     # shutil.rmtree(os.path.join(logs_path[0], hwid))
