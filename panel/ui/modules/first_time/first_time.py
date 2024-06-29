@@ -167,7 +167,7 @@ class MakeFiles:
         with open(certfile_path, "wb") as f:
             f.write(certificate.public_bytes(serialization.Encoding.PEM))
 
-        print("Private key and certificate have been generated and saved.")
+        logging.info("Private key and certificate have been generated and saved.")
 
     def get_key_path(self) -> str:
         """Gets the path of the key file.
@@ -196,11 +196,13 @@ class MakeFiles:
             self.get_config_file_path(): self.make_config,
         }
 
-        print("Ensuring all directories are present.")
+        logging.critical(
+            r"Ensuring all directories are present!!! If any are missing the programn will attempt to create them but sometimes I'm a bad coder and I mess that up. If this is the case please delete the Kematian-Stealer folder in %appdir%"
+        )
 
         for path, make_func in check_pairs.items():
             if not os.path.exists(path):
                 make_func()
-                print(f"Created {path}")
+                logging.warning(f"Created {path}")
             else:
-                print(f"{path} already exists.")
+                logging.info(f"{path} already exists.")

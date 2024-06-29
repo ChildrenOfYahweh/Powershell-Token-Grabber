@@ -1,4 +1,5 @@
 import os
+import shutil
 import logging
 
 import aiosqlite
@@ -118,6 +119,15 @@ def open_in_explorer(path: str) -> None:
 async def remove_entry(hwid: str, db_path: str) -> None:
     """REMOVE THE ROW FROM THE DATABASE WITH THE FOLLOWING HWID"""
     async with aiosqlite.connect(db_path) as db:
+        # get the logs path using the hwid
+        cursor = await db.execute(
+            "SELECT filepath FROM entries WHERE hwid = ?", (hwid,)
+        )
+        logs_path = await cursor.fetchone()
         await db.execute("DELETE FROM entries WHERE hwid = ?", (hwid,))
         await db.commit()
     logging.info(f"Removed entry with HWID: {hwid}")
+
+    print(logs_path)
+
+    # shutil.rmtree(os.path.join(logs_path[0], hwid))

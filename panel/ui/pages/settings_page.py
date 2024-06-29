@@ -24,8 +24,4 @@ def change_local_settings(settings) -> None:
     currentSettings = Settings()
     new_settings = settings.content["json"]
     for setting, value in new_settings.items():
-        if setting == "port":
-            currentSettings.change_setting(setting, int(value))
-            exit(0)
-        else:
-            currentSettings.change_setting(setting, value)
+        currentSettings.change_setting(setting, value)
