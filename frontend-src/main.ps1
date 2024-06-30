@@ -23,8 +23,6 @@ else {
 # Load WPF assemblies
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
 
-
-
 # Critical Process
 [System.Diagnostics.Process]::EnterDebugMode()
 $domain = [AppDomain]::CurrentDomain
