@@ -1,4 +1,5 @@
 import os
+import uuid
 import aiohttp
 import aiosqlite
 import subprocess
@@ -43,12 +44,7 @@ db_path_graphs = os.path.join(good_dir, "Kematian-Stealer", "graphs.db")
 
 api_base_url = "https://sped.lol"
 
-result = subprocess.check_output(
-    ["wmic", "csproduct", "get", "uuid"], universal_newlines=True
-)
-
-lines = result.strip().split("\n")
-hwid = lines[2].strip()
+identifier = uuid.uuid4()
 
 # Notification Handler
 NOTIFICATIONS = Notifications()
@@ -225,7 +221,7 @@ async def main():
             async with aiohttp.ClientSession() as session:
                 await session.post(f"{api_base_url}/send_message", json=message)
 
-        user_id = hwid
+        user_id = identifier
         avatar = f"https://robohash.org/{user_id}?set=any"
 
         await ui.context.client.connected()
