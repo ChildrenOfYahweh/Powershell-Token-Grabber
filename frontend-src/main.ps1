@@ -1112,7 +1112,15 @@ function Backup-Data {
     Write-Host $ZipFilePath
     Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     if ( -not ($write_disk_only)) {    
-    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
+    class TrustAllCertsPolicy : System.Net.ICertificatePolicy {
+    [bool] CheckValidationResult([System.Net.ServicePoint] $a,
+                                 [System.Security.Cryptography.X509Certificates.X509Certificate] $b,
+                                 [System.Net.WebRequest] $c,
+                                 [int] $d) {
+           return $true
+         }
+     }
+     [System.Net.ServicePointManager]::CertificatePolicy = [TrustAllCertsPolicy]::new()
         $went_through = $false
         while (-not $went_through) {
             try {
