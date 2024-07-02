@@ -20,7 +20,6 @@ else {
     $ProgressPreference = 'SilentlyContinue'
 }
 
-
 # Load WPF assemblies
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
 
