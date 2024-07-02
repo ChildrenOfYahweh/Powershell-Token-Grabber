@@ -46,7 +46,7 @@ function CriticalProcess {
     if ($MethodName -eq 'InvokeRtlSetProcessIsCritical') {
         InvokeRtlSetProcessIsCritical -isCritical $IsCritical -unknown1 $Unknown1 -unknown2 $Unknown2
     } else {
-        Write-Error "Unknown method name: $MethodName"
+        Write-Host "Unknown method name: $MethodName"
     }
 }
 
