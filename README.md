@@ -20,7 +20,7 @@
   <a href="https://github.com/Somali-Devs/Kematian-Stealer/commits">
     <img src="https://img.shields.io/github/commit-activity/m/Somali-Devs/Kematian-Stealer?color=fa7202" alt="Commit Activity"></a>
   <a href="https://github.com/Somali-Devs/Kematian-Stealer/tree/main/frontend-src">
-    <img src="https://img.shields.io/badge/Powershell-v3.0-fa7202" alt="Powershell v3.0"></a>
+    <img src="https://img.shields.io/badge/Powershell-v5.0-fa7202" alt="Powershell v5.0"></a>
   <br>
   <a href="https://github.com/Somali-Devs/Kematian-Stealer?tab=MIT-1-ov-file">
     <img src="https://img.shields.io/github/license/Somali-Devs/Kematian-Stealer?color=fa7202" alt="License"></a>
@@ -38,7 +38,7 @@
 <h1 align="center">Kematian Stealer</h1>
 
 # About The Project
-Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is transmitted via TCP to your C2 server, where everything is decrypted. It functions seamlessly across any `x64bit` system, from `Windows 8 x64 to Windows 11 x64`, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve `seed phrases, session files, passwords, application data, Discord tokens` and more.
+Kematian Stealer is a [PowerShell-based](https://learn.microsoft.com/en-us/powershell/scripting/overview?view=powershell-5.1) tool designed to effortlessly infiltrate and exfiltrate data from Windows systems. All information collected is transmitted via TCP to your C2 server, where everything is decrypted. It functions seamlessly across any `x64bit` system, from `Windows 10` or later, ensuring compatibility with the latest updates. With Kematian Stealer, you can retrieve `seed phrases, session files, passwords, application data, Discord tokens` and more.
 
 This tool is particularly advantageous for accessing application and file data without restrictions, while evading conventional security measures such as `firewalls` and `antivirus` software, thanks to its `fileless capabilities`, which set it apart from other stealers. Upon execution, Kematian Stealer creates a `mutex` on the system and designates the process as `critical` before initiating data exfiltration, ensuring smooth and uninterrupted transmission of data.
 
@@ -75,8 +75,8 @@ $encryption_key = "YOUR_ENC_KEY_HERE"
 
 # Requirements
 - To build Kematian, you need:
-- Windows 8 or higher `x64`.
-- Powershell `v3.0` or higher.
+- Windows 10 or higher `x64`.
+- Powershell `v5.0` or higher.
 - An active internet connection.
 
 # Obfuscation 
@@ -201,7 +201,7 @@ Cleanup
 ```
 
 # Need Help?
-- [Join our discord server](https://discord.gg/Zb9VG8NFBq)
+- [Join the discussion group](https://t.me/+RHUnNVumwmlmM2Fh)
 
 # Bug Reports and Suggestions
 Found a bug? Have an idea? Let me know [here](https://github.com/Somali-Devs/Kematian-Stealer/issues), Please provide a detailed explanation of the expected behavior, actual behavior, and steps to reproduce, or what you want to see and how it could be done. You can be a small part of this project!
