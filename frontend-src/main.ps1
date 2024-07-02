@@ -10,7 +10,6 @@
 #$encryption_key = "YOUR_ENC_KEY_HERE"
 $AllProtocols = [System.Net.SecurityProtocolType]'Ssl3,Tls,Tls11,Tls12'
 [System.Net.ServicePointManager]::SecurityProtocol = $AllProtocols
-[System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
 
 if ($debug) {
     $ProgressPreference = 'Continue'
@@ -1113,6 +1112,7 @@ function Backup-Data {
     Write-Host $ZipFilePath
     Write-Host "[!] Uploading the extracted data" -ForegroundColor Green
     if ( -not ($write_disk_only)) {    
+    [System.Net.ServicePointManager]::ServerCertificateValidationCallback = { $true }
         $went_through = $false
         while (-not $went_through) {
             try {
