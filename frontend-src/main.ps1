@@ -211,7 +211,7 @@ function Backup-Data {
 
     function Get-InstalledAV {
         $wmiQuery = "SELECT * FROM AntiVirusProduct"
-        $AntivirusProduct = Get-WmiObject -Namespace "root\SecurityCenter2" -Query $wmiQuery
+        $AntivirusProduct = Get-WmiObject -Namespace "root\SecurityCenter2" -Query $wmiQuery -EA "Ignore"
         $AntivirusProduct.displayName
     }
     $avlist = Get-InstalledAV | Format-Table | Out-String
