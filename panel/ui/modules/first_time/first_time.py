@@ -185,6 +185,21 @@ class MakeFiles:
         """
         return os.path.join(self.appdir, self.directoryName, "certfile.pem")
 
+    def make_map_db(self) -> None:
+        """Makes the SQLite database file where all the data will be stored."""
+        self.dbName = "map.db"
+        self.dbPath = os.path.join(self.appdir, self.directoryName, self.dbName)
+        if not os.path.exists(self.dbPath):
+            with open(self.dbPath, "w") as f:
+                f.write("")
+
+    def get_map_db_path(self) -> str:
+        """Method to get the path of the SQLite database file.
+
+        Returns:
+            str: Returns the path of the SQLite database file."""
+        return os.path.join(self.appdir, self.directoryName, "map.db")
+
     def ensure_all_dirs(self) -> None:
         """Ensures that all the directories are present."""
         check_pairs = {
@@ -194,6 +209,7 @@ class MakeFiles:
             self.get_logs_directory(): self.make_logs_directory,
             self.get_build_ids_file_path(): self.make_build_ids_file,
             self.get_config_file_path(): self.make_config,
+            self.get_map_db_path(): self.make_map_db,
         }
 
         logging.critical(
